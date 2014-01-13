@@ -1,15 +1,29 @@
 ﻿
-<#
-.Synopsis
-   Get a VirusTotal Report for a given IPv4 Address
-.DESCRIPTION
-   Get a VirusTotal Report for a given IPv4 Address that have been previously scanned.
-.EXAMPLE
-   Get-VirtusTotalIPReport -IPAddress 90.156.201.18 -APIKey $Key
-.LINK
-    http://www.darkoperator.com
-    https://www.virustotal.com/en/documentation/public-api/
-#>
+#  .ExternalHelp Posh-VirusTotal.Help.xml
+function Set-VirusTotalAPIKey
+{
+    [CmdletBinding()]
+    Param
+    (
+        # VirusToral API Key.
+        [Parameter(Mandatory=$true)]
+        [string]$APIKey
+    )
+
+    Begin
+    {
+    }
+    Process
+    {
+        $Global:VTAPIKey = $APIKey
+    }
+    End
+    {
+    }
+}
+
+
+#  .ExternalHelp Posh-VirusTotal.Help.xml
 function Get-VirusTotalIPReport
 {
     [CmdletBinding()]
@@ -22,13 +36,21 @@ function Get-VirusTotalIPReport
         [string]$IPAddress,
 
         # VirusToral API Key.
-        [Parameter(Mandatory=$true)]
+        [Parameter(Mandatory=$false)]
         [string]$APIKey
     )
 
     Begin
     {
         $URI = 'https://www.virustotal.com/vtapi/v2/ip-address/report'
+        if (!(Test-Path variable:Global:VTAPIKey ) -and !($APIKey))
+        {
+            Write-Error "No VirusTotal API Key has been specified or set."
+        }
+        elseif ((Test-Path variable:Global:VTAPIKey ) -and !($APIKey))
+        {
+            $APIKey = $Global:VTAPIKey
+        }
     }
     Process
     {
@@ -55,17 +77,8 @@ function Get-VirusTotalIPReport
     }
 }
 
-<#
-.Synopsis
-   Get a VirusTotal Report for a given Domain
-.DESCRIPTION
-   Get a VirusTotal Report for a given Domian that have been previously scanned.
-.EXAMPLE
-   Get-VirusTotalDomainReport -Domain '027.ru' -APIKey $Key
-.LINK
-    http://www.darkoperator.com
-    https://www.virustotal.com/en/documentation/public-api/
-#>
+
+#  .ExternalHelp Posh-VirusTotal.Help.xml
 function Get-VirusTotalDomainReport
 {
     [CmdletBinding()]
@@ -78,13 +91,21 @@ function Get-VirusTotalDomainReport
         [string]$Domain,
 
         # VirusToral API Key.
-        [Parameter(Mandatory=$true)]
+        [Parameter(Mandatory=$false)]
         [string]$APIKey
     )
 
     Begin
     {
         $URI = 'https://www.virustotal.com/vtapi/v2/domain/report'
+        if (!(Test-Path variable:Global:VTAPIKey ) -and !($APIKey))
+        {
+            Write-Error "No VirusTotal API Key has been specified or set."
+        }
+        elseif ((Test-Path variable:Global:VTAPIKey ) -and !($APIKey))
+        {
+            $APIKey = $Global:VTAPIKey
+        }
     }
     Process
     {
@@ -112,19 +133,7 @@ function Get-VirusTotalDomainReport
 }
 
 
-<#
-.Synopsis
-   Get a VirusTotal Report for a given File
-.DESCRIPTION
-   Get a VirusTotal Report for a given File that have been previously scanned.
-   A MD5, SHA1 or SHA2 Cryptpgraphic Hash can be provided or a ScanID for a File.
-   Up to 4 file reporst can be retrieve at the same time.
-.EXAMPLE
-   Get-VirusTotalFileReport -Resource 99017f6eebbac24f351415dd410d522d -APIKey $Key
-.LINK
-    http://www.darkoperator.com
-    https://www.virustotal.com/en/documentation/public-api/
-#>
+#  .ExternalHelp Posh-VirusTotal.Help.xml
 function Get-VirusTotalFileReport
 {
     [CmdletBinding()]
@@ -138,13 +147,21 @@ function Get-VirusTotalFileReport
         [string[]]$Resource,
 
         # VirusToral API Key.
-        [Parameter(Mandatory=$true)]
+        [Parameter(Mandatory=$false)]
         [string]$APIKey
     )
 
     Begin
     {
         $URI = 'https://www.virustotal.com/vtapi/v2/file/report'
+        if (!(Test-Path variable:Global:VTAPIKey ) -and !($APIKey))
+        {
+            Write-Error "No VirusTotal API Key has been specified or set."
+        }
+        elseif ((Test-Path variable:Global:VTAPIKey ) -and !($APIKey))
+        {
+            $APIKey = $Global:VTAPIKey
+        }
     }
     Process
     {
@@ -177,18 +194,7 @@ function Get-VirusTotalFileReport
 }
 
 
-<#
-.Synopsis
-   Get a VirusTotal Report for a given URL
-.DESCRIPTION
-   Get a VirusTotal Report for a given URL that have been previously scanned.
-   A URL or a ScanID for prevous scan. Up to 4 URL reporst can be retrieve at the same time.
-.EXAMPLE
-   Get-VirusTotalURLReport -Resource http://www.darkoperator.com -APIKey $Key
-.LINK
-    http://www.darkoperator.com
-    https://www.virustotal.com/en/documentation/public-api/
-#>
+#  .ExternalHelp Posh-VirusTotal.Help.xml
 function Get-VirusTotalURLReport
 {
     [CmdletBinding()]
@@ -202,7 +208,7 @@ function Get-VirusTotalURLReport
         [string[]]$Resource,
 
         # VirusToral API Key.
-        [Parameter(Mandatory=$true)]
+        [Parameter(Mandatory=$false)]
         [string]$APIKey,
 
         # Automatically submit the URL for analysis if no report is found for it in VirusTotal.
@@ -213,6 +219,7 @@ function Get-VirusTotalURLReport
     Begin
     {
         $URI = 'https://www.virustotal.com/vtapi/v2/url/report'
+        
         if ($Scan)
         {
             $scanurl = 1
@@ -220,6 +227,15 @@ function Get-VirusTotalURLReport
         else
         {
             $scanurl = 0
+        }
+
+        if (!(Test-Path variable:Global:VTAPIKey ) -and !($APIKey))
+        {
+            Write-Error "No VirusTotal API Key has been specified or set."
+        }
+        elseif ((Test-Path variable:Global:VTAPIKey ) -and !($APIKey))
+        {
+            $APIKey = $Global:VTAPIKey
         }
     }
     Process
@@ -253,17 +269,7 @@ function Get-VirusTotalURLReport
 }
 
 
-<#
-.Synopsis
-   Submit a URL for scanning by VirusTotal
-.DESCRIPTION
-   Submit a URL for scanning by VirusTotal. Up to 4 URLcan be submitted at the same time.
-.EXAMPLE
-   Submit-VirusTotalURL -URL "http://www.darkoperator.com","http://gamil.com" -APIKey $Key
-.LINK
-    http://www.darkoperator.com
-    https://www.virustotal.com/en/documentation/public-api/
-#>
+#  .ExternalHelp Posh-VirusTotal.Help.xml
 function Submit-VirusTotalURL
 {
     [CmdletBinding()]
@@ -277,7 +283,7 @@ function Submit-VirusTotalURL
         [string[]]$URL,
 
         # VirusToral API Key.
-        [Parameter(Mandatory=$true)]
+        [Parameter(Mandatory=$false)]
         [string]$APIKey,
 
         # Automatically submit the URL for analysis if no report is found for it in VirusTotal.
@@ -295,6 +301,15 @@ function Submit-VirusTotalURL
         else
         {
             $scanurl = 0
+        }
+
+        if (!(Test-Path variable:Global:VTAPIKey ) -and !($APIKey))
+        {
+            Write-Error "No VirusTotal API Key has been specified or set."
+        }
+        elseif ((Test-Path variable:Global:VTAPIKey ) -and !($APIKey))
+        {
+            $APIKey = $Global:VTAPIKey
         }
     }
     Process
@@ -327,17 +342,7 @@ function Submit-VirusTotalURL
     }
 }
 
-<#
-.Synopsis
-   Submit a File for scanning by VirusTotal
-.DESCRIPTION
-   Submit a File for scanning by VirusTotal. File size is limited to 20MB.
-.EXAMPLE
-   Submit-VirusTotalFile -File C:\backdoor.dll -APIKey $Key
-.LINK
-    http://www.darkoperator.com
-    https://www.virustotal.com/en/documentation/public-api/
-#>
+#  .ExternalHelp Posh-VirusTotal.Help.xml
 function Submit-VirusTotalFile
 {
     [CmdletBinding()]
@@ -351,13 +356,22 @@ function Submit-VirusTotalFile
         [string]$File,
 
         # VirusToral API Key.
-        [Parameter(Mandatory=$true)]
+        [Parameter(Mandatory=$false)]
         [string]$APIKey
     )
 
     Begin
     {
         $URI = "http://www.virustotal.com/vtapi/v2/file/scan"
+
+        if (!(Test-Path variable:Global:VTAPIKey ) -and !($APIKey))
+        {
+            Write-Error "No VirusTotal API Key has been specified or set."
+        }
+        elseif ((Test-Path variable:Global:VTAPIKey ) -and !($APIKey))
+        {
+            $APIKey = $Global:VTAPIKey
+        }
     }
     Process
     {
