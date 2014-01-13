@@ -451,3 +451,50 @@ function Submit-VirusTotalFile
     {
     }
 }
+
+function Get-PoshVirusTotalVersion
+ {
+     [CmdletBinding(DefaultParameterSetName="Index")]
+     [OutputType([pscustomobject])]
+     Param
+     ()
+ 
+     Begin
+     {
+        $currentversion = ""
+        $installed = Get-Module -Name "Posh-VirusTotal" 
+     }
+     Process
+     {
+        $webClient = New-Object System.Net.WebClient
+        Try
+        {
+            $current = Invoke-Expression  $webClient.DownloadString('https://raw.github.com/darkoperator/Posh-VirusTotal/master/Posh-VirusTotal.psd1')
+            $currentversion = $current.moduleversion
+        }
+        Catch
+        {
+            Write-Warning "Could not retrieve the current version."
+        }
+        $majorver,$minorver = $currentversion.split(".")
+
+        if ($majorver -gt $installed.Version.Major)
+        {
+            Write-Warning "You are running an outdated version of the module."
+        }
+        elseif ($minorver -gt $installed.Version.Minor)
+        {
+            Write-Warning "You are running an outdated version of the module."
+        } 
+        
+        $props = @{
+            InstalledVersion = $installed.Version.ToString()
+            CurrentVersion   = $currentversion
+        }
+        New-Object -TypeName psobject -Property $props
+     }
+     End
+     {
+          
+     }
+ }
