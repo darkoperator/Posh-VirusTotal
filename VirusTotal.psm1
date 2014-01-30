@@ -1,6 +1,6 @@
 ﻿
 #  .ExternalHelp Posh-VirusTotal.Help.xml
-function Set-VirusTotalAPIKey
+function Set-VTAPIKey
 {
     [CmdletBinding()]
     Param
@@ -24,7 +24,7 @@ function Set-VirusTotalAPIKey
 
 
 #  .ExternalHelp Posh-VirusTotal.Help.xml
-function Get-VirusTotalIPReport
+function Get-VTIPReport
 {
     [CmdletBinding()]
     Param
@@ -79,7 +79,7 @@ function Get-VirusTotalIPReport
 
 
 #  .ExternalHelp Posh-VirusTotal.Help.xml
-function Get-VirusTotalDomainReport
+function Get-VTDomainReport
 {
     [CmdletBinding()]
     Param
@@ -134,7 +134,7 @@ function Get-VirusTotalDomainReport
 
 
 #  .ExternalHelp Posh-VirusTotal.Help.xml
-function Get-VirusTotalFileReport
+function Get-VTFileReport
 {
     [CmdletBinding()]
     Param
@@ -167,26 +167,36 @@ function Get-VirusTotalFileReport
     {
         $QueryResources =  $Resource -join ","
 
-        Try
+        $OldEAP = $ErrorActionPreference
+        $ErrorActionPreference = 'SilentlyContinue'
+
+        $Body =  @{'resource'= $QueryResources; 'apikey'= $APIKey}
+        $ReportResult =Invoke-RestMethod -Uri $URI -method get -Body $Body -ErrorVariable RESTError
+
+        $ErrorActionPreference = $OldEAP
+        
+        if ($RESTError)
         {
-            $ReportResult =Invoke-RestMethod -Uri $URI -method get -Body @{'resource'= $QueryResources; 'apikey'= $APIKey}
-            foreach ($FileReport in $ReportResult)
+            if ($RESTError.Message.Contains("403"))
             {
-                $FileReport.pstypenames.insert(0,'VirusTotal.File.Report')
-                $FileReport
+                Write-Error "API key is not valid." -ErrorAction Stop
+            }
+            elseif ($RESTError.Message -like "*204*")
+            {
+                Write-Error "API key rate has been reached." -ErrorAction Stop
+            }
+            else
+            {
+                Write-Error $RESTError -ErrorAction Stop
             }
         }
-        Catch [Net.WebException]
+
+        foreach ($FileReport in $ReportResult)
         {
-            if ($Error[0].ToString() -like "*403*")
-            {
-                Write-Error "API key is not valid."
-            }
-            elseif ($Error[0].ToString() -like "*204*")
-            {
-                Write-Error "API key rate has been reached."
-            }
+            $FileReport.pstypenames.insert(0,'VirusTotal.File.Report')
+            $FileReport
         }
+        
     }
     End
     {
@@ -195,7 +205,7 @@ function Get-VirusTotalFileReport
 
 
 #  .ExternalHelp Posh-VirusTotal.Help.xml
-function Get-VirusTotalURLReport
+function Get-VTURLReport
 {
     [CmdletBinding()]
     Param
@@ -242,26 +252,36 @@ function Get-VirusTotalURLReport
     {
         $QueryResources =  $Resource -join ","
 
-        Try
+        $OldEAP = $ErrorActionPreference
+        $ErrorActionPreference = 'SilentlyContinue'
+
+        $Body = @{'resource'= $QueryResources; 'apikey'= $APIKey; 'scan'=$scanurl}
+        $ReportResult = Invoke-RestMethod -Uri $URI -method get -Body $Body -ErrorVariable RESTError
+        
+        $ErrorActionPreference = $OldEAP
+        
+        if ($RESTError)
         {
-            $ReportResult = Invoke-RestMethod -Uri $URI -method get -Body @{'resource'= $QueryResources; 'apikey'= $APIKey; 'scan'=$scanurl}
-            foreach ($URLReport in $ReportResult)
+            if ($RESTError.Message.Contains("403"))
             {
-                $URLReport.pstypenames.insert(0,'VirusTotal.URL.Report')
-                $URLReport
+                Write-Error "API key is not valid." -ErrorAction Stop
+            }
+            elseif ($RESTError.Message -like "*204*")
+            {
+                Write-Error "API key rate has been reached." -ErrorAction Stop
+            }
+            else
+            {
+                Write-Error $RESTError -ErrorAction Stop
             }
         }
-        Catch [Net.WebException]
+
+        foreach ($URLReport in $ReportResult)
         {
-            if ($Error[0].ToString() -like "*403*")
-            {
-                Write-Error "API key is not valid."
-            }
-            elseif ($Error[0].ToString() -like "*204*")
-            {
-                Write-Error "API key rate has been reached."
-            }
+            $URLReport.pstypenames.insert(0,'VirusTotal.URL.Report')
+            $URLReport
         }
+        
     }
     End
     {
@@ -270,7 +290,7 @@ function Get-VirusTotalURLReport
 
 
 #  .ExternalHelp Posh-VirusTotal.Help.xml
-function Submit-VirusTotalURL
+function Submit-VTURL
 {
     [CmdletBinding()]
     Param
@@ -315,27 +335,35 @@ function Submit-VirusTotalURL
     Process
     {
         $URLList =  $URL -join "`n"
+        $OldEAP = $ErrorActionPreference
+        $ErrorActionPreference = 'SilentlyContinue'
 
-        Try
+        $SubmitedList = Invoke-RestMethod -Uri $URI -method Post -Body @{'url'= $URLList; 'apikey'= $APIKey} -ErrorVariable RESTError
+
+        $ErrorActionPreference = $OldEAP
+        
+        if ($RESTError)
         {
-            $SubmitedList = Invoke-RestMethod -Uri $URI -method Post -Body @{'url'= $URLList; 'apikey'= $APIKey}
-            foreach($submited in $SubmitedList)
+            if ($RESTError.Message.Contains("403"))
             {
-                $submited.pstypenames.insert(0,'VirusTotal.URL.Submission')
-                $submited
+                Write-Error "API key is not valid." -ErrorAction Stop
+            }
+            elseif ($RESTError.Message -like "*204*")
+            {
+                Write-Error "API key rate has been reached." -ErrorAction Stop
+            }
+            else
+            {
+                Write-Error $RESTError -ErrorAction Stop
             }
         }
-        Catch [Net.WebException]
+
+        foreach($submited in $SubmitedList)
         {
-            if ($Error[0].ToString() -like "*403*")
-            {
-                Write-Error "API key is not valid."
-            }
-            elseif ($Error[0].ToString() -like "*204*")
-            {
-                Write-Error "API key rate has been reached."
-            }
+            $submited.pstypenames.insert(0,'VirusTotal.URL.Submission')
+            $submited
         }
+      
     }
     End
     {
@@ -343,7 +371,7 @@ function Submit-VirusTotalURL
 }
 
 #  .ExternalHelp Posh-VirusTotal.Help.xml
-function Submit-VirusTotalFile
+function Submit-VTFile
 {
     [CmdletBinding()]
     Param
@@ -384,7 +412,7 @@ function Submit-VirusTotalFile
         }
    
         $req = [System.Net.httpWebRequest][System.Net.WebRequest]::Create("http://www.virustotal.com/vtapi/v2/file/scan")
-        $req.Headers = $headers
+        #$req.Headers = $headers
         $req.Method = "POST"
         $req.AllowWriteStreamBuffering = $true;
         $req.SendChunked = $false;
@@ -452,7 +480,7 @@ function Submit-VirusTotalFile
     }
 }
 
-function Get-PoshVirusTotalVersion
+function Get-PoshVTVersion
  {
      [CmdletBinding(DefaultParameterSetName="Index")]
      [OutputType([pscustomobject])]
@@ -498,3 +526,604 @@ function Get-PoshVirusTotalVersion
           
      }
  }
+
+ # Private API
+ ###############
+
+ #  .ExternalHelp Posh-VirusTotal.Help.xml
+function Get-VTSpecialURL
+{
+    [CmdletBinding()]
+    Param
+    (
+        # VirusToral Private API Key.
+        [Parameter(Mandatory=$false)]
+        [string]$APIKey
+    )
+
+    Begin
+    {
+        $URI = 'https://www.virustotal.com/vtapi/v2/file/scan/upload_url'
+        if (!(Test-Path variable:Global:VTAPIKey ) -and !($APIKey))
+        {
+            Write-Error "No VirusTotal API Key has been specified or set."
+        }
+        elseif ((Test-Path variable:Global:VTAPIKey ) -and !($APIKey))
+        {
+            $APIKey = $Global:VTAPIKey
+        }
+    }
+    Process
+    {
+
+        $OldEAP = $ErrorActionPreference
+        $ErrorActionPreference = 'SilentlyContinue'
+                
+        $IPReport = Invoke-RestMethod -Uri $URI -method get -Body @{'apikey'= $APIKey} -ErrorVariable RESTError
+
+        $ErrorActionPreference = $OldEAP
+        
+        if ($RESTError)
+        {
+            if ($RESTError.Message.Contains("403"))
+            {
+                Write-Error "API key is not valid." -ErrorAction Stop
+            }
+            elseif ($RESTError.Message -like "*204*")
+            {
+                Write-Error "API key rate has been reached." -ErrorAction Stop
+            }
+            else
+            {
+                Write-Error $RESTError -ErrorAction Stop
+            }
+        }
+
+        $IPReport.pstypenames.insert(0,'VirusTotal.SpecialUploadURL')
+        $IPReport
+    }
+    End
+    {
+    }
+}
+
+
+function Set-VTFileRescan
+{
+    [CmdletBinding()]
+    Param
+    (
+        # File MD5 Checksum, File SHA1 Checksum, File SHA256 Checksum or ScanID to query.
+        [Parameter(Mandatory=$true,
+                   ValueFromPipelineByPropertyName=$true,
+                   Position=0)]
+        [string]$Resource,
+
+        # VirusToral API Key.
+        [Parameter(Mandatory=$false)]
+        [string]$APIKey,
+
+        # Date in which the rescan should be performed. If not specified the rescan will be performed immediately.
+        [Parameter(Mandatory=$false)]
+        [datetime]$Date,
+
+        # Period in days in which the file should be rescanned.
+        [Parameter(Mandatory=$false)]
+        [int32]$Period,
+
+        # Used in conjunction with period to specify the number of times the file should be rescanned.
+        [Parameter(Mandatory=$false)]
+        [int32]$Repeat,
+
+        # An URL where a POST notification should be sent when the rescan finishes.
+        [Parameter(Mandatory=$false)]
+        [string]$NotifyURL,
+
+        # Indicates if POST notifications should be sent only if the scan results differ from the previous one.
+        [Parameter(Mandatory=$false)]
+        [bool]$NotifyChanges
+    )
+
+    Begin
+    {
+        $URI = 'https://www.virustotal.com/vtapi/v2/file/rescan'
+        if (!(Test-Path variable:Global:VTAPIKey ) -and !($APIKey))
+        {
+            Write-Error "No VirusTotal API Key has been specified or set."
+        }
+        elseif ((Test-Path variable:Global:VTAPIKey ) -and !($APIKey))
+        {
+            $APIKey = $Global:VTAPIKey
+        }
+
+        $Body = @{'apikey'= $APIKey}
+    }
+    Process
+    {
+        $Body.add('resource',$Resource)
+        if ($Date)
+        {
+            $Body.add('date', ($Date.ToString("yyyyMMddhhmmss")))
+        }
+
+        if ($Period)
+        {
+            $Body.add('period', $Period)
+        }
+
+        if ($Repeat)
+        {
+            $Body.add('repeat', $Repeat)
+        }
+
+        if ($NotifyURL)
+        {
+            $Body.add('notify_url', $NotifyURL)
+        }
+
+        if ($NotifyChanges)
+        {
+            $Body.add('notify_changes_only', $NotifyChanges)
+        }
+
+        $Body.add('resource',$Resource)
+        
+        $OldEAP = $ErrorActionPreference
+        $ErrorActionPreference = 'SilentlyContinue'
+
+        $Response = Invoke-RestMethod -Uri $URI -method post -Body $Body -ErrorVariable RESTError
+
+        $ErrorActionPreference = $OldEAP
+        if ($RESTError)
+        {
+            if ($RESTError.Message.Contains("403"))
+            {
+                Write-Error "API key is not valid." -ErrorAction Stop
+            }
+            elseif ($RESTError.Message -like "*204*")
+            {
+                Write-Error "API key rate has been reached." -ErrorAction Stop
+            }
+            else
+            {
+                Write-Error $RESTError
+            }
+        }
+
+        $Response.pstypenames.insert(0,'VirusTotal.ReScan')
+        $Response
+        
+    }
+    End
+    {
+    }
+}
+
+
+function Remove-VTFileRescan
+{
+    [CmdletBinding()]
+    Param
+    (
+        # File MD5 Checksum, File SHA1 Checksum, File SHA256 Checksum or ScanID to remove rescan.
+        [Parameter(Mandatory=$true,
+                   ValueFromPipelineByPropertyName=$true,
+                   Position=0)]
+        [string]$Resource,
+
+        # VirusToral API Key.
+        [Parameter(Mandatory=$false)]
+        [string]$APIKey
+    
+    )
+
+    Begin
+    {
+        $URI = 'https://www.virustotal.com/vtapi/v2/file/rescan/delete'
+        if (!(Test-Path variable:Global:VTAPIKey ) -and !($APIKey))
+        {
+            Write-Error "No VirusTotal API Key has been specified or set."
+        }
+        elseif ((Test-Path variable:Global:VTAPIKey ) -and !($APIKey))
+        {
+            $APIKey = $Global:VTAPIKey
+        }
+
+        $Body = @{'apikey'= $APIKey}
+    }
+    Process
+    {
+
+        $Body.add('resource',$Resource)
+        
+        $OldEAP = $ErrorActionPreference
+        $ErrorActionPreference = 'SilentlyContinue'
+        
+        $Response = Invoke-RestMethod -Uri $URI -method post -Body $Body -ErrorVariable RESTError
+        
+        $ErrorActionPreference = $OldEAP
+
+        if ($RESTError)
+        {
+            if ($RESTError.Message.Contains("403"))
+            {
+                Write-Error "API key is not valid." -ErrorAction Stop
+            }
+            elseif ($RESTError.Message -like "*204*")
+            {
+                Write-Error "API key rate has been reached." -ErrorAction Stop
+            }
+            else
+            {
+                Write-Error $RESTError
+            }
+        }
+
+        $Response.pstypenames.insert(0,'VirusTotal.ReScan')
+        $Response
+
+    }
+    End
+    {
+    }
+}
+
+
+function Get-VTFileScanReport
+{
+    [CmdletBinding()]
+    Param
+    (
+        # File MD5 Checksum, File SHA1 Checksum, File SHA256 Checksum or ScanID of the scan.
+        [Parameter(Mandatory=$true,
+                   ValueFromPipelineByPropertyName=$true,
+                   Position=0)]
+        [string]$Resource,
+
+        # VirusToral API Key.
+        [Parameter(Mandatory=$false)]
+        [string]$APIKey,
+
+        [Parameter(Mandatory=$false)]
+        [switch]$AllInfo
+    
+    )
+
+    Begin
+    {
+        $URI = 'https://www.virustotal.com/vtapi/v2/file/report'
+        if (!(Test-Path variable:Global:VTAPIKey ) -and !($APIKey))
+        {
+            Write-Error "No VirusTotal API Key has been specified or set."
+        }
+        elseif ((Test-Path variable:Global:VTAPIKey ) -and !($APIKey))
+        {
+            $APIKey = $Global:VTAPIKey
+        }
+
+        $Body = @{'apikey'= $APIKey}
+
+        if ($AllInfo)
+        {
+            $Body.Add('allinfo',1)
+        }
+    }
+    Process
+    {
+
+        $Body.add('resource',$Resource)
+        
+        $OldEAP = $ErrorActionPreference
+        $ErrorActionPreference = 'SilentlyContinue'
+        
+        $Response = Invoke-RestMethod -Uri $URI -method post -Body $Body -ErrorVariable RESTError
+        
+        $ErrorActionPreference = $OldEAP
+        
+        if ($RESTError)
+        {
+            if ($RESTError.Message.Contains("403"))
+            {
+                Write-Error "API key is not valid." -ErrorAction Stop
+            }
+            elseif ($RESTError.Message -like "*204*")
+            {
+                Write-Error "API key rate has been reached." -ErrorAction Stop
+            }
+            else
+            {
+                Write-Error $RESTError
+            }
+        }
+        $Response.pstypenames.insert(0,'VirusTotal.Scan.Report')
+        $Response
+
+    }
+    End
+    {
+    }
+}
+
+
+function Get-VTFileComment
+{
+    [CmdletBinding()]
+    Param
+    (
+        # File MD5 Checksum, File SHA1 Checksum, File SHA256 Checksum or ScanID to remove rescan.
+        [Parameter(Mandatory=$true,
+                   ValueFromPipelineByPropertyName=$true,
+                   Position=0)]
+        [string]$Resource,
+
+        # VirusToral API Key.
+        [Parameter(Mandatory=$false)]
+        [string]$APIKey
+    
+    )
+
+    Begin
+    {
+        $URI = 'https://www.virustotal.com/vtapi/v2/comments/get'
+        if (!(Test-Path variable:Global:VTAPIKey ) -and !($APIKey))
+        {
+            Write-Error "No VirusTotal API Key has been specified or set."
+        }
+        elseif ((Test-Path variable:Global:VTAPIKey ) -and !($APIKey))
+        {
+            $APIKey = $Global:VTAPIKey
+        }
+
+        $Body = @{'apikey'= $APIKey}
+    }
+    Process
+    {
+
+        $Body.add('resource',$Resource)
+
+        $OldEAP = $ErrorActionPreference
+        $ErrorActionPreference = 'SilentlyContinue'
+
+        $Response = Invoke-RestMethod -Uri $URI -method Get -Body $Body -ErrorVariable RESTError
+
+        $ErrorActionPreference = $OldEAP
+        if ($RESTError)
+        {
+            if ($RESTError.Message.Contains("403"))
+            {
+                Write-Error "API key is not valid." -ErrorAction Stop
+            }
+            elseif ($RESTError.Message -like "*204*")
+            {
+                Write-Error "API key rate has been reached." -ErrorAction Stop
+            }
+            else
+            {
+                Write-Error $RESTError
+            }
+        }
+        $Response.pstypenames.insert(0,'VirusTotal.Comment')
+        $Response
+
+    }
+    End
+    {
+    }
+}
+
+
+function Get-VTFileBehaviourReport
+{
+    [CmdletBinding()]
+    Param
+    (
+        # File MD5 Checksum, File SHA1 Checksum or File SHA256 Checksum of file.
+        [Parameter(Mandatory=$true,
+                   ValueFromPipelineByPropertyName=$true,
+                   Position=0)]
+        [string]$Resource,
+
+        # VirusToral API Key.
+        [Parameter(Mandatory=$false)]
+        [string]$APIKey,
+
+        # File name and path to save Behaviour report as a Cuckoo JSON Dump.
+        [Parameter(Mandatory=$true,
+                   Position=1)]
+        [string]$Report
+
+    
+    )
+
+    Begin
+    {
+        $URI = 'https://www.virustotal.com/vtapi/v2/file/behaviour'
+        if (!(Test-Path variable:Global:VTAPIKey ) -and !($APIKey))
+        {
+            Write-Error "No VirusTotal API Key has been specified or set."
+        }
+        elseif ((Test-Path variable:Global:VTAPIKey ) -and !($APIKey))
+        {
+            $APIKey = $Global:VTAPIKey
+        }
+
+        $Body = @{'apikey'= $APIKey}
+    }
+    Process
+    {
+
+        $Body.add('hash',$Resource)
+        
+        $OldEAP = $ErrorActionPreference
+        $ErrorActionPreference = 'SilentlyContinue'
+
+        $ReportFullPath = $ExecutionContext.SessionState.Path.GetUnresolvedProviderPathFromPSPath($Report)
+        Write-Verbose "Saving report to $($ReportFullPath)."
+
+        $bahaviour_report = Invoke-WebRequest -Uri $URI -Body $body -Method Get -ErrorVariable RESTError -OutFile $Report
+        
+        $ErrorActionPreference = $OldEAP
+        if ($RESTError)
+        {
+            if ($RESTError.Message.Contains("403"))
+            {
+                Write-Error "API key is not valid." -ErrorAction Stop
+            }
+            elseif ($RESTError.Message -like "*204*")
+            {
+                Write-Error "API key rate has been reached." -ErrorAction Stop
+            }
+            else
+            {
+                Write-Error $RESTError
+            }
+        }
+    }
+    End
+    {
+    }
+}
+
+
+function Get-VTFileSample
+{
+    [CmdletBinding()]
+    Param
+    (
+        # File MD5 Checksum, File SHA1 Checksum or File SHA256 Checksum of file.
+        [Parameter(Mandatory=$true,
+                   ValueFromPipelineByPropertyName=$true,
+                   Position=0)]
+        [string]$Resource,
+
+        # VirusToral API Key.
+        [Parameter(Mandatory=$false)]
+        [string]$APIKey,
+
+        # File name and path to save sample.
+        [Parameter(Mandatory=$true,
+                   Position=1)]
+        [string]$File
+
+    
+    )
+
+    Begin
+    {
+        $URI = 'https://www.virustotal.com/vtapi/v2/file/download'
+        if (!(Test-Path variable:Global:VTAPIKey ) -and !($APIKey))
+        {
+            Write-Error "No VirusTotal API Key has been specified or set."
+        }
+        elseif ((Test-Path variable:Global:VTAPIKey ) -and !($APIKey))
+        {
+            $APIKey = $Global:VTAPIKey
+        }
+
+        $Body = @{'apikey'= $APIKey}
+    }
+    Process
+    {
+
+        $Body.add('hash',$Resource)
+        $OldEAP = $ErrorActionPreference
+        $ErrorActionPreference = 'SilentlyContinue'
+
+        $SampleFullPath = $ExecutionContext.SessionState.Path.GetUnresolvedProviderPathFromPSPath($File)
+        Write-Verbose "Saving report to $($SampleFullPath)."
+
+        $SampleResponse = Invoke-RestMethod -Uri $URI -Body $body -Method Get -ErrorVariable RESTError -OutFile $File
+        $ErrorActionPreference = $OldEAP
+
+        if ($RESTError)
+        {
+            if ($RESTError.Message.Contains("403"))
+            {
+                Write-Error "API key is not valid." -ErrorAction Stop
+            }
+            elseif ($RESTError.Message -like "*204*")
+            {
+                Write-Error "API key rate has been reached." -ErrorAction Stop
+            }
+            else
+            {
+                Write-Error $RESTError
+            }
+        }
+    }
+    End
+    {
+    }
+}
+
+
+function Get-VTFileNetworkTraffic
+{
+    [CmdletBinding()]
+    Param
+    (
+        # File MD5 Checksum, File SHA1 Checksum or File SHA256 Checksum.
+        [Parameter(Mandatory=$true,
+                   ValueFromPipelineByPropertyName=$true,
+                   Position=0)]
+        [string]$Hash,
+
+        # VirusToral API Key.
+        [Parameter(Mandatory=$false)]
+        [string]$APIKey,
+
+        # File name and path to save Network Traffic in PCAP format.
+        [Parameter(Mandatory=$true,
+                   Position=1)]
+        [string]$File
+
+    
+    )
+
+    Begin
+    {
+        $URI = 'https://www.virustotal.com/vtapi/v2/file/network-traffic'
+        if (!(Test-Path variable:Global:VTAPIKey ) -and !($APIKey))
+        {
+            Write-Error "No VirusTotal API Key has been specified or set."
+        }
+        elseif ((Test-Path variable:Global:VTAPIKey ) -and !($APIKey))
+        {
+            $APIKey = $Global:VTAPIKey
+        }
+
+        $Body = @{'apikey'= $APIKey}
+    }
+    Process
+    {
+
+        $Body.add('hash',$Resource)
+        $OldEAP = $ErrorActionPreference
+        $ErrorActionPreference = 'SilentlyContinue'
+
+        $NTFullPath = $ExecutionContext.SessionState.Path.GetUnresolvedProviderPathFromPSPath($File)
+        Write-Verbose "Saving file to $($NTFullPath)."
+
+        $NTResponse = Invoke-RestMethod -Uri $URI -Body $body -Method Get -ErrorVariable RESTError -OutFile $File
+        $ErrorActionPreference = $OldEAP
+
+        if ($RESTError)
+        {
+            if ($RESTError.Message.Contains("403"))
+            {
+                Write-Error "API key is not valid." -ErrorAction Stop
+            }
+            elseif ($RESTError.Message -like "*204*")
+            {
+                Write-Error "API key rate has been reached." -ErrorAction Stop
+            }
+            else
+            {
+                Write-Error $RESTError
+            }
+        }
+    }
+    End
+    {
+    }
+}
