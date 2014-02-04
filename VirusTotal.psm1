@@ -54,23 +54,34 @@ function Get-VTIPReport
     }
     Process
     {
-        Try
+
+        $OldEAP = $ErrorActionPreference
+        $ErrorActionPreference = 'SilentlyContinue'
+
+        $Body = @{'ip'= $IPAddress; 'apikey'= $APIKey}
+        $IPReport = Invoke-RestMethod -Uri $URI -method get -Body $Body -ErrorVariable RESTError
+        
+        $ErrorActionPreference = $OldEAP
+        
+        if ($RESTError)
         {
-            $IPReport = Invoke-RestMethod -Uri $URI -method get -Body @{'ip'= $IPAddress; 'apikey'= $APIKey}
-            $IPReport.pstypenames.insert(0,'VirusTotal.IP.Report')
-            $IPReport
-        }
-        Catch [Net.WebException]
-        {
-            if ($Error[0].ToString() -like "*403*")
+            if ($RESTError.Message.Contains("403"))
             {
-                Write-Error "API key is not valid."
+                Write-Error "API key is not valid." -ErrorAction Stop
             }
-            elseif ($Error[0].ToString() -like "*204*")
+            elseif ($RESTError.Message -like "*204*")
             {
-                Write-Error "API key rate has been reached."
+                Write-Error "API key rate has been reached." -ErrorAction Stop
+            }
+            else
+            {
+                Write-Error $RESTError -ErrorAction Stop
             }
         }
+
+        $IPReport.pstypenames.insert(0,'VirusTotal.IP.Report')
+        $IPReport
+        
     }
     End
     {
@@ -109,23 +120,32 @@ function Get-VTDomainReport
     }
     Process
     {
-        Try
+        $OldEAP = $ErrorActionPreference
+        $ErrorActionPreference = 'SilentlyContinue'
+
+        $Body = @{'domain'= $Domain; 'apikey'= $APIKey}
+        $DomainReport = Invoke-RestMethod -Uri $URI -method get -Body $Body -ErrorVariable RESTError
+            
+        $ErrorActionPreference = $OldEAP
+        
+        if ($RESTError)
         {
-            $DomainReport = Invoke-RestMethod -Uri $URI -method get -Body @{'domain'= $Domain; 'apikey'= $APIKey}
-            $DomainReport.pstypenames.insert(0,'VirusTotal.Domain.Report')
-            $DomainReport
-        }
-        Catch [Net.WebException]
-        {
-            if ($Error[0].ToString() -like "*403*")
+            if ($RESTError.Message.Contains("403"))
             {
-                Write-Error "API key is not valid."
+                Write-Error "API key is not valid." -ErrorAction Stop
             }
-            elseif ($Error[0].ToString() -like "*204*")
+            elseif ($RESTError.Message -like "*204*")
             {
-                Write-Error "API key rate has been reached."
+                Write-Error "API key rate has been reached." -ErrorAction Stop
+            }
+            else
+            {
+                Write-Error $RESTError -ErrorAction Stop
             }
         }
+
+        $DomainReport.pstypenames.insert(0,'VirusTotal.Domain.Report')
+        $DomainReport
     }
     End
     {
@@ -370,6 +390,7 @@ function Submit-VTURL
     }
 }
 
+
 #  .ExternalHelp Posh-VirusTotal.Help.xml
 function Submit-VTFile
 {
@@ -480,6 +501,7 @@ function Submit-VTFile
     }
 }
 
+
 function Get-PoshVTVersion
  {
      [CmdletBinding(DefaultParameterSetName="Index")]
@@ -527,23 +549,21 @@ function Get-PoshVTVersion
      }
  }
 
- # Private API
- ###############
 
- #  .ExternalHelp Posh-VirusTotal.Help.xml
-function Get-VTSpecialURL
+ function Get-VTAPIKeyInfo
 {
     [CmdletBinding()]
     Param
     (
-        # VirusToral Private API Key.
+
+        # VirusToral API Key.
         [Parameter(Mandatory=$false)]
         [string]$APIKey
     )
 
     Begin
     {
-        $URI = 'https://www.virustotal.com/vtapi/v2/file/scan/upload_url'
+        $URI = 'http://www.virustotal.com/vtapi/v2/key/details'
         if (!(Test-Path variable:Global:VTAPIKey ) -and !($APIKey))
         {
             Write-Error "No VirusTotal API Key has been specified or set."
@@ -558,8 +578,100 @@ function Get-VTSpecialURL
 
         $OldEAP = $ErrorActionPreference
         $ErrorActionPreference = 'SilentlyContinue'
-                
-        $IPReport = Invoke-RestMethod -Uri $URI -method get -Body @{'apikey'= $APIKey} -ErrorVariable RESTError
+
+        $Body = @{'apikey'= $APIKey}
+        $IPReport = Invoke-RestMethod -Uri $URI -method get -Body $Body -ErrorVariable RESTError
+        
+        $ErrorActionPreference = $OldEAP
+        
+        if ($RESTError)
+        {
+            if ($RESTError.Message.Contains("403"))
+            {
+                Write-Error "API key is not valid." -ErrorAction Stop
+            }
+            elseif ($RESTError.Message -like "*204*")
+            {
+                Write-Error "API key rate has been reached." -ErrorAction Stop
+            }
+            else
+            {
+                Write-Error $RESTError -ErrorAction Stop
+            }
+        }
+
+        $IPReport.pstypenames.insert(0,'VirusTotal.IP.Report')
+        $IPReport
+        
+    }
+    End
+    {
+    }
+}
+
+# Private API
+###############
+
+
+#  .ExternalHelp Posh-VirusTotal.Help.xml
+function Get-VTSpecialURL
+{
+    [CmdletBinding()]
+    Param
+    (
+        # VirusToral Private API Key.
+        [Parameter(Mandatory=$false)]
+        [string]$APIKey,
+
+        [Parameter(Mandatory=$false)]
+        [switch]$IgnoreCertificateThumbprint
+    )
+
+    Begin
+    {
+        
+        $URI = 'https://www.virustotal.com/vtapi/v2/file/scan/upload_url'
+        if (!(Test-Path variable:Global:VTAPIKey ) -and !($APIKey))
+        {
+            Write-Error "No VirusTotal API Key has been specified or set."
+        }
+        elseif ((Test-Path variable:Global:VTAPIKey ) -and !($APIKey))
+        {
+            $APIKey = $Global:VTAPIKey
+        }
+
+        # Virus Total Thumbprint
+        $CertThumPrint = '49DBA7417CC48B5058DFAAE768063B7AFC0D1D6C'
+
+        # Check he date and ask to upgrade
+        if ((Get-Date) -gt [datetime]'12/15/14')
+        {
+            Write-Warning 'Certificate for the thumbprint used for pinning is about to expire.'
+            Write-Warning 'Check for an updated module or use the -IgnoreCertificateThumbprint option.'
+        }
+
+        Write-Verbose 'Verifying the API Key.'
+        $KeyInfo = Get-VTAPIKeyInfo -APIKey $APIKey
+        if ($KeyInfo.type -ne 'private')
+        {
+            throw "The key provided is not a Private API Key"
+        }
+        Write-Verbose 'Key verifies as a Private API Key.'
+    }
+    Process
+    {
+
+        $OldEAP = $ErrorActionPreference
+        $ErrorActionPreference = 'SilentlyContinue'
+        
+        if ($IgnoreCertificateThumbprint)
+        {
+            $IPReport = Invoke-RestMethod -Uri $URI -method get -Body @{'apikey'= $APIKey} -ErrorVariable RESTError
+        }
+        else
+        {
+            $IPReport = Invoke-RestMethod -Uri $URI -method get -Body @{'apikey'= $APIKey} -ErrorVariable RESTError -CertificateThumbprint $CertThumPrint
+        }
 
         $ErrorActionPreference = $OldEAP
         
@@ -621,7 +733,10 @@ function Set-VTFileRescan
 
         # Indicates if POST notifications should be sent only if the scan results differ from the previous one.
         [Parameter(Mandatory=$false)]
-        [bool]$NotifyChanges
+        [bool]$NotifyChanges,
+
+        [Parameter(Mandatory=$false)]
+        [switch]$IgnoreCertificateThumbprint
     )
 
     Begin
@@ -637,6 +752,24 @@ function Set-VTFileRescan
         }
 
         $Body = @{'apikey'= $APIKey}
+
+        # Virus Total Thumbprint
+        $CertThumPrint = '49DBA7417CC48B5058DFAAE768063B7AFC0D1D6C'
+
+        # Check he date and ask to upgrade
+        if ((Get-Date) -gt [datetime]'12/15/14')
+        {
+            Write-Warning 'Certificate for the thumbprint used for pinning is about to expire.'
+            Write-Warning 'Check for an updated module or use the -IgnoreCertificateThumbprint option.'
+        }
+
+        Write-Verbose 'Verifying the API Key.'
+        $KeyInfo = Get-VTAPIKeyInfo -APIKey $APIKey
+        if ($KeyInfo.type -ne 'private')
+        {
+            throw "The key provided is not a Private API Key"
+        }
+        Write-Verbose 'Key verifies as a Private API Key.'
     }
     Process
     {
@@ -671,7 +804,14 @@ function Set-VTFileRescan
         $OldEAP = $ErrorActionPreference
         $ErrorActionPreference = 'SilentlyContinue'
 
-        $Response = Invoke-RestMethod -Uri $URI -method post -Body $Body -ErrorVariable RESTError
+        if ($IgnoreCertificateThumbprint)
+        {
+            $Response = Invoke-RestMethod -Uri $URI -method post -Body $Body -ErrorVariable RESTError
+        }
+        else
+        {
+            $Response = Invoke-RestMethod -Uri $URI -method post -Body $Body -ErrorVariable RESTError -CertificateThumbprint $CertThumPrint
+        }
 
         $ErrorActionPreference = $OldEAP
         if ($RESTError)
@@ -713,7 +853,10 @@ function Remove-VTFileRescan
 
         # VirusToral API Key.
         [Parameter(Mandatory=$false)]
-        [string]$APIKey
+        [string]$APIKey,
+
+        [Parameter(Mandatory=$false)]
+        [switch]$IgnoreCertificateThumbprint
     
     )
 
@@ -730,6 +873,25 @@ function Remove-VTFileRescan
         }
 
         $Body = @{'apikey'= $APIKey}
+
+        # Virus Total Thumbprint
+        $CertThumPrint = '49DBA7417CC48B5058DFAAE768063B7AFC0D1D6C'
+
+        # Check he date and ask to upgrade
+        if ((Get-Date) -gt [datetime]'12/15/14')
+        {
+            Write-Warning 'Certificate for the thumbprint used for pinning is about to expire.'
+            Write-Warning 'Check for an updated module or use the -IgnoreCertificateThumbprint option.'
+        }
+
+        Write-Verbose 'Verifying the API Key.'
+        $KeyInfo = Get-VTAPIKeyInfo -APIKey $APIKey
+        if ($KeyInfo.type -ne 'private')
+        {
+            throw "The key provided is not a Private API Key"
+        }
+        Write-Verbose 'Key verifies as a Private API Key.'
+
     }
     Process
     {
@@ -739,8 +901,14 @@ function Remove-VTFileRescan
         $OldEAP = $ErrorActionPreference
         $ErrorActionPreference = 'SilentlyContinue'
         
-        $Response = Invoke-RestMethod -Uri $URI -method post -Body $Body -ErrorVariable RESTError
-        
+        if ($IgnoreCertificateThumbprint)
+        {
+            $Response = Invoke-RestMethod -Uri $URI -method post -Body $Body -ErrorVariable RESTError
+        }
+        else
+        {
+            $Response = Invoke-RestMethod -Uri $URI -method post -Body $Body -ErrorVariable RESTError -CertificateThumbprint $CertThumPrint 
+        }
         $ErrorActionPreference = $OldEAP
 
         if ($RESTError)
@@ -785,7 +953,10 @@ function Get-VTFileScanReport
         [string]$APIKey,
 
         [Parameter(Mandatory=$false)]
-        [switch]$AllInfo
+        [switch]$AllInfo,
+
+        [Parameter(Mandatory=$false)]
+        [switch]$IgnoreCertificateThumbprint
     
     )
 
@@ -807,6 +978,24 @@ function Get-VTFileScanReport
         {
             $Body.Add('allinfo',1)
         }
+
+        # Virus Total Thumbprint
+        $CertThumPrint = '49DBA7417CC48B5058DFAAE768063B7AFC0D1D6C'
+
+        # Check he date and ask to upgrade
+        if ((Get-Date) -gt [datetime]'12/15/14')
+        {
+            Write-Warning 'Certificate for the thumbprint used for pinning is about to expire.'
+            Write-Warning 'Check for an updated module or use the -IgnoreCertificateThumbprint option.'
+        }
+
+        Write-Verbose 'Verifying the API Key.'
+        $KeyInfo = Get-VTAPIKeyInfo -APIKey $APIKey
+        if ($KeyInfo.type -ne 'private')
+        {
+            throw "The key provided is not a Private API Key"
+        }
+        Write-Verbose 'Key verifies as a Private API Key.'
     }
     Process
     {
@@ -1127,3 +1316,4 @@ function Get-VTFileNetworkTraffic
     {
     }
 }
+
