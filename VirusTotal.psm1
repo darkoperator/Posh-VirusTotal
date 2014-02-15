@@ -37,7 +37,10 @@ function Get-VTIPReport
 
         # VirusToral API Key.
         [Parameter(Mandatory=$false)]
-        [string]$APIKey
+        [string]$APIKey,
+
+        [Parameter(Mandatory=$false)]
+        [string]$CertificateThumbprint
     )
 
     Begin
@@ -59,8 +62,15 @@ function Get-VTIPReport
         $ErrorActionPreference = 'SilentlyContinue'
 
         $Body = @{'ip'= $IPAddress; 'apikey'= $APIKey}
-        $IPReport = Invoke-RestMethod -Uri $URI -method get -Body $Body -ErrorVariable RESTError
-        
+
+        if ($CertificateThumbprint)
+        {
+            $IPReport = Invoke-RestMethod -Uri $URI -method get -Body $Body -ErrorVariable RESTError -CertificateThumbprint $CertificateThumbprint
+        }
+        else
+        {
+            $IPReport = Invoke-RestMethod -Uri $URI -method get -Body $Body -ErrorVariable RESTError
+        }
         $ErrorActionPreference = $OldEAP
         
         if ($RESTError)
@@ -103,7 +113,10 @@ function Get-VTDomainReport
 
         # VirusToral API Key.
         [Parameter(Mandatory=$false)]
-        [string]$APIKey
+        [string]$APIKey,
+
+        [Parameter(Mandatory=$false)]
+        [string]$CertificateThumbprint
     )
 
     Begin
@@ -124,8 +137,16 @@ function Get-VTDomainReport
         $ErrorActionPreference = 'SilentlyContinue'
 
         $Body = @{'domain'= $Domain; 'apikey'= $APIKey}
-        $DomainReport = Invoke-RestMethod -Uri $URI -method get -Body $Body -ErrorVariable RESTError
-            
+
+        if ($CertificateThumbprint)
+        {
+            $DomainReport = Invoke-RestMethod -Uri $URI -method get -Body $Body -ErrorVariable RESTError -CertificateThumbprint $CertificateThumbprint
+        }
+        else
+        {
+            $DomainReport = Invoke-RestMethod -Uri $URI -method get -Body $Body -ErrorVariable RESTError
+        }
+
         $ErrorActionPreference = $OldEAP
         
         if ($RESTError)
@@ -168,7 +189,10 @@ function Get-VTFileReport
 
         # VirusToral API Key.
         [Parameter(Mandatory=$false)]
-        [string]$APIKey
+        [string]$APIKey,
+
+        [Parameter(Mandatory=$false)]
+        [string]$CertificateThumbprint
     )
 
     Begin
@@ -191,7 +215,15 @@ function Get-VTFileReport
         $ErrorActionPreference = 'SilentlyContinue'
 
         $Body =  @{'resource'= $QueryResources; 'apikey'= $APIKey}
-        $ReportResult =Invoke-RestMethod -Uri $URI -method get -Body $Body -ErrorVariable RESTError
+
+        if ($CertificateThumbprint)
+        {
+            $ReportResult =Invoke-RestMethod -Uri $URI -method get -Body $Body -ErrorVariable RESTError -CertificateThumbprint $CertificateThumbprint
+        }
+        else
+        {
+            $ReportResult =Invoke-RestMethod -Uri $URI -method get -Body $Body -ErrorVariable RESTError
+        }
 
         $ErrorActionPreference = $OldEAP
         
@@ -243,7 +275,10 @@ function Get-VTURLReport
 
         # Automatically submit the URL for analysis if no report is found for it in VirusTotal.
         [Parameter(Mandatory=$false)]
-        [switch]$Scan
+        [switch]$Scan,
+
+        [Parameter(Mandatory=$false)]
+        [string]$CertificateThumbprint
     )
 
     Begin
@@ -276,8 +311,16 @@ function Get-VTURLReport
         $ErrorActionPreference = 'SilentlyContinue'
 
         $Body = @{'resource'= $QueryResources; 'apikey'= $APIKey; 'scan'=$scanurl}
-        $ReportResult = Invoke-RestMethod -Uri $URI -method get -Body $Body -ErrorVariable RESTError
-        
+
+        if($CertificateThumbprint)
+        {
+            $ReportResult = Invoke-RestMethod -Uri $URI -method get -Body $Body -ErrorVariable RESTError -CertificateThumbprint $CertificateThumbprint
+        }
+        else
+        {
+            $ReportResult = Invoke-RestMethod -Uri $URI -method get -Body $Body -ErrorVariable RESTError
+        }
+
         $ErrorActionPreference = $OldEAP
         
         if ($RESTError)
@@ -328,7 +371,10 @@ function Submit-VTURL
 
         # Automatically submit the URL for analysis if no report is found for it in VirusTotal.
         [Parameter(Mandatory=$false)]
-        [switch]$Scan
+        [switch]$Scan,
+
+        [Parameter(Mandatory=$false)]
+        [string]$CertificateThumbprint
     )
 
     Begin
@@ -357,9 +403,15 @@ function Submit-VTURL
         $URLList =  $URL -join "`n"
         $OldEAP = $ErrorActionPreference
         $ErrorActionPreference = 'SilentlyContinue'
-
-        $SubmitedList = Invoke-RestMethod -Uri $URI -method Post -Body @{'url'= $URLList; 'apikey'= $APIKey} -ErrorVariable RESTError
-
+        
+        if ($CertificateThumbprint)
+        {
+            $SubmitedList = Invoke-RestMethod -Uri $URI -method Post -Body @{'url'= $URLList; 'apikey'= $APIKey} -ErrorVariable RESTError -CertificateThumbprint $CertificateThumbprint
+        }
+        else
+        {
+            $SubmitedList = Invoke-RestMethod -Uri $URI -method Post -Body @{'url'= $URLList; 'apikey'= $APIKey} -ErrorVariable RESTError
+        }
         $ErrorActionPreference = $OldEAP
         
         if ($RESTError)
@@ -558,7 +610,10 @@ function Get-PoshVTVersion
 
         # VirusToral API Key.
         [Parameter(Mandatory=$false)]
-        [string]$APIKey
+        [string]$APIKey,
+
+        [Parameter(Mandatory=$false)]
+        [string]$CertificateThumbprint
     )
 
     Begin
@@ -580,7 +635,14 @@ function Get-PoshVTVersion
         $ErrorActionPreference = 'SilentlyContinue'
 
         $Body = @{'apikey'= $APIKey}
-        $IPReport = Invoke-RestMethod -Uri $URI -method get -Body $Body -ErrorVariable RESTError
+        if ($CertificateThumbprint)
+        {
+            $IPReport = Invoke-RestMethod -Uri $URI -method get -Body $Body -ErrorVariable RESTError -CertificateThumbprint $CertificateThumbprint
+        }
+        else
+        {
+            $IPReport = Invoke-RestMethod -Uri $URI -method get -Body $Body -ErrorVariable RESTError
+        }
         
         $ErrorActionPreference = $OldEAP
         
@@ -624,7 +686,7 @@ function Get-VTSpecialURL
         [string]$APIKey,
 
         [Parameter(Mandatory=$false)]
-        [switch]$IgnoreCertificateThumbprint
+        [string]$CertificateThumbprint
     )
 
     Begin
@@ -638,16 +700,6 @@ function Get-VTSpecialURL
         elseif ((Test-Path variable:Global:VTAPIKey ) -and !($APIKey))
         {
             $APIKey = $Global:VTAPIKey
-        }
-
-        # Virus Total Thumbprint
-        $CertThumPrint = '49DBA7417CC48B5058DFAAE768063B7AFC0D1D6C'
-
-        # Check he date and ask to upgrade
-        if ((Get-Date) -gt [datetime]'12/15/14')
-        {
-            Write-Warning 'Certificate for the thumbprint used for pinning is about to expire.'
-            Write-Warning 'Check for an updated module or use the -IgnoreCertificateThumbprint option.'
         }
 
         Write-Verbose 'Verifying the API Key.'
@@ -664,13 +716,13 @@ function Get-VTSpecialURL
         $OldEAP = $ErrorActionPreference
         $ErrorActionPreference = 'SilentlyContinue'
         
-        if ($IgnoreCertificateThumbprint)
+        if ($CertThumPrint)
         {
-            $IPReport = Invoke-RestMethod -Uri $URI -method get -Body @{'apikey'= $APIKey} -ErrorVariable RESTError
+            $IPReport = Invoke-RestMethod -Uri $URI -method get -Body @{'apikey'= $APIKey} -ErrorVariable RESTError -CertificateThumbprint $CertThumPrint
         }
         else
         {
-            $IPReport = Invoke-RestMethod -Uri $URI -method get -Body @{'apikey'= $APIKey} -ErrorVariable RESTError -CertificateThumbprint $CertThumPrint
+            $IPReport = Invoke-RestMethod -Uri $URI -method get -Body @{'apikey'= $APIKey} -ErrorVariable RESTError
         }
 
         $ErrorActionPreference = $OldEAP
@@ -736,7 +788,7 @@ function Set-VTFileRescan
         [bool]$NotifyChanges,
 
         [Parameter(Mandatory=$false)]
-        [switch]$IgnoreCertificateThumbprint
+        [string]$CertificateThumbprint
     )
 
     Begin
@@ -752,16 +804,6 @@ function Set-VTFileRescan
         }
 
         $Body = @{'apikey'= $APIKey}
-
-        # Virus Total Thumbprint
-        $CertThumPrint = '49DBA7417CC48B5058DFAAE768063B7AFC0D1D6C'
-
-        # Check he date and ask to upgrade
-        if ((Get-Date) -gt [datetime]'12/15/14')
-        {
-            Write-Warning 'Certificate for the thumbprint used for pinning is about to expire.'
-            Write-Warning 'Check for an updated module or use the -IgnoreCertificateThumbprint option.'
-        }
 
         Write-Verbose 'Verifying the API Key.'
         $KeyInfo = Get-VTAPIKeyInfo -APIKey $APIKey
@@ -804,13 +846,13 @@ function Set-VTFileRescan
         $OldEAP = $ErrorActionPreference
         $ErrorActionPreference = 'SilentlyContinue'
 
-        if ($IgnoreCertificateThumbprint)
+        if ($CertificateThumbprint)
         {
-            $Response = Invoke-RestMethod -Uri $URI -method post -Body $Body -ErrorVariable RESTError
+            $Response = Invoke-RestMethod -Uri $URI -method post -Body $Body -ErrorVariable RESTError -CertificateThumbprint $CertThumPrint
         }
         else
         {
-            $Response = Invoke-RestMethod -Uri $URI -method post -Body $Body -ErrorVariable RESTError -CertificateThumbprint $CertThumPrint
+            $Response = Invoke-RestMethod -Uri $URI -method post -Body $Body -ErrorVariable RESTError
         }
 
         $ErrorActionPreference = $OldEAP
@@ -856,7 +898,7 @@ function Remove-VTFileRescan
         [string]$APIKey,
 
         [Parameter(Mandatory=$false)]
-        [switch]$IgnoreCertificateThumbprint
+        [string]$CertificateThumbprint
     
     )
 
@@ -874,15 +916,7 @@ function Remove-VTFileRescan
 
         $Body = @{'apikey'= $APIKey}
 
-        # Virus Total Thumbprint
-        $CertThumPrint = '49DBA7417CC48B5058DFAAE768063B7AFC0D1D6C'
-
-        # Check he date and ask to upgrade
-        if ((Get-Date) -gt [datetime]'12/15/14')
-        {
-            Write-Warning 'Certificate for the thumbprint used for pinning is about to expire.'
-            Write-Warning 'Check for an updated module or use the -IgnoreCertificateThumbprint option.'
-        }
+        
 
         Write-Verbose 'Verifying the API Key.'
         $KeyInfo = Get-VTAPIKeyInfo -APIKey $APIKey
@@ -901,13 +935,13 @@ function Remove-VTFileRescan
         $OldEAP = $ErrorActionPreference
         $ErrorActionPreference = 'SilentlyContinue'
         
-        if ($IgnoreCertificateThumbprint)
+        if ($CertificateThumbprint)
         {
-            $Response = Invoke-RestMethod -Uri $URI -method post -Body $Body -ErrorVariable RESTError
+            $Response = Invoke-RestMethod -Uri $URI -method post -Body $Body -ErrorVariable RESTError -CertificateThumbprint $CertThumPrint
         }
         else
         {
-            $Response = Invoke-RestMethod -Uri $URI -method post -Body $Body -ErrorVariable RESTError -CertificateThumbprint $CertThumPrint 
+            $Response = Invoke-RestMethod -Uri $URI -method post -Body $Body -ErrorVariable RESTError
         }
         $ErrorActionPreference = $OldEAP
 
@@ -956,7 +990,7 @@ function Get-VTFileScanReport
         [switch]$AllInfo,
 
         [Parameter(Mandatory=$false)]
-        [switch]$IgnoreCertificateThumbprint
+        [string]$CertificateThumbprint
     
     )
 
@@ -979,23 +1013,13 @@ function Get-VTFileScanReport
             $Body.Add('allinfo',1)
         }
 
-        # Virus Total Thumbprint
-        $CertThumPrint = '49DBA7417CC48B5058DFAAE768063B7AFC0D1D6C'
-
-        # Check he date and ask to upgrade
-        if ((Get-Date) -gt [datetime]'12/15/14')
-        {
-            Write-Warning 'Certificate for the thumbprint used for pinning is about to expire.'
-            Write-Warning 'Check for an updated module or use the -IgnoreCertificateThumbprint option.'
-        }
-
         Write-Verbose 'Verifying the API Key.'
         $KeyInfo = Get-VTAPIKeyInfo -APIKey $APIKey
         if ($KeyInfo.type -ne 'private')
         {
             throw "The key provided is not a Private API Key"
         }
-        Write-Verbose 'Key verifies as a Private API Key.'
+        Write-Verbose 'Key verified as a Private API Key.'
     }
     Process
     {
@@ -1004,9 +1028,15 @@ function Get-VTFileScanReport
         
         $OldEAP = $ErrorActionPreference
         $ErrorActionPreference = 'SilentlyContinue'
-        
-        $Response = Invoke-RestMethod -Uri $URI -method post -Body $Body -ErrorVariable RESTError
-        
+
+        if ($CertificateThumbprint)
+        {
+            $Response = Invoke-RestMethod -Uri $URI -method post -Body $Body -ErrorVariable RESTError -CertificateThumbprint $CertificateThumbprint
+        }
+        else
+        {
+            $Response = Invoke-RestMethod -Uri $URI -method post -Body $Body -ErrorVariable RESTError
+        }
         $ErrorActionPreference = $OldEAP
         
         if ($RESTError)
@@ -1047,7 +1077,10 @@ function Get-VTFileComment
 
         # VirusToral API Key.
         [Parameter(Mandatory=$false)]
-        [string]$APIKey
+        [string]$APIKey,
+
+        [Parameter(Mandatory=$false)]
+        [string]$CertificateThumbprint
     
     )
 
@@ -1073,7 +1106,14 @@ function Get-VTFileComment
         $OldEAP = $ErrorActionPreference
         $ErrorActionPreference = 'SilentlyContinue'
 
-        $Response = Invoke-RestMethod -Uri $URI -method Get -Body $Body -ErrorVariable RESTError
+        if ($CertificateThumbprint)
+        {
+            $Response = Invoke-RestMethod -Uri $URI -method Get -Body $Body -ErrorVariable RESTError -CertificateThumbprint $CertificateThumbprint
+        }
+        else
+        {
+            $Response = Invoke-RestMethod -Uri $URI -method Get -Body $Body -ErrorVariable RESTError
+        }
 
         $ErrorActionPreference = $OldEAP
         if ($RESTError)
@@ -1119,7 +1159,10 @@ function Get-VTFileBehaviourReport
         # File name and path to save Behaviour report as a Cuckoo JSON Dump.
         [Parameter(Mandatory=$true,
                    Position=1)]
-        [string]$Report
+        [string]$Report,
+
+        [Parameter(Mandatory=$false)]
+        [string]$CertificateThumbprint
 
     
     )
@@ -1136,6 +1179,14 @@ function Get-VTFileBehaviourReport
             $APIKey = $Global:VTAPIKey
         }
 
+        Write-Verbose 'Verifying the API Key.'
+        $KeyInfo = Get-VTAPIKeyInfo -APIKey $APIKey
+        if ($KeyInfo.type -ne 'private')
+        {
+            throw "The key provided is not a Private API Key"
+        }
+        Write-Verbose 'Key verified as a Private API Key.'
+
         $Body = @{'apikey'= $APIKey}
     }
     Process
@@ -1149,8 +1200,15 @@ function Get-VTFileBehaviourReport
         $ReportFullPath = $ExecutionContext.SessionState.Path.GetUnresolvedProviderPathFromPSPath($Report)
         Write-Verbose "Saving report to $($ReportFullPath)."
 
-        $bahaviour_report = Invoke-WebRequest -Uri $URI -Body $body -Method Get -ErrorVariable RESTError -OutFile $Report
-        
+        if ($CertificateThumbprint)
+        {
+            $bahaviour_report = Invoke-WebRequest -Uri $URI -Body $body -Method Get -ErrorVariable RESTError -OutFile $Report -CertificateThumbprint $CertificateThumbprint
+        }
+        else
+        {
+            $bahaviour_report = Invoke-WebRequest -Uri $URI -Body $body -Method Get -ErrorVariable RESTError -OutFile $Report
+        }
+
         $ErrorActionPreference = $OldEAP
         if ($RESTError)
         {
@@ -1192,8 +1250,10 @@ function Get-VTFileSample
         # File name and path to save sample.
         [Parameter(Mandatory=$true,
                    Position=1)]
-        [string]$File
+        [string]$File,
 
+        [Parameter(Mandatory=$false)]
+        [string]$CertificateThumbprint
     
     )
 
@@ -1209,6 +1269,14 @@ function Get-VTFileSample
             $APIKey = $Global:VTAPIKey
         }
 
+        Write-Verbose 'Verifying the API Key.'
+        $KeyInfo = Get-VTAPIKeyInfo -APIKey $APIKey
+        if ($KeyInfo.type -ne 'private')
+        {
+            throw "The key provided is not a Private API Key"
+        }
+        Write-Verbose 'Key verified as a Private API Key.'
+
         $Body = @{'apikey'= $APIKey}
     }
     Process
@@ -1220,8 +1288,14 @@ function Get-VTFileSample
 
         $SampleFullPath = $ExecutionContext.SessionState.Path.GetUnresolvedProviderPathFromPSPath($File)
         Write-Verbose "Saving report to $($SampleFullPath)."
-
-        $SampleResponse = Invoke-RestMethod -Uri $URI -Body $body -Method Get -ErrorVariable RESTError -OutFile $File
+        if ($CertificateThumbprint)
+        {
+            $SampleResponse = Invoke-RestMethod -Uri $URI -Body $body -Method Get -ErrorVariable RESTError -OutFile $File -CertificateThumbprint $CertificateThumbprint
+        }
+        else
+        {
+            $SampleResponse = Invoke-RestMethod -Uri $URI -Body $body -Method Get -ErrorVariable RESTError -OutFile $File
+        }
         $ErrorActionPreference = $OldEAP
 
         if ($RESTError)
@@ -1264,7 +1338,10 @@ function Get-VTFileNetworkTraffic
         # File name and path to save Network Traffic in PCAP format.
         [Parameter(Mandatory=$true,
                    Position=1)]
-        [string]$File
+        [string]$File,
+
+        [Parameter(Mandatory=$false)]
+        [string]$CertificateThumbprint
 
     
     )
@@ -1281,6 +1358,14 @@ function Get-VTFileNetworkTraffic
             $APIKey = $Global:VTAPIKey
         }
 
+        Write-Verbose 'Verifying the API Key.'
+        $KeyInfo = Get-VTAPIKeyInfo -APIKey $APIKey
+        if ($KeyInfo.type -ne 'private')
+        {
+            throw "The key provided is not a Private API Key"
+        }
+        Write-Verbose 'Key verified as a Private API Key.'
+
         $Body = @{'apikey'= $APIKey}
     }
     Process
@@ -1293,7 +1378,15 @@ function Get-VTFileNetworkTraffic
         $NTFullPath = $ExecutionContext.SessionState.Path.GetUnresolvedProviderPathFromPSPath($File)
         Write-Verbose "Saving file to $($NTFullPath)."
 
-        $NTResponse = Invoke-RestMethod -Uri $URI -Body $body -Method Get -ErrorVariable RESTError -OutFile $File
+        if ($CertificateThumbprint)
+        {
+            $NTResponse = Invoke-RestMethod -Uri $URI -Body $body -Method Get -ErrorVariable RESTError -OutFile $File -CertificateThumbprint $CertificateThumbprint
+        }
+        else
+        {
+            $NTResponse = Invoke-RestMethod -Uri $URI -Body $body -Method Get -ErrorVariable RESTError -OutFile $File
+        }
+
         $ErrorActionPreference = $OldEAP
 
         if ($RESTError)
