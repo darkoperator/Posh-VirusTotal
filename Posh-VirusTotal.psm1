@@ -553,7 +553,7 @@ function Submit-VTFile
     }
 }
 
-
+#  .ExternalHelp Posh-VirusTotal.Help.xml
 function Get-PoshVTVersion
  {
      [CmdletBinding(DefaultParameterSetName="Index")]
@@ -590,7 +590,7 @@ function Get-PoshVTVersion
         } 
         
         $props = @{
-            InstalledVersion = $installed.Version.ToString()
+            InstalledVersion = "$($installed.Version)"
             CurrentVersion   = $currentversion
         }
         New-Object -TypeName psobject -Property $props
@@ -601,7 +601,7 @@ function Get-PoshVTVersion
      }
  }
 
-
+#  .ExternalHelp Posh-VirusTotal.Help.xml
  function Get-VTAPIKeyInfo
 {
     [CmdletBinding()]
@@ -670,6 +670,7 @@ function Get-PoshVTVersion
     {
     }
 }
+
 
 # Private API
 ###############
@@ -752,6 +753,182 @@ function Get-VTSpecialURL
 }
 
 
+#  .ExternalHelp Posh-VirusTotal.Help.xml
+function Get-VTFileComment
+{
+    [CmdletBinding()]
+    Param
+    (
+        # File MD5, SHA1 or SHA256 Checksum to get comments from.
+        [Parameter(Mandatory=$true,
+                   ValueFromPipelineByPropertyName=$true,
+                   Position=0)]
+        [string]$Resource,
+
+        # VirusToral API Key.
+        [Parameter(Mandatory=$false)]
+        [string]$APIKey,
+
+        [Parameter(Mandatory=$false)]
+        [string]$CertificateThumbprint
+    
+    )
+
+    Begin
+    {
+        $URI = 'https://www.virustotal.com/vtapi/v2/comments/get'
+        if (!(Test-Path variable:Global:VTAPIKey ) -and !($APIKey))
+        {
+            Write-Error "No VirusTotal API Key has been specified or set."
+        }
+        elseif ((Test-Path variable:Global:VTAPIKey ) -and !($APIKey))
+        {
+            $APIKey = $Global:VTAPIKey
+        }
+
+        Write-Verbose 'Verifying the API Key.'
+        $KeyInfo = Get-VTAPIKeyInfo -APIKey $APIKey
+        if ($KeyInfo.type -ne 'private')
+        {
+            throw "The key provided is not a Private API Key"
+        }
+        Write-Verbose 'Key verifies as a Private API Key.'
+
+        $Body = @{'apikey'= $APIKey}
+    }
+    Process
+    {
+
+        $Body.add('resource',$Resource)
+
+        $OldEAP = $ErrorActionPreference
+        $ErrorActionPreference = 'SilentlyContinue'
+
+        if ($CertificateThumbprint)
+        {
+            $Response = Invoke-RestMethod -Uri $URI -method Get -Body $Body -ErrorVariable RESTError -CertificateThumbprint $CertificateThumbprint
+        }
+        else
+        {
+            $Response = Invoke-RestMethod -Uri $URI -method Get -Body $Body -ErrorVariable RESTError
+        }
+
+        $ErrorActionPreference = $OldEAP
+        if ($RESTError)
+        {
+            if ($RESTError.Message.Contains("403"))
+            {
+                Write-Error "API key is not valid." -ErrorAction Stop
+            }
+            elseif ($RESTError.Message -like "*204*")
+            {
+                Write-Error "API key rate has been reached." -ErrorAction Stop
+            }
+            else
+            {
+                Write-Error $RESTError
+            }
+        }
+        $Response.pstypenames.insert(0,'VirusTotal.Comment')
+        $Response
+
+    }
+    End
+    {
+    }
+}
+
+
+#  .ExternalHelp Posh-VirusTotal.Help.xml
+function Set-VTFileComment
+{
+    [CmdletBinding()]
+    Param
+    (
+        # File MD5, SHA1 or SHA256 Checksum to comment on.
+        [Parameter(Mandatory=$true,
+                   ValueFromPipelineByPropertyName=$true,
+                   Position=0)]
+        [string]$Resource,
+
+        # VirusToral API Key.
+        [Parameter(Mandatory=$false)]
+        [string]$APIKey,
+
+        [Parameter(Mandatory=$true)]
+        [string]$Comment,
+
+        [Parameter(Mandatory=$false)]
+        [string]$CertificateThumbprint
+    
+    )
+
+    Begin
+    {
+        $URI = 'https://www.virustotal.com/vtapi/v2/comments/put'
+        if (!(Test-Path variable:Global:VTAPIKey ) -and !($APIKey))
+        {
+            Write-Error "No VirusTotal API Key has been specified or set."
+        }
+        elseif ((Test-Path variable:Global:VTAPIKey ) -and !($APIKey))
+        {
+            $APIKey = $Global:VTAPIKey
+        }
+
+        Write-Verbose 'Verifying the API Key.'
+        $KeyInfo = Get-VTAPIKeyInfo -APIKey $APIKey
+        if ($KeyInfo.type -ne 'private')
+        {
+            throw "The key provided is not a Private API Key"
+        }
+        Write-Verbose 'Key verifies as a Private API Key.'
+
+        $Body = @{'apikey'= $APIKey}
+    }
+    Process
+    {
+
+        $Body.add('resource',$Resource)
+
+        $OldEAP = $ErrorActionPreference
+        $ErrorActionPreference = 'SilentlyContinue'
+
+        if ($CertificateThumbprint)
+        {
+            $Response = Invoke-RestMethod -Uri $URI -method Post -Body $Body -ErrorVariable RESTError -CertificateThumbprint $CertificateThumbprint
+        }
+        else
+        {
+            $Response = Invoke-RestMethod -Uri $URI -method Post -Body $Body -ErrorVariable RESTError
+        }
+
+        $ErrorActionPreference = $OldEAP
+        if ($RESTError)
+        {
+            if ($RESTError.Message.Contains("403"))
+            {
+                Write-Error "API key is not valid." -ErrorAction Stop
+            }
+            elseif ($RESTError.Message -like "*204*")
+            {
+                Write-Error "API key rate has been reached." -ErrorAction Stop
+            }
+            else
+            {
+                Write-Error $RESTError
+            }
+        }
+        $Response.pstypenames.insert(0,'VirusTotal.Comment')
+        $Response
+
+    }
+    End
+    {
+    }
+}
+
+
+#  .ExternalHelp Posh-VirusTotal.Help.xml
 function Set-VTFileRescan
 {
     [CmdletBinding()]
@@ -882,6 +1059,7 @@ function Set-VTFileRescan
 }
 
 
+#  .ExternalHelp Posh-VirusTotal.Help.xml
 function Remove-VTFileRescan
 {
     [CmdletBinding()]
@@ -971,6 +1149,7 @@ function Remove-VTFileRescan
 }
 
 
+#  .ExternalHelp Posh-VirusTotal.Help.xml
 function Get-VTFileScanReport
 {
     [CmdletBinding()]
@@ -1064,83 +1243,7 @@ function Get-VTFileScanReport
 }
 
 
-function Get-VTFileComment
-{
-    [CmdletBinding()]
-    Param
-    (
-        # File MD5 Checksum, File SHA1 Checksum, File SHA256 Checksum or ScanID to remove rescan.
-        [Parameter(Mandatory=$true,
-                   ValueFromPipelineByPropertyName=$true,
-                   Position=0)]
-        [string]$Resource,
-
-        # VirusToral API Key.
-        [Parameter(Mandatory=$false)]
-        [string]$APIKey,
-
-        [Parameter(Mandatory=$false)]
-        [string]$CertificateThumbprint
-    
-    )
-
-    Begin
-    {
-        $URI = 'https://www.virustotal.com/vtapi/v2/comments/get'
-        if (!(Test-Path variable:Global:VTAPIKey ) -and !($APIKey))
-        {
-            Write-Error "No VirusTotal API Key has been specified or set."
-        }
-        elseif ((Test-Path variable:Global:VTAPIKey ) -and !($APIKey))
-        {
-            $APIKey = $Global:VTAPIKey
-        }
-
-        $Body = @{'apikey'= $APIKey}
-    }
-    Process
-    {
-
-        $Body.add('resource',$Resource)
-
-        $OldEAP = $ErrorActionPreference
-        $ErrorActionPreference = 'SilentlyContinue'
-
-        if ($CertificateThumbprint)
-        {
-            $Response = Invoke-RestMethod -Uri $URI -method Get -Body $Body -ErrorVariable RESTError -CertificateThumbprint $CertificateThumbprint
-        }
-        else
-        {
-            $Response = Invoke-RestMethod -Uri $URI -method Get -Body $Body -ErrorVariable RESTError
-        }
-
-        $ErrorActionPreference = $OldEAP
-        if ($RESTError)
-        {
-            if ($RESTError.Message.Contains("403"))
-            {
-                Write-Error "API key is not valid." -ErrorAction Stop
-            }
-            elseif ($RESTError.Message -like "*204*")
-            {
-                Write-Error "API key rate has been reached." -ErrorAction Stop
-            }
-            else
-            {
-                Write-Error $RESTError
-            }
-        }
-        $Response.pstypenames.insert(0,'VirusTotal.Comment')
-        $Response
-
-    }
-    End
-    {
-    }
-}
-
-
+#  .ExternalHelp Posh-VirusTotal.Help.xml
 function Get-VTFileBehaviourReport
 {
     [CmdletBinding()]
@@ -1232,6 +1335,7 @@ function Get-VTFileBehaviourReport
 }
 
 
+#  .ExternalHelp Posh-VirusTotal.Help.xml
 function Get-VTFileSample
 {
     [CmdletBinding()]
@@ -1320,6 +1424,7 @@ function Get-VTFileSample
 }
 
 
+#  .ExternalHelp Posh-VirusTotal.Help.xml
 function Get-VTFileNetworkTraffic
 {
     [CmdletBinding()]
@@ -1410,3 +1515,102 @@ function Get-VTFileNetworkTraffic
     }
 }
 
+
+#  .ExternalHelp Posh-VirusTotal.Help.xml
+function Search-VTAdvancedReversed
+{
+    [CmdletBinding()]
+    Param
+    (
+        # A search modifier compliant file search query..
+        [Parameter(Mandatory=$true,
+                   ValueFromPipelineByPropertyName=$true,
+                   Position=0)]
+        [string]$Query,
+
+        # VirusToral API Key.
+        [Parameter(Mandatory=$false)]
+        [string]$APIKey,
+
+        # The offset value returned by a previously issued identical query.
+        [Parameter(Mandatory=$false)]
+        [int]$OffSet,
+
+        [Parameter(Mandatory=$false)]
+        [string]$CertificateThumbprint
+    
+    )
+
+    Begin
+    {
+        $URI = 'https://www.virustotal.com/vtapi/vtapi/v2/file/search'
+        if (!(Test-Path variable:Global:VTAPIKey ) -and !($APIKey))
+        {
+            Write-Error "No VirusTotal API Key has been specified or set."
+        }
+        elseif ((Test-Path variable:Global:VTAPIKey ) -and !($APIKey))
+        {
+            $APIKey = $Global:VTAPIKey
+        }
+
+        $Body = @{'apikey' = $APIKey
+                'query' = $Query
+            }
+        # If an offset is provided apply it.
+        if ($OffSet)
+        {
+            $Body.Add('offset',$OffSet)
+        }
+        
+
+        Write-Verbose 'Verifying the API Key.'
+        $KeyInfo = Get-VTAPIKeyInfo -APIKey $APIKey
+        if ($KeyInfo.type -ne 'private')
+        {
+            throw "The key provided is not a Private API Key"
+        }
+        Write-Verbose 'Key verifies as a Private API Key.'
+
+    }
+    Process
+    {
+
+        $Body.add('resource',$Resource)
+        
+        $OldEAP = $ErrorActionPreference
+        $ErrorActionPreference = 'SilentlyContinue'
+        
+        if ($CertificateThumbprint)
+        {
+            $Response = Invoke-RestMethod -Uri $URI -method Get -Body $Body -ErrorVariable RESTError -CertificateThumbprint $CertThumPrint
+        }
+        else
+        {
+            $Response = Invoke-RestMethod -Uri $URI -method Get -Body $Body -ErrorVariable RESTError
+        }
+        $ErrorActionPreference = $OldEAP
+
+        if ($RESTError)
+        {
+            if ($RESTError.Message.Contains("403"))
+            {
+                Write-Error "API key is not valid." -ErrorAction Stop
+            }
+            elseif ($RESTError.Message -like "*204*")
+            {
+                Write-Error "API key rate has been reached." -ErrorAction Stop
+            }
+            else
+            {
+                Write-Error $RESTError
+            }
+        }
+
+        $Response.pstypenames.insert(0,'VirusTotal.Search')
+        $Response
+
+    }
+    End
+    {
+    }
+}
