@@ -28,7 +28,7 @@ Cmdlets Available
 | Submit-VTURL                |Submit a URL for scanning by VirusTotal                                                 |
 
 #Install
-To install the module including all source code you can just run in a PowerShell v3 the following command:
+To install the module including all source code you can just run in a PowerShell v3 or higher session the following command:
 <pre>
 iex (New-Object Net.WebClient).DownloadString("https://gist.githubusercontent.com/darkoperator/9138373/raw/22fb97c07a21139a398c2a3d6ca7e3e710e476bc/PoshVTInstall.ps1")
 </pre>
