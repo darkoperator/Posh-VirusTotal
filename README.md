@@ -33,6 +33,40 @@ To install the module including all source code you can just run in a PowerShell
 iex (New-Object Net.WebClient).DownloadString("https://gist.githubusercontent.com/darkoperator/9138373/raw/22fb97c07a21139a398c2a3d6ca7e3e710e476bc/PoshVTInstall.ps1")
 </pre>
 
+The process should look like:
+<pre>
+PS C:\Windows\system32> iex (New-Object Net.WebClient).DownloadString("https://gist.githubusercontent.com/darkoperator/9
+138373/raw/22fb97c07a21139a398c2a3d6ca7e3e710e476bc/PoshVTInstall.ps1")
+Downloading latest version of Posh-VirusTotal from https://github.com/darkoperator/Posh-VirusTotal/archive/master.zip
+File saved to C:\Users\Carlos\AppData\Local\Temp\Posh-VirusTotal.zip
+Uncompressing the Zip file to C:\Users\Carlos\Documents\WindowsPowerShell\Modules
+Renaming folder
+Module has been installed
+
+CommandType     Name                                               ModuleName
+-----------     ----                                               ----------
+Function        Get-PoshVTVersion                                  Posh-VirusTotal
+Function        Get-VTAPIKeyInfo                                   Posh-VirusTotal
+Function        Get-VTDomainReport                                 Posh-VirusTotal
+Function        Get-VTFileBehaviourReport                          Posh-VirusTotal
+Function        Get-VTFileComment                                  Posh-VirusTotal
+Function        Get-VTFileNetworkTraffic                           Posh-VirusTotal
+Function        Get-VTFileReport                                   Posh-VirusTotal
+Function        Get-VTFileSample                                   Posh-VirusTotal
+Function        Get-VTFileScanReport                               Posh-VirusTotal
+Function        Get-VTIPReport                                     Posh-VirusTotal
+Function        Get-VTSpecialURL                                   Posh-VirusTotal
+Function        Get-VTURLReport                                    Posh-VirusTotal
+Function        Remove-VTFileRescan                                Posh-VirusTotal
+Function        Search-VTAdvancedReversed                          Posh-VirusTotal
+Function        Set-VTAPIKey                                       Posh-VirusTotal
+Function        Set-VTFileComment                                  Posh-VirusTotal
+Function        Set-VTFileRescan                                   Posh-VirusTotal
+Function        Submit-VTFile                                      Posh-VirusTotal
+Function        Submit-VTURL                                       Posh-VirusTotal
+
+</pre>
+
 # Change Log
 
 ## Version 1.0
