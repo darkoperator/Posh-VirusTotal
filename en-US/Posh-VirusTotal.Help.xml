@@ -1211,6 +1211,10 @@ To get a certificate thumbprint, use the Get-Item or Get-ChildItem command in th
 	<command:examples>
 	</command:examples>
 	<maml:relatedLinks>
+		<maml:navigationLink>
+			<maml:linkText>Private API</maml:linkText>
+			<maml:uri>https://www.virustotal.com/en/documentation/private-api/</maml:uri>
+		</maml:navigationLink>
 	</maml:relatedLinks>
 </command:command>
 <command:command xmlns:maml="http://schemas.microsoft.com/maml/2004/10" xmlns:command="http://schemas.microsoft.com/maml/dev/command/2004/10" xmlns:dev="http://schemas.microsoft.com/maml/dev/2004/10">
@@ -1487,6 +1491,10 @@ To get a certificate thumbprint, use the Get-Item or Get-ChildItem command in th
 	<command:examples>
 	</command:examples>
 	<maml:relatedLinks>
+		<maml:navigationLink>
+			<maml:linkText>Private API</maml:linkText>
+			<maml:uri>https://www.virustotal.com/en/documentation/private-api/</maml:uri>
+		</maml:navigationLink>
 	</maml:relatedLinks>
 </command:command>
 <command:command xmlns:maml="http://schemas.microsoft.com/maml/2004/10" xmlns:command="http://schemas.microsoft.com/maml/dev/command/2004/10" xmlns:dev="http://schemas.microsoft.com/maml/dev/2004/10">
@@ -1795,6 +1803,10 @@ To get a certificate thumbprint, use the Get-Item or Get-ChildItem command in th
 	<command:examples>
 	</command:examples>
 	<maml:relatedLinks>
+		<maml:navigationLink>
+			<maml:linkText>Private API</maml:linkText>
+			<maml:uri>https://www.virustotal.com/en/documentation/private-api/#search</maml:uri>
+		</maml:navigationLink>
 	</maml:relatedLinks>
 </command:command>
 <command:command xmlns:maml="http://schemas.microsoft.com/maml/2004/10" xmlns:command="http://schemas.microsoft.com/maml/dev/command/2004/10" xmlns:dev="http://schemas.microsoft.com/maml/dev/2004/10">
@@ -1821,7 +1833,7 @@ To get a certificate thumbprint, use the Get-Item or Get-ChildItem command in th
 			<command:parameter required="true" variableLength="false" globbing="false" pipelineInput="true (ByPropertyName)" position="0">
 				<maml:name>Query</maml:name>
 				<maml:description>
-					<maml:para>A search modifier compliant file search query.</maml:para>
+					<maml:para>A search modifier compliant file search query. For an updated list of modifiers check https://www.virustotal.com/intelligence/help/file-search/</maml:para>
 				</maml:description>
 				<command:parameterValue required="true" variableLength="false">String</command:parameterValue>
 			</command:parameter>
@@ -1856,7 +1868,7 @@ To get a certificate thumbprint, use the Get-Item or Get-ChildItem command in th
 		<command:parameter required="true" variableLength="false" globbing="false" pipelineInput="true (ByPropertyName)" position="0">
 			<maml:name>Query</maml:name>
 			<maml:description>
-				<maml:para>A search modifier compliant file search query.</maml:para>
+				<maml:para>A search modifier compliant file search query. For an updated list of modifiers check https://www.virustotal.com/intelligence/help/file-search/</maml:para>
 			</maml:description>
 			<command:parameterValue required="true" variableLength="false">String</command:parameterValue>
 			<dev:type>
@@ -1941,6 +1953,14 @@ To get a certificate thumbprint, use the Get-Item or Get-ChildItem command in th
 	<command:examples>
 	</command:examples>
 	<maml:relatedLinks>
+		<maml:navigationLink>
+			<maml:linkText>Search Modifiers</maml:linkText>
+			<maml:uri>https://www.virustotal.com/intelligence/help/file-search/</maml:uri>
+		</maml:navigationLink>
+		<maml:navigationLink>
+			<maml:linkText>Private API</maml:linkText>
+			<maml:uri>https://www.virustotal.com/en/documentation/private-api/#search</maml:uri>
+		</maml:navigationLink>
 	</maml:relatedLinks>
 </command:command>
 <command:command xmlns:maml="http://schemas.microsoft.com/maml/2004/10" xmlns:command="http://schemas.microsoft.com/maml/dev/command/2004/10" xmlns:dev="http://schemas.microsoft.com/maml/dev/2004/10">
@@ -2191,6 +2211,10 @@ To get a certificate thumbprint, use the Get-Item or Get-ChildItem command in th
 	<command:examples>
 	</command:examples>
 	<maml:relatedLinks>
+		<maml:navigationLink>
+			<maml:linkText>Private API</maml:linkText>
+			<maml:uri>https://www.virustotal.com/en/documentation/private-api/</maml:uri>
+		</maml:navigationLink>
 	</maml:relatedLinks>
 </command:command>
 <command:command xmlns:maml="http://schemas.microsoft.com/maml/2004/10" xmlns:command="http://schemas.microsoft.com/maml/dev/command/2004/10" xmlns:dev="http://schemas.microsoft.com/maml/dev/2004/10">
@@ -2413,6 +2437,10 @@ To get a certificate thumbprint, use the Get-Item or Get-ChildItem command in th
 	<command:examples>
 	</command:examples>
 	<maml:relatedLinks>
+		<maml:navigationLink>
+			<maml:linkText>Private API</maml:linkText>
+			<maml:uri>https://www.virustotal.com/en/documentation/private-api/</maml:uri>
+		</maml:navigationLink>
 	</maml:relatedLinks>
 </command:command>
 <command:command xmlns:maml="http://schemas.microsoft.com/maml/2004/10" xmlns:command="http://schemas.microsoft.com/maml/dev/command/2004/10" xmlns:dev="http://schemas.microsoft.com/maml/dev/2004/10">
@@ -2529,8 +2557,8 @@ To get a certificate thumbprint, use the Get-Item or Get-ChildItem command in th
 	</command:examples>
 	<maml:relatedLinks>
 		<maml:navigationLink>
-			<maml:linkText>https://www.virustotal.com/en/documentation/public-api/</maml:linkText>
-			<maml:uri></maml:uri>
+			<maml:linkText>Public API</maml:linkText>
+			<maml:uri>https://www.virustotal.com/en/documentation/public-api/</maml:uri>
 		</maml:navigationLink>
 	</maml:relatedLinks>
 </command:command>
@@ -2694,8 +2722,8 @@ To get a certificate thumbprint, use the Get-Item or Get-ChildItem command in th
 	</command:examples>
 	<maml:relatedLinks>
 		<maml:navigationLink>
-			<maml:linkText>https://www.virustotal.com/en/documentation/public-api/</maml:linkText>
-			<maml:uri></maml:uri>
+			<maml:linkText>Public API</maml:linkText>
+			<maml:uri>https://www.virustotal.com/en/documentation/public-api/</maml:uri>
 		</maml:navigationLink>
 	</maml:relatedLinks>
 </command:command>
