@@ -147,7 +147,7 @@
 		<Info name="adrequired" value="false"/>
 		<Info name="rsatrequired" value="false"/>
 		<Info name="ps2" value="false"/>
-		<Info name="ps3" value="false"/>
+		<Info name="ps3" value="true"/>
 		<Info name="ps4" value="false"/>
 		<Info name="winXP" value="false"/>
 		<Info name="winVista" value="false"/>
@@ -171,7 +171,7 @@
 		<Info name="adrequired" value="false"/>
 		<Info name="rsatrequired" value="false"/>
 		<Info name="ps2" value="false"/>
-		<Info name="ps3" value="false"/>
+		<Info name="ps3" value="true"/>
 		<Info name="ps4" value="false"/>
 		<Info name="winXP" value="false"/>
 		<Info name="winVista" value="false"/>
@@ -195,7 +195,7 @@
 		<Info name="adrequired" value="false"/>
 		<Info name="rsatrequired" value="false"/>
 		<Info name="ps2" value="false"/>
-		<Info name="ps3" value="false"/>
+		<Info name="ps3" value="true"/>
 		<Info name="ps4" value="false"/>
 		<Info name="winXP" value="false"/>
 		<Info name="winVista" value="false"/>
@@ -435,7 +435,7 @@
 		<Info name="adrequired" value="false"/>
 		<Info name="rsatrequired" value="false"/>
 		<Info name="ps2" value="false"/>
-		<Info name="ps3" value="false"/>
+		<Info name="ps3" value="true"/>
 		<Info name="ps4" value="false"/>
 		<Info name="winXP" value="false"/>
 		<Info name="winVista" value="false"/>
