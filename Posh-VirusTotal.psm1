@@ -31,8 +31,8 @@ function Get-VTIPReport
     (
         # IP Address to scan for.
         [Parameter(Mandatory=$true,
-                   ValueFromPipelineByPropertyName=$true,
-                   Position=0)]
+            ValueFromPipelineByPropertyName=$true,
+            Position=0)]
         [string]$IPAddress,
 
         # VirusToral API Key.
@@ -40,7 +40,16 @@ function Get-VTIPReport
         [string]$APIKey,
 
         [Parameter(Mandatory=$false)]
-        [string]$CertificateThumbprint
+        [string]$CertificateThumbprint,
+
+        [Parameter(Mandatory=$false)]
+        [string]$Proxy,
+ 
+        [Parameter(Mandatory=$false)]
+        [Management.Automation.PSCredential]$ProxyCredential,
+
+        [Parameter(Mandatory=$false)]
+        [Switch]$ProxyUseDefaultCredentials
     )
 
     Begin
@@ -48,7 +57,7 @@ function Get-VTIPReport
         $URI = 'https://www.virustotal.com/vtapi/v2/ip-address/report'
         if (!(Test-Path variable:Global:VTAPIKey ) -and !($APIKey))
         {
-            Write-Error "No VirusTotal API Key has been specified or set."
+            throw "No VirusTotal API Key has been specified or set."
         }
         elseif ((Test-Path variable:Global:VTAPIKey ) -and !($APIKey))
         {
@@ -63,29 +72,52 @@ function Get-VTIPReport
 
         $Body = @{'ip'= $IPAddress; 'apikey'= $APIKey}
 
+        # Start building parameters for REST Method invokation.
+        $Params =  @{}
+        $Params.add('Body', $Body)
+        $Params.add('Method', 'Get')
+        $Params.add('Uri',$URI)
+        $Params.Add('ErrorVariable', 'RESTError')
+
+        # Check if connection will be made thru a proxy.
+        if ($PsCmdlet.ParameterSetName -eq "Proxy")
+        {
+            $Params.Add('Proxy', $Proxy)
+
+            if ($ProxyCredential)
+            {
+                $Params.Add('ProxyCredential', $ProxyCredential)
+            }
+
+            if ($ProxyUseDefaultCredentials)
+            {
+                $Params.Add('ProxyUseDefaultCredentials', $ProxyUseDefaultCredentials)
+            }
+        }
+
+        # Check if we will be doing certificate pinning by checking the certificate thumprint.
         if ($CertificateThumbprint)
         {
-            $IPReport = Invoke-RestMethod -Uri $URI -method get -Body $Body -ErrorVariable RESTError -CertificateThumbprint $CertificateThumbprint
+            $Params.Add('CertificateThumbprint', $CertificateThumbprint)
         }
-        else
-        {
-            $IPReport = Invoke-RestMethod -Uri $URI -method get -Body $Body -ErrorVariable RESTError
-        }
+
+        $IPReport = Invoke-RestMethod @Params
+        
         $ErrorActionPreference = $OldEAP
         
         if ($RESTError)
         {
             if ($RESTError.Message.Contains("403"))
             {
-                Write-Error "API key is not valid." -ErrorAction Stop
+                throw "API key is not valid."
             }
             elseif ($RESTError.Message -like "*204*")
             {
-                Write-Error "API key rate has been reached." -ErrorAction Stop
+                throw "API key rate has been reached."
             }
             else
             {
-                Write-Error $RESTError -ErrorAction Stop
+                throw $RESTError
             }
         }
 
@@ -107,8 +139,8 @@ function Get-VTDomainReport
     (
         # Domain to scan.
         [Parameter(Mandatory=$true,
-                   ValueFromPipelineByPropertyName=$true,
-                   Position=0)]
+            ValueFromPipelineByPropertyName=$true,
+            Position=0)]
         [string]$Domain,
 
         # VirusToral API Key.
@@ -116,7 +148,16 @@ function Get-VTDomainReport
         [string]$APIKey,
 
         [Parameter(Mandatory=$false)]
-        [string]$CertificateThumbprint
+        [string]$CertificateThumbprint,
+
+        [Parameter(Mandatory=$false)]
+        [string]$Proxy,
+ 
+        [Parameter(Mandatory=$false)]
+        [Management.Automation.PSCredential]$ProxyCredential,
+
+        [Parameter(Mandatory=$false)]
+        [Switch]$ProxyUseDefaultCredentials
     )
 
     Begin
@@ -124,7 +165,7 @@ function Get-VTDomainReport
         $URI = 'https://www.virustotal.com/vtapi/v2/domain/report'
         if (!(Test-Path variable:Global:VTAPIKey ) -and !($APIKey))
         {
-            Write-Error "No VirusTotal API Key has been specified or set."
+            throw "No VirusTotal API Key has been specified or set."
         }
         elseif ((Test-Path variable:Global:VTAPIKey ) -and !($APIKey))
         {
@@ -138,14 +179,37 @@ function Get-VTDomainReport
 
         $Body = @{'domain'= $Domain; 'apikey'= $APIKey}
 
+        # Start building parameters for REST Method invokation.
+        $Params =  @{}
+        $Params.add('Body', $Body)
+        $Params.add('Method', 'Get')
+        $Params.add('Uri',$URI)
+        $Params.Add('ErrorVariable', 'RESTError')
+
+        # Check if connection will be made thru a proxy.
+        if ($PsCmdlet.ParameterSetName -eq "Proxy")
+        {
+            $Params.Add('Proxy', $Proxy)
+
+            if ($ProxyCredential)
+            {
+                $Params.Add('ProxyCredential', $ProxyCredential)
+            }
+
+            if ($ProxyUseDefaultCredentials)
+            {
+                $Params.Add('ProxyUseDefaultCredentials', $ProxyUseDefaultCredentials)
+            }
+        }
+
+        # Check if we will be doing certificate pinning by checking the certificate thumprint.
         if ($CertificateThumbprint)
         {
-            $DomainReport = Invoke-RestMethod -Uri $URI -method get -Body $Body -ErrorVariable RESTError -CertificateThumbprint $CertificateThumbprint
+            $Params.Add('CertificateThumbprint', $CertificateThumbprint)
         }
-        else
-        {
-            $DomainReport = Invoke-RestMethod -Uri $URI -method get -Body $Body -ErrorVariable RESTError
-        }
+
+        
+        $DomainReport = Invoke-RestMethod @Params
 
         $ErrorActionPreference = $OldEAP
         
@@ -153,15 +217,15 @@ function Get-VTDomainReport
         {
             if ($RESTError.Message.Contains("403"))
             {
-                Write-Error "API key is not valid." -ErrorAction Stop
+                throw "API key is not valid."
             }
             elseif ($RESTError.Message -like "*204*")
             {
-                Write-Error "API key rate has been reached." -ErrorAction Stop
+                throw "API key rate has been reached."
             }
             else
             {
-                Write-Error $RESTError -ErrorAction Stop
+                throw $RESTError
             }
         }
 
@@ -182,8 +246,8 @@ function Get-VTFileReport
     (
         # File MD5 Checksum, File SHA1 Checksum, File SHA256 Checksum or ScanID to query.
         [Parameter(Mandatory=$true,
-                   ValueFromPipelineByPropertyName=$true,
-                   Position=0)]
+            ValueFromPipelineByPropertyName=$true,
+            Position=0)]
         [ValidateCount(1,4)]
         [string[]]$Resource,
 
@@ -192,7 +256,16 @@ function Get-VTFileReport
         [string]$APIKey,
 
         [Parameter(Mandatory=$false)]
-        [string]$CertificateThumbprint
+        [string]$CertificateThumbprint,
+
+        [Parameter(Mandatory=$false)]
+        [string]$Proxy,
+ 
+        [Parameter(Mandatory=$false)]
+        [Management.Automation.PSCredential]$ProxyCredential,
+
+        [Parameter(Mandatory=$false)]
+        [Switch]$ProxyUseDefaultCredentials
     )
 
     Begin
@@ -200,7 +273,7 @@ function Get-VTFileReport
         $URI = 'https://www.virustotal.com/vtapi/v2/file/report'
         if (!(Test-Path variable:Global:VTAPIKey ) -and !($APIKey))
         {
-            Write-Error "No VirusTotal API Key has been specified or set."
+            throw "No VirusTotal API Key has been specified or set."
         }
         elseif ((Test-Path variable:Global:VTAPIKey ) -and !($APIKey))
         {
@@ -216,14 +289,37 @@ function Get-VTFileReport
 
         $Body =  @{'resource'= $QueryResources; 'apikey'= $APIKey}
 
+        # Start building parameters for REST Method invokation.
+        $Params =  @{}
+        $Params.add('Body', $Body)
+        $Params.add('Method', 'Get')
+        $Params.add('Uri',$URI)
+        $Params.Add('ErrorVariable', 'RESTError')
+
+        # Check if connection will be made thru a proxy.
+        if ($PsCmdlet.ParameterSetName -eq "Proxy")
+        {
+            $Params.Add('Proxy', $Proxy)
+
+            if ($ProxyCredential)
+            {
+                $Params.Add('ProxyCredential', $ProxyCredential)
+            }
+
+            if ($ProxyUseDefaultCredentials)
+            {
+                $Params.Add('ProxyUseDefaultCredentials', $ProxyUseDefaultCredentials)
+            }
+        }
+
+        # Check if we will be doing certificate pinning by checking the certificate thumprint.
         if ($CertificateThumbprint)
         {
-            $ReportResult =Invoke-RestMethod -Uri $URI -method get -Body $Body -ErrorVariable RESTError -CertificateThumbprint $CertificateThumbprint
+            $Params.Add('CertificateThumbprint', $CertificateThumbprint)
         }
-        else
-        {
-            $ReportResult =Invoke-RestMethod -Uri $URI -method get -Body $Body -ErrorVariable RESTError
-        }
+
+
+        $ReportResult =Invoke-RestMethod @Params
 
         $ErrorActionPreference = $OldEAP
         
@@ -231,15 +327,15 @@ function Get-VTFileReport
         {
             if ($RESTError.Message.Contains("403"))
             {
-                Write-Error "API key is not valid." -ErrorAction Stop
+                throw "API key is not valid."
             }
             elseif ($RESTError.Message -like "*204*")
             {
-                Write-Error "API key rate has been reached." -ErrorAction Stop
+                throw "API key rate has been reached."
             }
             else
             {
-                Write-Error $RESTError -ErrorAction Stop
+                throw $RESTError
             }
         }
 
@@ -264,8 +360,8 @@ function Get-VTURLReport
     (
         # URL or ScanID to query.
         [Parameter(Mandatory=$true,
-                   ValueFromPipelineByPropertyName=$true,
-                   Position=0)]
+            ValueFromPipelineByPropertyName=$true,
+            Position=0)]
         [ValidateCount(1,4)]
         [string[]]$Resource,
 
@@ -278,7 +374,16 @@ function Get-VTURLReport
         [switch]$Scan,
 
         [Parameter(Mandatory=$false)]
-        [string]$CertificateThumbprint
+        [string]$CertificateThumbprint,
+
+        [Parameter(Mandatory=$false)]
+        [string]$Proxy,
+ 
+        [Parameter(Mandatory=$false)]
+        [Management.Automation.PSCredential]$ProxyCredential,
+
+        [Parameter(Mandatory=$false)]
+        [Switch]$ProxyUseDefaultCredentials
     )
 
     Begin
@@ -296,7 +401,7 @@ function Get-VTURLReport
 
         if (!(Test-Path variable:Global:VTAPIKey ) -and !($APIKey))
         {
-            Write-Error "No VirusTotal API Key has been specified or set."
+            throw "No VirusTotal API Key has been specified or set."
         }
         elseif ((Test-Path variable:Global:VTAPIKey ) -and !($APIKey))
         {
@@ -312,14 +417,37 @@ function Get-VTURLReport
 
         $Body = @{'resource'= $QueryResources; 'apikey'= $APIKey; 'scan'=$scanurl}
 
-        if($CertificateThumbprint)
+
+        # Start building parameters for REST Method invokation.
+        $Params =  @{}
+        $Params.add('Body', $Body)
+        $Params.add('Method', 'Get')
+        $Params.add('Uri',$URI)
+        $Params.Add('ErrorVariable', 'RESTError')
+
+        # Check if connection will be made thru a proxy.
+        if ($PsCmdlet.ParameterSetName -eq "Proxy")
         {
-            $ReportResult = Invoke-RestMethod -Uri $URI -method get -Body $Body -ErrorVariable RESTError -CertificateThumbprint $CertificateThumbprint
+            $Params.Add('Proxy', $Proxy)
+
+            if ($ProxyCredential)
+            {
+                $Params.Add('ProxyCredential', $ProxyCredential)
+            }
+
+            if ($ProxyUseDefaultCredentials)
+            {
+                $Params.Add('ProxyUseDefaultCredentials', $ProxyUseDefaultCredentials)
+            }
         }
-        else
+
+        # Check if we will be doing certificate pinning by checking the certificate thumprint.
+        if ($CertificateThumbprint)
         {
-            $ReportResult = Invoke-RestMethod -Uri $URI -method get -Body $Body -ErrorVariable RESTError
+            $Params.Add('CertificateThumbprint', $CertificateThumbprint)
         }
+
+        $ReportResult = Invoke-RestMethod @Params
 
         $ErrorActionPreference = $OldEAP
         
@@ -327,15 +455,15 @@ function Get-VTURLReport
         {
             if ($RESTError.Message.Contains("403"))
             {
-                Write-Error "API key is not valid." -ErrorAction Stop
+                throw "API key is not valid."
             }
             elseif ($RESTError.Message -like "*204*")
             {
-                Write-Error "API key rate has been reached." -ErrorAction Stop
+                throw "API key rate has been reached."
             }
             else
             {
-                Write-Error $RESTError -ErrorAction Stop
+                throw $RESTError
             }
         }
 
@@ -360,8 +488,8 @@ function Submit-VTURL
     (
         # URL or ScanID to query.
         [Parameter(Mandatory=$true,
-                   ValueFromPipelineByPropertyName=$true,
-                   Position=0)]
+            ValueFromPipelineByPropertyName=$true,
+            Position=0)]
         [ValidateCount(1,4)]
         [string[]]$URL,
 
@@ -374,7 +502,16 @@ function Submit-VTURL
         [switch]$Scan,
 
         [Parameter(Mandatory=$false)]
-        [string]$CertificateThumbprint
+        [string]$CertificateThumbprint,
+
+        [Parameter(Mandatory=$false)]
+        [string]$Proxy,
+ 
+        [Parameter(Mandatory=$false)]
+        [Management.Automation.PSCredential]$ProxyCredential,
+
+        [Parameter(Mandatory=$false)]
+        [Switch]$ProxyUseDefaultCredentials
     )
 
     Begin
@@ -391,7 +528,7 @@ function Submit-VTURL
 
         if (!(Test-Path variable:Global:VTAPIKey ) -and !($APIKey))
         {
-            Write-Error "No VirusTotal API Key has been specified or set."
+            throw "No VirusTotal API Key has been specified or set."
         }
         elseif ((Test-Path variable:Global:VTAPIKey ) -and !($APIKey))
         {
@@ -404,29 +541,54 @@ function Submit-VTURL
         $OldEAP = $ErrorActionPreference
         $ErrorActionPreference = 'SilentlyContinue'
         
+        $Body =  @{'url'= $URLList; 'apikey'= $APIKey}
+
+        # Start building parameters for REST Method invokation.
+        $Params =  @{}
+        $Params.add('Body', $Body)
+        $Params.add('Method', 'Post')
+        $Params.add('Uri',$URI)
+        $Params.Add('ErrorVariable', 'RESTError')
+
+        # Check if connection will be made thru a proxy.
+        if ($PsCmdlet.ParameterSetName -eq "Proxy")
+        {
+            $Params.Add('Proxy', $Proxy)
+
+            if ($ProxyCredential)
+            {
+                $Params.Add('ProxyCredential', $ProxyCredential)
+            }
+
+            if ($ProxyUseDefaultCredentials)
+            {
+                $Params.Add('ProxyUseDefaultCredentials', $ProxyUseDefaultCredentials)
+            }
+        }
+
+        # Check if we will be doing certificate pinning by checking the certificate thumprint.
         if ($CertificateThumbprint)
         {
-            $SubmitedList = Invoke-RestMethod -Uri $URI -method Post -Body @{'url'= $URLList; 'apikey'= $APIKey} -ErrorVariable RESTError -CertificateThumbprint $CertificateThumbprint
+            $Params.Add('CertificateThumbprint', $CertificateThumbprint)
         }
-        else
-        {
-            $SubmitedList = Invoke-RestMethod -Uri $URI -method Post -Body @{'url'= $URLList; 'apikey'= $APIKey} -ErrorVariable RESTError
-        }
+
+        $SubmitedList = Invoke-RestMethod @Params
+
         $ErrorActionPreference = $OldEAP
         
         if ($RESTError)
         {
             if ($RESTError.Message.Contains("403"))
             {
-                Write-Error "API key is not valid." -ErrorAction Stop
+                throw "API key is not valid."
             }
             elseif ($RESTError.Message -like "*204*")
             {
-                Write-Error "API key rate has been reached." -ErrorAction Stop
+                throw "API key rate has been reached."
             }
             else
             {
-                Write-Error $RESTError -ErrorAction Stop
+                throw $RESTError
             }
         }
 
@@ -451,8 +613,8 @@ function Submit-VTFile
     (
         # URL or ScanID to query.
         [Parameter(Mandatory=$true,
-                   ValueFromPipelineByPropertyName=$true,
-                   Position=0)]
+            ValueFromPipelineByPropertyName=$true,
+            Position=0)]
         [ValidateScript({Test-Path $_ -PathType Leaf})]
         [string]$File,
 
@@ -613,7 +775,16 @@ function Get-PoshVTVersion
         [string]$APIKey,
 
         [Parameter(Mandatory=$false)]
-        [string]$CertificateThumbprint
+        [string]$CertificateThumbprint,
+
+        [Parameter(Mandatory=$false)]
+        [string]$Proxy,
+ 
+        [Parameter(Mandatory=$false)]
+        [Management.Automation.PSCredential]$ProxyCredential,
+
+        [Parameter(Mandatory=$false)]
+        [Switch]$ProxyUseDefaultCredentials
     )
 
     Begin
@@ -621,7 +792,7 @@ function Get-PoshVTVersion
         $URI = 'http://www.virustotal.com/vtapi/v2/key/details'
         if (!(Test-Path variable:Global:VTAPIKey ) -and !($APIKey))
         {
-            Write-Error "No VirusTotal API Key has been specified or set."
+            throw "No VirusTotal API Key has been specified or set."
         }
         elseif ((Test-Path variable:Global:VTAPIKey ) -and !($APIKey))
         {
@@ -635,14 +806,37 @@ function Get-PoshVTVersion
         $ErrorActionPreference = 'SilentlyContinue'
 
         $Body = @{'apikey'= $APIKey}
+
+        # Start building parameters for REST Method invokation.
+        $Params =  @{}
+        $Params.add('Body', $Body)
+        $Params.add('Method', 'Get')
+        $Params.add('Uri',$URI)
+        $Params.Add('ErrorVariable', 'RESTError')
+
+        # Check if connection will be made thru a proxy.
+        if ($PsCmdlet.ParameterSetName -eq "Proxy")
+        {
+            $Params.Add('Proxy', $Proxy)
+
+            if ($ProxyCredential)
+            {
+                $Params.Add('ProxyCredential', $ProxyCredential)
+            }
+
+            if ($ProxyUseDefaultCredentials)
+            {
+                $Params.Add('ProxyUseDefaultCredentials', $ProxyUseDefaultCredentials)
+            }
+        }
+
+        # Check if we will be doing certificate pinning by checking the certificate thumprint.
         if ($CertificateThumbprint)
         {
-            $IPReport = Invoke-RestMethod -Uri $URI -method get -Body $Body -ErrorVariable RESTError -CertificateThumbprint $CertificateThumbprint
+            $Params.Add('CertificateThumbprint', $CertificateThumbprint)
         }
-        else
-        {
-            $IPReport = Invoke-RestMethod -Uri $URI -method get -Body $Body -ErrorVariable RESTError
-        }
+
+        $IPReport = Invoke-RestMethod @Params
         
         $ErrorActionPreference = $OldEAP
         
@@ -650,15 +844,15 @@ function Get-PoshVTVersion
         {
             if ($RESTError.Message.Contains("403"))
             {
-                Write-Error "API key is not valid." -ErrorAction Stop
+                throw "API key is not valid."
             }
             elseif ($RESTError.Message -like "*204*")
             {
-                Write-Error "API key rate has been reached." -ErrorAction Stop
+                throw "API key rate has been reached."
             }
             else
             {
-                Write-Error $RESTError -ErrorAction Stop
+                throw $RESTError
             }
         }
 
@@ -687,7 +881,16 @@ function Get-VTSpecialURL
         [string]$APIKey,
 
         [Parameter(Mandatory=$false)]
-        [string]$CertificateThumbprint
+        [string]$CertificateThumbprint,
+
+        [Parameter(Mandatory=$false)]
+        [string]$Proxy,
+ 
+        [Parameter(Mandatory=$false)]
+        [Management.Automation.PSCredential]$ProxyCredential,
+
+        [Parameter(Mandatory=$false)]
+        [Switch]$ProxyUseDefaultCredentials
     )
 
     Begin
@@ -696,7 +899,7 @@ function Get-VTSpecialURL
         $URI = 'https://www.virustotal.com/vtapi/v2/file/scan/upload_url'
         if (!(Test-Path variable:Global:VTAPIKey ) -and !($APIKey))
         {
-            Write-Error "No VirusTotal API Key has been specified or set."
+            throw "No VirusTotal API Key has been specified or set."
         }
         elseif ((Test-Path variable:Global:VTAPIKey ) -and !($APIKey))
         {
@@ -716,15 +919,39 @@ function Get-VTSpecialURL
 
         $OldEAP = $ErrorActionPreference
         $ErrorActionPreference = 'SilentlyContinue'
+
+        $Body = @{'apikey' = $APIKey}
+
+        # Start building parameters for REST Method invokation.
+        $Params =  @{}
+        $Params.add('Body', $Body)
+        $Params.add('Method', 'Get')
+        $Params.add('Uri',$URI)
+        $Params.Add('ErrorVariable', 'RESTError')
+
+        # Check if connection will be made thru a proxy.
+        if ($PsCmdlet.ParameterSetName -eq "Proxy")
+        {
+            $Params.Add('Proxy', $Proxy)
+
+            if ($ProxyCredential)
+            {
+                $Params.Add('ProxyCredential', $ProxyCredential)
+            }
+
+            if ($ProxyUseDefaultCredentials)
+            {
+                $Params.Add('ProxyUseDefaultCredentials', $ProxyUseDefaultCredentials)
+            }
+        }
+
+        # Check if we will be doing certificate pinning by checking the certificate thumprint.
+        if ($CertificateThumbprint)
+        {
+            $Params.Add('CertificateThumbprint', $CertificateThumbprint)
+        }
         
-        if ($CertThumPrint)
-        {
-            $IPReport = Invoke-RestMethod -Uri $URI -method get -Body @{'apikey'= $APIKey} -ErrorVariable RESTError -CertificateThumbprint $CertThumPrint
-        }
-        else
-        {
-            $IPReport = Invoke-RestMethod -Uri $URI -method get -Body @{'apikey'= $APIKey} -ErrorVariable RESTError
-        }
+        $IPReport = Invoke-RestMethod $Params
 
         $ErrorActionPreference = $OldEAP
         
@@ -732,15 +959,15 @@ function Get-VTSpecialURL
         {
             if ($RESTError.Message.Contains("403"))
             {
-                Write-Error "API key is not valid." -ErrorAction Stop
+                throw "API key is not valid."
             }
             elseif ($RESTError.Message -like "*204*")
             {
-                Write-Error "API key rate has been reached." -ErrorAction Stop
+                throw "API key rate has been reached."
             }
             else
             {
-                Write-Error $RESTError -ErrorAction Stop
+                throw $RESTError
             }
         }
 
@@ -761,8 +988,8 @@ function Get-VTFileComment
     (
         # File MD5, SHA1 or SHA256 Checksum to get comments from.
         [Parameter(Mandatory=$true,
-                   ValueFromPipelineByPropertyName=$true,
-                   Position=0)]
+            ValueFromPipelineByPropertyName=$true,
+            Position=0)]
         [string]$Resource,
 
         # VirusToral API Key.
@@ -770,7 +997,16 @@ function Get-VTFileComment
         [string]$APIKey,
 
         [Parameter(Mandatory=$false)]
-        [string]$CertificateThumbprint
+        [string]$CertificateThumbprint,
+
+        [Parameter(Mandatory=$false)]
+        [string]$Proxy,
+ 
+        [Parameter(Mandatory=$false)]
+        [Management.Automation.PSCredential]$ProxyCredential,
+
+        [Parameter(Mandatory=$false)]
+        [Switch]$ProxyUseDefaultCredentials
     
     )
 
@@ -801,18 +1037,40 @@ function Get-VTFileComment
 
         $Body.add('resource',$Resource)
 
+        # Start building parameters for REST Method invokation.
+        $Params =  @{}
+        $Params.add('Body', $Body)
+        $Params.add('Method', 'Get')
+        $Params.add('Uri',$URI)
+        $Params.Add('ErrorVariable', 'RESTError')
+
+        # Check if connection will be made thru a proxy.
+        if ($PsCmdlet.ParameterSetName -eq "Proxy")
+        {
+            $Params.Add('Proxy', $Proxy)
+
+            if ($ProxyCredential)
+            {
+                $Params.Add('ProxyCredential', $ProxyCredential)
+            }
+
+            if ($ProxyUseDefaultCredentials)
+            {
+                $Params.Add('ProxyUseDefaultCredentials', $ProxyUseDefaultCredentials)
+            }
+        }
+
+        # Check if we will be doing certificate pinning by checking the certificate thumprint.
+        if ($CertificateThumbprint)
+        {
+            $Params.Add('CertificateThumbprint', $CertificateThumbprint)
+        }
+
         $OldEAP = $ErrorActionPreference
         $ErrorActionPreference = 'SilentlyContinue'
 
-        if ($CertificateThumbprint)
-        {
-            $Response = Invoke-RestMethod -Uri $URI -method Get -Body $Body -ErrorVariable RESTError -CertificateThumbprint $CertificateThumbprint
-        }
-        else
-        {
-            $Response = Invoke-RestMethod -Uri $URI -method Get -Body $Body -ErrorVariable RESTError
-        }
-
+        $Response = Invoke-RestMethod @Params
+        
         $ErrorActionPreference = $OldEAP
         if ($RESTError)
         {
@@ -847,8 +1105,8 @@ function Set-VTFileComment
     (
         # File MD5, SHA1 or SHA256 Checksum to comment on.
         [Parameter(Mandatory=$true,
-                   ValueFromPipelineByPropertyName=$true,
-                   Position=0)]
+            ValueFromPipelineByPropertyName=$true,
+            Position=0)]
         [string]$Resource,
 
         # VirusToral API Key.
@@ -859,7 +1117,16 @@ function Set-VTFileComment
         [string]$Comment,
 
         [Parameter(Mandatory=$false)]
-        [string]$CertificateThumbprint
+        [string]$CertificateThumbprint,
+
+        [Parameter(Mandatory=$false)]
+        [string]$Proxy,
+ 
+        [Parameter(Mandatory=$false)]
+        [Management.Automation.PSCredential]$ProxyCredential,
+
+        [Parameter(Mandatory=$false)]
+        [Switch]$ProxyUseDefaultCredentials
     
     )
 
@@ -868,7 +1135,7 @@ function Set-VTFileComment
         $URI = 'https://www.virustotal.com/vtapi/v2/comments/put'
         if (!(Test-Path variable:Global:VTAPIKey ) -and !($APIKey))
         {
-            Write-Error "No VirusTotal API Key has been specified or set."
+            throw "No VirusTotal API Key has been specified or set."
         }
         elseif ((Test-Path variable:Global:VTAPIKey ) -and !($APIKey))
         {
@@ -890,32 +1157,54 @@ function Set-VTFileComment
 
         $Body.add('resource',$Resource)
 
+        # Start building parameters for REST Method invokation.
+        $Params =  @{}
+        $Params.add('Body', $Body)
+        $Params.add('Method', 'Post')
+        $Params.add('Uri',$URI)
+        $Params.Add('ErrorVariable', 'RESTError')
+
+        # Check if connection will be made thru a proxy.
+        if ($PsCmdlet.ParameterSetName -eq "Proxy")
+        {
+            $Params.Add('Proxy', $Proxy)
+
+            if ($ProxyCredential)
+            {
+                $Params.Add('ProxyCredential', $ProxyCredential)
+            }
+
+            if ($ProxyUseDefaultCredentials)
+            {
+                $Params.Add('ProxyUseDefaultCredentials', $ProxyUseDefaultCredentials)
+            }
+        }
+
+        # Check if we will be doing certificate pinning by checking the certificate thumprint.
+        if ($CertificateThumbprint)
+        {
+            $Params.Add('CertificateThumbprint', $CertificateThumbprint)
+        }
+
         $OldEAP = $ErrorActionPreference
         $ErrorActionPreference = 'SilentlyContinue'
 
-        if ($CertificateThumbprint)
-        {
-            $Response = Invoke-RestMethod -Uri $URI -method Post -Body $Body -ErrorVariable RESTError -CertificateThumbprint $CertificateThumbprint
-        }
-        else
-        {
-            $Response = Invoke-RestMethod -Uri $URI -method Post -Body $Body -ErrorVariable RESTError
-        }
+        $Response = Invoke-RestMethod @Params
 
         $ErrorActionPreference = $OldEAP
         if ($RESTError)
         {
             if ($RESTError.Message.Contains("403"))
             {
-                Write-Error "API key is not valid." -ErrorAction Stop
+                throw "API key is not valid."
             }
             elseif ($RESTError.Message -like "*204*")
             {
-                Write-Error "API key rate has been reached." -ErrorAction Stop
+                throw "API key rate has been reached."
             }
             else
             {
-                Write-Error $RESTError
+                throw $RESTError
             }
         }
         $Response.pstypenames.insert(0,'VirusTotal.Comment')
@@ -936,8 +1225,8 @@ function Set-VTFileRescan
     (
         # File MD5 Checksum, File SHA1 Checksum, File SHA256 Checksum or ScanID to query.
         [Parameter(Mandatory=$true,
-                   ValueFromPipelineByPropertyName=$true,
-                   Position=0)]
+            ValueFromPipelineByPropertyName=$true,
+            Position=0)]
         [string]$Resource,
 
         # VirusToral API Key.
@@ -965,7 +1254,16 @@ function Set-VTFileRescan
         [bool]$NotifyChanges,
 
         [Parameter(Mandatory=$false)]
-        [string]$CertificateThumbprint
+        [string]$CertificateThumbprint,
+
+        [Parameter(Mandatory=$false)]
+        [string]$Proxy,
+ 
+        [Parameter(Mandatory=$false)]
+        [Management.Automation.PSCredential]$ProxyCredential,
+
+        [Parameter(Mandatory=$false)]
+        [Switch]$ProxyUseDefaultCredentials
     )
 
     Begin
@@ -1020,32 +1318,54 @@ function Set-VTFileRescan
 
         $Body.add('resource',$Resource)
         
+        # Start building parameters for REST Method invokation.
+        $Params =  @{}
+        $Params.add('Body', $Body)
+        $Params.add('Method', 'Post')
+        $Params.add('Uri',$URI)
+        $Params.Add('ErrorVariable', 'RESTError')
+
+        # Check if connection will be made thru a proxy.
+        if ($PsCmdlet.ParameterSetName -eq "Proxy")
+        {
+            $Params.Add('Proxy', $Proxy)
+
+            if ($ProxyCredential)
+            {
+                $Params.Add('ProxyCredential', $ProxyCredential)
+            }
+
+            if ($ProxyUseDefaultCredentials)
+            {
+                $Params.Add('ProxyUseDefaultCredentials', $ProxyUseDefaultCredentials)
+            }
+        }
+
+        # Check if we will be doing certificate pinning by checking the certificate thumprint.
+        if ($CertificateThumbprint)
+        {
+            $Params.Add('CertificateThumbprint', $CertificateThumbprint)
+        }
+
         $OldEAP = $ErrorActionPreference
         $ErrorActionPreference = 'SilentlyContinue'
 
-        if ($CertificateThumbprint)
-        {
-            $Response = Invoke-RestMethod -Uri $URI -method post -Body $Body -ErrorVariable RESTError -CertificateThumbprint $CertThumPrint
-        }
-        else
-        {
-            $Response = Invoke-RestMethod -Uri $URI -method post -Body $Body -ErrorVariable RESTError
-        }
+        $Response = Invoke-RestMethod @Params
 
         $ErrorActionPreference = $OldEAP
         if ($RESTError)
         {
             if ($RESTError.Message.Contains("403"))
             {
-                Write-Error "API key is not valid." -ErrorAction Stop
+                throw "API key is not valid."
             }
             elseif ($RESTError.Message -like "*204*")
             {
-                Write-Error "API key rate has been reached." -ErrorAction Stop
+                throw "API key rate has been reached."
             }
             else
             {
-                Write-Error $RESTError
+                throw $RESTError
             }
         }
 
@@ -1067,8 +1387,8 @@ function Remove-VTFileRescan
     (
         # File MD5 Checksum, File SHA1 Checksum, File SHA256 Checksum or ScanID to remove rescan.
         [Parameter(Mandatory=$true,
-                   ValueFromPipelineByPropertyName=$true,
-                   Position=0)]
+            ValueFromPipelineByPropertyName=$true,
+            Position=0)]
         [string]$Resource,
 
         # VirusToral API Key.
@@ -1076,7 +1396,16 @@ function Remove-VTFileRescan
         [string]$APIKey,
 
         [Parameter(Mandatory=$false)]
-        [string]$CertificateThumbprint
+        [string]$CertificateThumbprint,
+
+        [Parameter(Mandatory=$false)]
+        [string]$Proxy,
+ 
+        [Parameter(Mandatory=$false)]
+        [Management.Automation.PSCredential]$ProxyCredential,
+
+        [Parameter(Mandatory=$false)]
+        [Switch]$ProxyUseDefaultCredentials
     
     )
 
@@ -1109,18 +1438,41 @@ function Remove-VTFileRescan
     {
 
         $Body.add('resource',$Resource)
+
+        # Start building parameters for REST Method invokation.
+        $Params =  @{}
+        $Params.add('Body', $Body)
+        $Params.add('Method', 'Post')
+        $Params.add('Uri',$URI)
+        $Params.Add('ErrorVariable', 'RESTError')
+
+        # Check if connection will be made thru a proxy.
+        if ($PsCmdlet.ParameterSetName -eq "Proxy")
+        {
+            $Params.Add('Proxy', $Proxy)
+
+            if ($ProxyCredential)
+            {
+                $Params.Add('ProxyCredential', $ProxyCredential)
+            }
+
+            if ($ProxyUseDefaultCredentials)
+            {
+                $Params.Add('ProxyUseDefaultCredentials', $ProxyUseDefaultCredentials)
+            }
+        }
+
+        # Check if we will be doing certificate pinning by checking the certificate thumprint.
+        if ($CertificateThumbprint)
+        {
+            $Params.Add('CertificateThumbprint', $CertificateThumbprint)
+        }
         
         $OldEAP = $ErrorActionPreference
         $ErrorActionPreference = 'SilentlyContinue'
         
-        if ($CertificateThumbprint)
-        {
-            $Response = Invoke-RestMethod -Uri $URI -method post -Body $Body -ErrorVariable RESTError -CertificateThumbprint $CertThumPrint
-        }
-        else
-        {
-            $Response = Invoke-RestMethod -Uri $URI -method post -Body $Body -ErrorVariable RESTError
-        }
+        $Response = Invoke-RestMethod @Params
+
         $ErrorActionPreference = $OldEAP
 
         if ($RESTError)
@@ -1157,8 +1509,8 @@ function Get-VTFileScanReport
     (
         # File MD5 Checksum, File SHA1 Checksum, File SHA256 Checksum or ScanID of the scan.
         [Parameter(Mandatory=$true,
-                   ValueFromPipelineByPropertyName=$true,
-                   Position=0)]
+            ValueFromPipelineByPropertyName=$true,
+            Position=0)]
         [string]$Resource,
 
         # VirusToral API Key.
@@ -1169,7 +1521,16 @@ function Get-VTFileScanReport
         [switch]$AllInfo,
 
         [Parameter(Mandatory=$false)]
-        [string]$CertificateThumbprint
+        [string]$CertificateThumbprint,
+
+        [Parameter(Mandatory=$false)]
+        [string]$Proxy,
+ 
+        [Parameter(Mandatory=$false)]
+        [Management.Automation.PSCredential]$ProxyCredential,
+
+        [Parameter(Mandatory=$false)]
+        [Switch]$ProxyUseDefaultCredentials
     
     )
 
@@ -1178,7 +1539,7 @@ function Get-VTFileScanReport
         $URI = 'https://www.virustotal.com/vtapi/v2/file/report'
         if (!(Test-Path variable:Global:VTAPIKey ) -and !($APIKey))
         {
-            Write-Error "No VirusTotal API Key has been specified or set."
+            throw "No VirusTotal API Key has been specified or set."
         }
         elseif ((Test-Path variable:Global:VTAPIKey ) -and !($APIKey))
         {
@@ -1205,17 +1566,40 @@ function Get-VTFileScanReport
 
         $Body.add('resource',$Resource)
         
+        # Start building parameters for REST Method invokation.
+        $Params =  @{}
+        $Params.add('Body', $Body)
+        $Params.add('Method', 'Get')
+        $Params.add('Uri',$URI)
+        $Params.Add('ErrorVariable', 'RESTError')
+
+        # Check if connection will be made thru a proxy.
+        if ($PsCmdlet.ParameterSetName -eq "Proxy")
+        {
+            $Params.Add('Proxy', $Proxy)
+
+            if ($ProxyCredential)
+            {
+                $Params.Add('ProxyCredential', $ProxyCredential)
+            }
+
+            if ($ProxyUseDefaultCredentials)
+            {
+                $Params.Add('ProxyUseDefaultCredentials', $ProxyUseDefaultCredentials)
+            }
+        }
+
+        # Check if we will be doing certificate pinning by checking the certificate thumprint.
+        if ($CertificateThumbprint)
+        {
+            $Params.Add('CertificateThumbprint', $CertificateThumbprint)
+        }
+
         $OldEAP = $ErrorActionPreference
         $ErrorActionPreference = 'SilentlyContinue'
 
-        if ($CertificateThumbprint)
-        {
-            $Response = Invoke-RestMethod -Uri $URI -method post -Body $Body -ErrorVariable RESTError -CertificateThumbprint $CertificateThumbprint
-        }
-        else
-        {
-            $Response = Invoke-RestMethod -Uri $URI -method post -Body $Body -ErrorVariable RESTError
-        }
+        $Response = Invoke-RestMethod @Params
+
         $ErrorActionPreference = $OldEAP
         
         if ($RESTError)
@@ -1251,8 +1635,8 @@ function Get-VTFileBehaviourReport
     (
         # File MD5 Checksum, File SHA1 Checksum or File SHA256 Checksum of file.
         [Parameter(Mandatory=$true,
-                   ValueFromPipelineByPropertyName=$true,
-                   Position=0)]
+            ValueFromPipelineByPropertyName=$true,
+            Position=0)]
         [string]$Resource,
 
         # VirusToral API Key.
@@ -1265,7 +1649,16 @@ function Get-VTFileBehaviourReport
         [string]$Report,
 
         [Parameter(Mandatory=$false)]
-        [string]$CertificateThumbprint
+        [string]$CertificateThumbprint,
+
+        [Parameter(Mandatory=$false)]
+        [string]$Proxy,
+ 
+        [Parameter(Mandatory=$false)]
+        [Management.Automation.PSCredential]$ProxyCredential,
+
+        [Parameter(Mandatory=$false)]
+        [Switch]$ProxyUseDefaultCredentials
 
     
     )
@@ -1275,7 +1668,7 @@ function Get-VTFileBehaviourReport
         $URI = 'https://www.virustotal.com/vtapi/v2/file/behaviour'
         if (!(Test-Path variable:Global:VTAPIKey ) -and !($APIKey))
         {
-            Write-Error "No VirusTotal API Key has been specified or set."
+            throw "No VirusTotal API Key has been specified or set."
         }
         elseif ((Test-Path variable:Global:VTAPIKey ) -and !($APIKey))
         {
@@ -1296,36 +1689,60 @@ function Get-VTFileBehaviourReport
     {
 
         $Body.add('hash',$Resource)
+
+        $ReportFullPath = $ExecutionContext.SessionState.Path.GetUnresolvedProviderPathFromPSPath($Report)
+        
+        # Start building parameters for REST Method invokation.
+        $Params =  @{}
+        $Params.add('Body', $Body)
+        $Params.add('Method', 'Get')
+        $Params.add('Uri',$URI)
+        $Params.Add('ErrorVariable', 'RESTError')
+        $Params.Add('Outfile', $ReportFullPath)
+
+        # Check if connection will be made thru a proxy.
+        if ($PsCmdlet.ParameterSetName -eq "Proxy")
+        {
+            $Params.Add('Proxy', $Proxy)
+
+            if ($ProxyCredential)
+            {
+                $Params.Add('ProxyCredential', $ProxyCredential)
+            }
+
+            if ($ProxyUseDefaultCredentials)
+            {
+                $Params.Add('ProxyUseDefaultCredentials', $ProxyUseDefaultCredentials)
+            }
+        }
+
+        # Check if we will be doing certificate pinning by checking the certificate thumprint.
+        if ($CertificateThumbprint)
+        {
+            $Params.Add('CertificateThumbprint', $CertificateThumbprint)
+        }
         
         $OldEAP = $ErrorActionPreference
         $ErrorActionPreference = 'SilentlyContinue'
 
-        $ReportFullPath = $ExecutionContext.SessionState.Path.GetUnresolvedProviderPathFromPSPath($Report)
         Write-Verbose "Saving report to $($ReportFullPath)."
 
-        if ($CertificateThumbprint)
-        {
-            $bahaviour_report = Invoke-WebRequest -Uri $URI -Body $body -Method Get -ErrorVariable RESTError -OutFile $Report -CertificateThumbprint $CertificateThumbprint
-        }
-        else
-        {
-            $bahaviour_report = Invoke-WebRequest -Uri $URI -Body $body -Method Get -ErrorVariable RESTError -OutFile $Report
-        }
+        $bahaviour_report = Invoke-WebRequest @Params
 
         $ErrorActionPreference = $OldEAP
         if ($RESTError)
         {
             if ($RESTError.Message.Contains("403"))
             {
-                Write-Error "API key is not valid." -ErrorAction Stop
+                throw "API key is not valid."
             }
             elseif ($RESTError.Message -like "*204*")
             {
-                Write-Error "API key rate has been reached." -ErrorAction Stop
+                throw "API key rate has been reached."
             }
             else
             {
-                Write-Error $RESTError
+                throw $RESTError
             }
         }
     }
@@ -1343,8 +1760,8 @@ function Get-VTFileSample
     (
         # File MD5 Checksum, File SHA1 Checksum or File SHA256 Checksum of file.
         [Parameter(Mandatory=$true,
-                   ValueFromPipelineByPropertyName=$true,
-                   Position=0)]
+            ValueFromPipelineByPropertyName=$true,
+            Position=0)]
         [string]$Resource,
 
         # VirusToral API Key.
@@ -1357,7 +1774,16 @@ function Get-VTFileSample
         [string]$File,
 
         [Parameter(Mandatory=$false)]
-        [string]$CertificateThumbprint
+        [string]$CertificateThumbprint,
+
+        [Parameter(Mandatory=$false)]
+        [string]$Proxy,
+ 
+        [Parameter(Mandatory=$false)]
+        [Management.Automation.PSCredential]$ProxyCredential,
+
+        [Parameter(Mandatory=$false)]
+        [Switch]$ProxyUseDefaultCredentials
     
     )
 
@@ -1387,34 +1813,61 @@ function Get-VTFileSample
     {
 
         $Body.add('hash',$Resource)
+
+        $SampleFullPath = $ExecutionContext.SessionState.Path.GetUnresolvedProviderPathFromPSPath($File)
+
+        # Start building parameters for REST Method invokation.
+        $Params =  @{}
+        $Params.add('Body', $Body)
+        $Params.add('Method', 'Get')
+        $Params.add('Uri',$URI)
+        $Params.Add('ErrorVariable', 'RESTError')
+        $Params.Add('OutFile', $SampleFullPath)
+
+        # Check if connection will be made thru a proxy.
+        if ($PsCmdlet.ParameterSetName -eq "Proxy")
+        {
+            $Params.Add('Proxy', $Proxy)
+
+            if ($ProxyCredential)
+            {
+                $Params.Add('ProxyCredential', $ProxyCredential)
+            }
+
+            if ($ProxyUseDefaultCredentials)
+            {
+                $Params.Add('ProxyUseDefaultCredentials', $ProxyUseDefaultCredentials)
+            }
+        }
+
+        # Check if we will be doing certificate pinning by checking the certificate thumprint.
+        if ($CertificateThumbprint)
+        {
+            $Params.Add('CertificateThumbprint', $CertificateThumbprint)
+        }
+
         $OldEAP = $ErrorActionPreference
         $ErrorActionPreference = 'SilentlyContinue'
 
-        $SampleFullPath = $ExecutionContext.SessionState.Path.GetUnresolvedProviderPathFromPSPath($File)
         Write-Verbose "Saving report to $($SampleFullPath)."
-        if ($CertificateThumbprint)
-        {
-            $SampleResponse = Invoke-RestMethod -Uri $URI -Body $body -Method Get -ErrorVariable RESTError -OutFile $File -CertificateThumbprint $CertificateThumbprint
-        }
-        else
-        {
-            $SampleResponse = Invoke-RestMethod -Uri $URI -Body $body -Method Get -ErrorVariable RESTError -OutFile $File
-        }
+
+        $SampleResponse = Invoke-RestMethod @Params
+
         $ErrorActionPreference = $OldEAP
 
         if ($RESTError)
         {
             if ($RESTError.Message.Contains("403"))
             {
-                Write-Error "API key is not valid." -ErrorAction Stop
+                throw "API key is not valid."
             }
             elseif ($RESTError.Message -like "*204*")
             {
-                Write-Error "API key rate has been reached." -ErrorAction Stop
+                throw "API key rate has been reached."
             }
             else
             {
-                Write-Error $RESTError
+                throw $RESTError
             }
         }
     }
@@ -1432,8 +1885,8 @@ function Get-VTFileNetworkTraffic
     (
         # File MD5 Checksum, File SHA1 Checksum or File SHA256 Checksum.
         [Parameter(Mandatory=$true,
-                   ValueFromPipelineByPropertyName=$true,
-                   Position=0)]
+            ValueFromPipelineByPropertyName=$true,
+            Position=0)]
         [string]$Hash,
 
         # VirusToral API Key.
@@ -1446,7 +1899,16 @@ function Get-VTFileNetworkTraffic
         [string]$File,
 
         [Parameter(Mandatory=$false)]
-        [string]$CertificateThumbprint
+        [string]$CertificateThumbprint,
+
+        [Parameter(Mandatory=$false)]
+        [string]$Proxy,
+ 
+        [Parameter(Mandatory=$false)]
+        [Management.Automation.PSCredential]$ProxyCredential,
+
+        [Parameter(Mandatory=$false)]
+        [Switch]$ProxyUseDefaultCredentials
 
     
     )
@@ -1456,7 +1918,7 @@ function Get-VTFileNetworkTraffic
         $URI = 'https://www.virustotal.com/vtapi/v2/file/network-traffic'
         if (!(Test-Path variable:Global:VTAPIKey ) -and !($APIKey))
         {
-            Write-Error "No VirusTotal API Key has been specified or set."
+            throw "No VirusTotal API Key has been specified or set."
         }
         elseif ((Test-Path variable:Global:VTAPIKey ) -and !($APIKey))
         {
@@ -1477,20 +1939,47 @@ function Get-VTFileNetworkTraffic
     {
 
         $Body.add('hash',$Resource)
+
+        $NTFullPath = $ExecutionContext.SessionState.Path.GetUnresolvedProviderPathFromPSPath($File)
+
+        # Start building parameters for REST Method invokation.
+        $Params =  @{}
+        $Params.add('Body', $Body)
+        $Params.add('Method', 'Get')
+        $Params.add('Uri',$URI)
+        $Params.Add('ErrorVariable', 'RESTError')
+        $Params.Add('OutFile', $NTFullPath)
+
+        # Check if connection will be made thru a proxy.
+        if ($PsCmdlet.ParameterSetName -eq "Proxy")
+        {
+            $Params.Add('Proxy', $Proxy)
+
+            if ($ProxyCredential)
+            {
+                $Params.Add('ProxyCredential', $ProxyCredential)
+            }
+
+            if ($ProxyUseDefaultCredentials)
+            {
+                $Params.Add('ProxyUseDefaultCredentials', $ProxyUseDefaultCredentials)
+            }
+        }
+
+        # Check if we will be doing certificate pinning by checking the certificate thumprint.
+        if ($CertificateThumbprint)
+        {
+            $Params.Add('CertificateThumbprint', $CertificateThumbprint)
+        }
+
         $OldEAP = $ErrorActionPreference
         $ErrorActionPreference = 'SilentlyContinue'
 
-        $NTFullPath = $ExecutionContext.SessionState.Path.GetUnresolvedProviderPathFromPSPath($File)
+        
+
         Write-Verbose "Saving file to $($NTFullPath)."
 
-        if ($CertificateThumbprint)
-        {
-            $NTResponse = Invoke-RestMethod -Uri $URI -Body $body -Method Get -ErrorVariable RESTError -OutFile $File -CertificateThumbprint $CertificateThumbprint
-        }
-        else
-        {
-            $NTResponse = Invoke-RestMethod -Uri $URI -Body $body -Method Get -ErrorVariable RESTError -OutFile $File
-        }
+        $NTResponse = Invoke-RestMethod @Params
 
         $ErrorActionPreference = $OldEAP
 
@@ -1498,15 +1987,15 @@ function Get-VTFileNetworkTraffic
         {
             if ($RESTError.Message.Contains("403"))
             {
-                Write-Error "API key is not valid." -ErrorAction Stop
+                throw "API key is not valid."
             }
             elseif ($RESTError.Message -like "*204*")
             {
-                Write-Error "API key rate has been reached." -ErrorAction Stop
+                throw "API key rate has been reached."
             }
             else
             {
-                Write-Error $RESTError
+                throw $RESTError
             }
         }
     }
@@ -1524,8 +2013,8 @@ function Search-VTAdvancedReversed
     (
         # A search modifier compliant file search query..
         [Parameter(Mandatory=$true,
-                   ValueFromPipelineByPropertyName=$true,
-                   Position=0)]
+            ValueFromPipelineByPropertyName=$true,
+            Position=0)]
         [string]$Query,
 
         # VirusToral API Key.
@@ -1537,7 +2026,16 @@ function Search-VTAdvancedReversed
         [int]$OffSet,
 
         [Parameter(Mandatory=$false)]
-        [string]$CertificateThumbprint
+        [string]$CertificateThumbprint,
+
+        [Parameter(Mandatory=$false)]
+        [string]$Proxy,
+ 
+        [Parameter(Mandatory=$false)]
+        [Management.Automation.PSCredential]$ProxyCredential,
+
+        [Parameter(Mandatory=$false)]
+        [Switch]$ProxyUseDefaultCredentials
     
     )
 
@@ -1554,15 +2052,13 @@ function Search-VTAdvancedReversed
         }
 
         $Body = @{'apikey' = $APIKey
-                'query' = $Query
-            }
+                'query' = $Query}
         # If an offset is provided apply it.
         if ($OffSet)
         {
             $Body.Add('offset',$OffSet)
         }
         
-
         Write-Verbose 'Verifying the API Key.'
         $KeyInfo = Get-VTAPIKeyInfo -APIKey $APIKey
         if ($KeyInfo.type -ne 'private')
@@ -1577,17 +2073,40 @@ function Search-VTAdvancedReversed
 
         $Body.add('resource',$Resource)
         
+        # Start building parameters for REST Method invokation.
+        $Params =  @{}
+        $Params.add('Body', $Body)
+        $Params.add('Method', 'Get')
+        $Params.add('Uri',$URI)
+        $Params.Add('ErrorVariable', 'RESTError')
+
+        # Check if connection will be made thru a proxy.
+        if ($PsCmdlet.ParameterSetName -eq "Proxy")
+        {
+            $Params.Add('Proxy', $Proxy)
+
+            if ($ProxyCredential)
+            {
+                $Params.Add('ProxyCredential', $ProxyCredential)
+            }
+
+            if ($ProxyUseDefaultCredentials)
+            {
+                $Params.Add('ProxyUseDefaultCredentials', $ProxyUseDefaultCredentials)
+            }
+        }
+
+        # Check if we will be doing certificate pinning by checking the certificate thumprint.
+        if ($CertificateThumbprint)
+        {
+            $Params.Add('CertificateThumbprint', $CertificateThumbprint)
+        }
+
         $OldEAP = $ErrorActionPreference
         $ErrorActionPreference = 'SilentlyContinue'
         
-        if ($CertificateThumbprint)
-        {
-            $Response = Invoke-RestMethod -Uri $URI -method Get -Body $Body -ErrorVariable RESTError -CertificateThumbprint $CertThumPrint
-        }
-        else
-        {
-            $Response = Invoke-RestMethod -Uri $URI -method Get -Body $Body -ErrorVariable RESTError
-        }
+        $Response = Invoke-RestMethod @Params
+
         $ErrorActionPreference = $OldEAP
 
         if ($RESTError)
