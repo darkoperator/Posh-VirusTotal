@@ -26,29 +26,50 @@ function Set-VTAPIKey
 #  .ExternalHelp Posh-VirusTotal.Help.xml
 function Get-VTIPReport
 {
-    [CmdletBinding()]
+    [CmdletBinding(DefaultParameterSetName = 'Direct')]
     Param
     (
         # IP Address to scan for.
-        [Parameter(Mandatory=$true,
+        [Parameter(ParameterSetName = 'Direct',
+            Mandatory=$true,
+            ValueFromPipelineByPropertyName=$true,
+            Position=0)]
+        [Parameter(ParameterSetName = 'Proxy',
+            Mandatory=$true,
             ValueFromPipelineByPropertyName=$true,
             Position=0)]
         [string]$IPAddress,
 
         # VirusToral API Key.
-        [Parameter(Mandatory=$false)]
+        [Parameter(ParameterSetName = 'Direct',
+            Mandatory=$true,
+            ValueFromPipelineByPropertyName=$false)]
+        [Parameter(ParameterSetName = 'Proxy',
+            Mandatory=$true,
+            ValueFromPipelineByPropertyName=$false)]
         [string]$APIKey,
 
-        [Parameter(Mandatory=$false)]
+        [Parameter(ParameterSetName = 'Direct',
+            Mandatory=$true,
+            ValueFromPipelineByPropertyName=$false)]
+        [Parameter(ParameterSetName = 'Proxy',
+            Mandatory=$true,
+            ValueFromPipelineByPropertyName=$false)]
         [string]$CertificateThumbprint,
 
-        [Parameter(Mandatory=$false)]
+        [Parameter(ParameterSetName = 'Proxy',
+            Mandatory=$true,
+            ValueFromPipelineByPropertyName=$true)]
         [string]$Proxy,
  
-        [Parameter(Mandatory=$false)]
+        [Parameter(ParameterSetName = 'Proxy',
+            Mandatory=$true,
+            ValueFromPipelineByPropertyName=$true)]
         [Management.Automation.PSCredential]$ProxyCredential,
 
-        [Parameter(Mandatory=$false)]
+        [Parameter(ParameterSetName = 'Proxy',
+            Mandatory=$true,
+            ValueFromPipelineByPropertyName=$true)]
         [Switch]$ProxyUseDefaultCredentials
     )
 
@@ -134,29 +155,50 @@ function Get-VTIPReport
 #  .ExternalHelp Posh-VirusTotal.Help.xml
 function Get-VTDomainReport
 {
-    [CmdletBinding()]
+    [CmdletBinding(DefaultParametersetName = 'Direct')]
     Param
     (
         # Domain to scan.
-        [Parameter(Mandatory=$true,
+        [Parameter(ParameterSetName = 'Direct',
+            Mandatory=$true,
+            ValueFromPipelineByPropertyName=$true,
+            Position=0)]
+        [Parameter(ParameterSetName = 'Proxy',
+            Mandatory=$true,
             ValueFromPipelineByPropertyName=$true,
             Position=0)]
         [string]$Domain,
 
         # VirusToral API Key.
-        [Parameter(Mandatory=$false)]
+        [Parameter(ParameterSetName = 'Direct',
+            Mandatory=$true,
+            ValueFromPipelineByPropertyName=$false)]
+        [Parameter(ParameterSetName = 'Proxy',
+            Mandatory=$true,
+            ValueFromPipelineByPropertyName=$false)]
         [string]$APIKey,
 
-        [Parameter(Mandatory=$false)]
+        [Parameter(ParameterSetName = 'Direct',
+            Mandatory=$true,
+            ValueFromPipelineByPropertyName=$false)]
+        [Parameter(ParameterSetName = 'Proxy',
+            Mandatory=$true,
+            ValueFromPipelineByPropertyName=$false)]
         [string]$CertificateThumbprint,
 
-        [Parameter(Mandatory=$false)]
+        [Parameter(ParameterSetName = 'Proxy',
+            Mandatory=$true,
+            ValueFromPipelineByPropertyName=$true)]
         [string]$Proxy,
  
-        [Parameter(Mandatory=$false)]
+        [Parameter(ParameterSetName = 'Proxy',
+            Mandatory=$true,
+            ValueFromPipelineByPropertyName=$true)]
         [Management.Automation.PSCredential]$ProxyCredential,
 
-        [Parameter(Mandatory=$false)]
+        [Parameter(ParameterSetName = 'Proxy',
+            Mandatory=$true,
+            ValueFromPipelineByPropertyName=$true)]
         [Switch]$ProxyUseDefaultCredentials
     )
 
@@ -241,30 +283,51 @@ function Get-VTDomainReport
 #  .ExternalHelp Posh-VirusTotal.Help.xml
 function Get-VTFileReport
 {
-    [CmdletBinding()]
+    [CmdletBinding(DefaultParameterSetName = 'Direct')]
     Param
     (
         # File MD5 Checksum, File SHA1 Checksum, File SHA256 Checksum or ScanID to query.
-        [Parameter(Mandatory=$true,
+        [Parameter(ParameterSetName = 'Direct',
+            Mandatory=$true,
+            ValueFromPipelineByPropertyName=$true,
+            Position=0)]
+        [Parameter(ParameterSetName = 'Proxy',
+            Mandatory=$true,
             ValueFromPipelineByPropertyName=$true,
             Position=0)]
         [ValidateCount(1,4)]
         [string[]]$Resource,
 
         # VirusToral API Key.
-        [Parameter(Mandatory=$false)]
+        [Parameter(ParameterSetName = 'Direct',
+            Mandatory=$true,
+            ValueFromPipelineByPropertyName=$false)]
+        [Parameter(ParameterSetName = 'Proxy',
+            Mandatory=$true,
+            ValueFromPipelineByPropertyName=$false)]
         [string]$APIKey,
 
-        [Parameter(Mandatory=$false)]
+        [Parameter(ParameterSetName = 'Direct',
+            Mandatory=$true,
+            ValueFromPipelineByPropertyName=$false)]
+        [Parameter(ParameterSetName = 'Proxy',
+            Mandatory=$true,
+            ValueFromPipelineByPropertyName=$false)]
         [string]$CertificateThumbprint,
 
-        [Parameter(Mandatory=$false)]
+        [Parameter(ParameterSetName = 'Proxy',
+            Mandatory=$true,
+            ValueFromPipelineByPropertyName=$true)]
         [string]$Proxy,
  
-        [Parameter(Mandatory=$false)]
+        [Parameter(ParameterSetName = 'Proxy',
+            Mandatory=$true,
+            ValueFromPipelineByPropertyName=$true)]
         [Management.Automation.PSCredential]$ProxyCredential,
 
-        [Parameter(Mandatory=$false)]
+        [Parameter(ParameterSetName = 'Proxy',
+            Mandatory=$true,
+            ValueFromPipelineByPropertyName=$true)]
         [Switch]$ProxyUseDefaultCredentials
     )
 
@@ -355,34 +418,60 @@ function Get-VTFileReport
 #  .ExternalHelp Posh-VirusTotal.Help.xml
 function Get-VTURLReport
 {
-    [CmdletBinding()]
+    [CmdletBinding(DefaultParameterSetName = 'Direct')]
     Param
     (
         # URL or ScanID to query.
-        [Parameter(Mandatory=$true,
+        [Parameter(ParameterSetName = 'Direct',
+            Mandatory=$true,
+            ValueFromPipelineByPropertyName=$true,
+            Position=0)]
+        [Parameter(ParameterSetName = 'Proxy',
+            Mandatory=$true,
             ValueFromPipelineByPropertyName=$true,
             Position=0)]
         [ValidateCount(1,4)]
         [string[]]$Resource,
 
         # VirusToral API Key.
-        [Parameter(Mandatory=$false)]
+        [Parameter(ParameterSetName = 'Direct',
+            Mandatory=$true,
+            ValueFromPipelineByPropertyName=$false)]
+        [Parameter(ParameterSetName = 'Proxy',
+            Mandatory=$true,
+            ValueFromPipelineByPropertyName=$false)]
         [string]$APIKey,
 
         # Automatically submit the URL for analysis if no report is found for it in VirusTotal.
-        [Parameter(Mandatory=$false)]
+        [Parameter(ParameterSetName = 'Direct',
+            Mandatory=$true,
+            ValueFromPipelineByPropertyName=$false)]
+        [Parameter(ParameterSetName = 'Proxy',
+            Mandatory=$true,
+            ValueFromPipelineByPropertyName=$false)]
         [switch]$Scan,
 
-        [Parameter(Mandatory=$false)]
+        [Parameter(ParameterSetName = 'Direct',
+            Mandatory=$true,
+            ValueFromPipelineByPropertyName=$false)]
+        [Parameter(ParameterSetName = 'Proxy',
+            Mandatory=$true,
+            ValueFromPipelineByPropertyName=$false)]
         [string]$CertificateThumbprint,
 
-        [Parameter(Mandatory=$false)]
+        [Parameter(ParameterSetName = 'Proxy',
+            Mandatory=$true,
+            ValueFromPipelineByPropertyName=$true)]
         [string]$Proxy,
  
-        [Parameter(Mandatory=$false)]
+        [Parameter(ParameterSetName = 'Proxy',
+            Mandatory=$true,
+            ValueFromPipelineByPropertyName=$true)]
         [Management.Automation.PSCredential]$ProxyCredential,
 
-        [Parameter(Mandatory=$false)]
+        [Parameter(ParameterSetName = 'Proxy',
+            Mandatory=$true,
+            ValueFromPipelineByPropertyName=$true)]
         [Switch]$ProxyUseDefaultCredentials
     )
 
@@ -483,34 +572,60 @@ function Get-VTURLReport
 #  .ExternalHelp Posh-VirusTotal.Help.xml
 function Submit-VTURL
 {
-    [CmdletBinding()]
+    [CmdletBinding(DefaultParameterSetName = 'Direct')]
     Param
     (
         # URL or ScanID to query.
-        [Parameter(Mandatory=$true,
+        [Parameter(ParameterSetName = 'Direct',
+            Mandatory=$true,
+            ValueFromPipelineByPropertyName=$true,
+            Position=0)]
+        [Parameter(ParameterSetName = 'Proxy',
+            Mandatory=$true,
             ValueFromPipelineByPropertyName=$true,
             Position=0)]
         [ValidateCount(1,4)]
         [string[]]$URL,
 
         # VirusToral API Key.
-        [Parameter(Mandatory=$false)]
+        [Parameter(ParameterSetName = 'Direct',
+            Mandatory=$true,
+            ValueFromPipelineByPropertyName=$false)]
+        [Parameter(ParameterSetName = 'Proxy',
+            Mandatory=$true,
+            ValueFromPipelineByPropertyName=$false)]
         [string]$APIKey,
 
         # Automatically submit the URL for analysis if no report is found for it in VirusTotal.
-        [Parameter(Mandatory=$false)]
+        [Parameter(ParameterSetName = 'Direct',
+            Mandatory=$true,
+            ValueFromPipelineByPropertyName=$false)]
+        [Parameter(ParameterSetName = 'Proxy',
+            Mandatory=$true,
+            ValueFromPipelineByPropertyName=$false)]
         [switch]$Scan,
 
-        [Parameter(Mandatory=$false)]
+        [Parameter(ParameterSetName = 'Direct',
+            Mandatory=$true,
+            ValueFromPipelineByPropertyName=$false)]
+        [Parameter(ParameterSetName = 'Proxy',
+            Mandatory=$true,
+            ValueFromPipelineByPropertyName=$false)]
         [string]$CertificateThumbprint,
 
-        [Parameter(Mandatory=$false)]
+        [Parameter(ParameterSetName = 'Proxy',
+            Mandatory=$true,
+            ValueFromPipelineByPropertyName=$true)]
         [string]$Proxy,
  
-        [Parameter(Mandatory=$false)]
+        [Parameter(ParameterSetName = 'Proxy',
+            Mandatory=$true,
+            ValueFromPipelineByPropertyName=$true)]
         [Management.Automation.PSCredential]$ProxyCredential,
 
-        [Parameter(Mandatory=$false)]
+        [Parameter(ParameterSetName = 'Proxy',
+            Mandatory=$true,
+            ValueFromPipelineByPropertyName=$true)]
         [Switch]$ProxyUseDefaultCredentials
     )
 
@@ -608,19 +723,44 @@ function Submit-VTURL
 #  .ExternalHelp Posh-VirusTotal.Help.xml
 function Submit-VTFile
 {
-    [CmdletBinding()]
+    [CmdletBinding(DefaultParameterSetName = 'Direct')]
     Param
     (
         # URL or ScanID to query.
-        [Parameter(Mandatory=$true,
+        [Parameter(ParameterSetName = 'Direct',
+            Mandatory=$true,
+            ValueFromPipelineByPropertyName=$true,
+            Position=0)]
+        [Parameter(ParameterSetName = 'Proxy',
+            Mandatory=$true,
             ValueFromPipelineByPropertyName=$true,
             Position=0)]
         [ValidateScript({Test-Path $_ -PathType Leaf})]
         [string]$File,
 
         # VirusToral API Key.
-        [Parameter(Mandatory=$false)]
-        [string]$APIKey
+        [Parameter(ParameterSetName = 'Direct',
+            Mandatory=$true,
+            ValueFromPipelineByPropertyName=$false)]
+        [Parameter(ParameterSetName = 'Proxy',
+            Mandatory=$true,
+            ValueFromPipelineByPropertyName=$false)]
+        [string]$APIKey,
+
+        [Parameter(ParameterSetName = 'Proxy',
+            Mandatory=$true,
+            ValueFromPipelineByPropertyName=$true)]
+        [string]$Proxy,
+ 
+        [Parameter(ParameterSetName = 'Proxy',
+            Mandatory=$true,
+            ValueFromPipelineByPropertyName=$true)]
+        [Management.Automation.PSCredential]$ProxyCredential,
+
+        [Parameter(ParameterSetName = 'Proxy',
+            Mandatory=$true,
+            ValueFromPipelineByPropertyName=$true)]
+        [Switch]$ProxyUseDefaultCredentials
     )
 
     Begin
@@ -646,13 +786,33 @@ function Submit-VTFile
             Write-Error "VirusTotal has a limit of 64MB per file submited" -ErrorAction Stop
         }
    
-        $req = [System.Net.httpWebRequest][System.Net.WebRequest]::Create("http://www.virustotal.com/vtapi/v2/file/scan")
+        $req = [System.Net.WebRequest]::Create("http://www.virustotal.com/vtapi/v2/file/scan")
         #$req.Headers = $headers
         $req.Method = "POST"
-        $req.AllowWriteStreamBuffering = $true;
-        $req.SendChunked = $false;
-        $req.KeepAlive = $true;
+        $req.AllowWriteStreamBuffering = $true
+        $req.SendChunked = $false
+        $req.KeepAlive = $true
 
+        # Set the Proxy values.
+        if ($PSCmdlet.ParameterSetName -eq 'Proxy')
+        {
+            $ProxyObject = New-Object System.Net.WebProxy
+            $ProxyObject.Address = [uri]$Proxy
+
+            if ($ProxyUseDefaultCredentials)
+            {
+                $ProxyObject.UseDefaultCredentials = $ProxyUseDefaultCredentials
+            }
+
+            if ($ProxyCredential)
+            {
+                $ProxyObject.Credentials = $ProxyCredential.GetNetworkCredential()
+            }
+
+            $req.Proxy = $ProxyObject
+        }
+
+        # Set the proper headers.
         $headers = New-Object -TypeName System.Net.WebHeaderCollection
 
         # Prep the POST Headers for the message
@@ -718,7 +878,7 @@ function Submit-VTFile
 #  .ExternalHelp Posh-VirusTotal.Help.xml
 function Get-PoshVTVersion
  {
-     [CmdletBinding(DefaultParameterSetName="Index")]
+     [CmdletBinding()]
      [OutputType([pscustomobject])]
      Param
      ()
@@ -766,24 +926,40 @@ function Get-PoshVTVersion
 #  .ExternalHelp Posh-VirusTotal.Help.xml
  function Get-VTAPIKeyInfo
 {
-    [CmdletBinding()]
+    [CmdletBinding(DefaultParameterSetName = 'Direct')]
     Param
     (
 
         # VirusToral API Key.
-        [Parameter(Mandatory=$false)]
+        [Parameter(ParameterSetName = 'Direct',
+            Mandatory=$true,
+            ValueFromPipelineByPropertyName=$false)]
+        [Parameter(ParameterSetName = 'Proxy',
+            Mandatory=$true,
+            ValueFromPipelineByPropertyName=$false)]
         [string]$APIKey,
 
-        [Parameter(Mandatory=$false)]
+        [Parameter(ParameterSetName = 'Direct',
+            Mandatory=$true,
+            ValueFromPipelineByPropertyName=$false)]
+        [Parameter(ParameterSetName = 'Proxy',
+            Mandatory=$true,
+            ValueFromPipelineByPropertyName=$false)]
         [string]$CertificateThumbprint,
 
-        [Parameter(Mandatory=$false)]
+        [Parameter(ParameterSetName = 'Proxy',
+            Mandatory=$true,
+            ValueFromPipelineByPropertyName=$true)]
         [string]$Proxy,
  
-        [Parameter(Mandatory=$false)]
+        [Parameter(ParameterSetName = 'Proxy',
+            Mandatory=$true,
+            ValueFromPipelineByPropertyName=$true)]
         [Management.Automation.PSCredential]$ProxyCredential,
 
-        [Parameter(Mandatory=$false)]
+        [Parameter(ParameterSetName = 'Proxy',
+            Mandatory=$true,
+            ValueFromPipelineByPropertyName=$true)]
         [Switch]$ProxyUseDefaultCredentials
     )
 
@@ -873,23 +1049,39 @@ function Get-PoshVTVersion
 #  .ExternalHelp Posh-VirusTotal.Help.xml
 function Get-VTSpecialURL
 {
-    [CmdletBinding()]
+    [CmdletBinding(DefaultParameterSetName = 'Direct')]
     Param
     (
         # VirusToral Private API Key.
-        [Parameter(Mandatory=$false)]
+        [Parameter(ParameterSetName = 'Direct',
+            Mandatory=$true,
+            ValueFromPipelineByPropertyName=$false)]
+        [Parameter(ParameterSetName = 'Proxy',
+            Mandatory=$true,
+            ValueFromPipelineByPropertyName=$false)]
         [string]$APIKey,
 
-        [Parameter(Mandatory=$false)]
+        [Parameter(ParameterSetName = 'Direct',
+            Mandatory=$true,
+            ValueFromPipelineByPropertyName=$false)]
+        [Parameter(ParameterSetName = 'Proxy',
+            Mandatory=$true,
+            ValueFromPipelineByPropertyName=$false)]
         [string]$CertificateThumbprint,
 
-        [Parameter(Mandatory=$false)]
+        [Parameter(ParameterSetName = 'Proxy',
+            Mandatory=$true,
+            ValueFromPipelineByPropertyName=$true)]
         [string]$Proxy,
  
-        [Parameter(Mandatory=$false)]
+        [Parameter(ParameterSetName = 'Proxy',
+            Mandatory=$true,
+            ValueFromPipelineByPropertyName=$true)]
         [Management.Automation.PSCredential]$ProxyCredential,
 
-        [Parameter(Mandatory=$false)]
+        [Parameter(ParameterSetName = 'Proxy',
+            Mandatory=$true,
+            ValueFromPipelineByPropertyName=$true)]
         [Switch]$ProxyUseDefaultCredentials
     )
 
@@ -983,29 +1175,50 @@ function Get-VTSpecialURL
 #  .ExternalHelp Posh-VirusTotal.Help.xml
 function Get-VTFileComment
 {
-    [CmdletBinding()]
+    [CmdletBinding(DefaultParameterSetName = 'Direct')]
     Param
     (
         # File MD5, SHA1 or SHA256 Checksum to get comments from.
-        [Parameter(Mandatory=$true,
+        [Parameter(ParameterSetName = 'Direct',
+            Mandatory=$true,
+            ValueFromPipelineByPropertyName=$true,
+            Position=0)]
+        [Parameter(ParameterSetName = 'Proxy',
+            Mandatory=$true,
             ValueFromPipelineByPropertyName=$true,
             Position=0)]
         [string]$Resource,
 
         # VirusToral API Key.
-        [Parameter(Mandatory=$false)]
+        [Parameter(ParameterSetName = 'Direct',
+            Mandatory=$true,
+            ValueFromPipelineByPropertyName=$false)]
+        [Parameter(ParameterSetName = 'Proxy',
+            Mandatory=$true,
+            ValueFromPipelineByPropertyName=$false)]
         [string]$APIKey,
 
-        [Parameter(Mandatory=$false)]
+        [Parameter(ParameterSetName = 'Direct',
+            Mandatory=$true,
+            ValueFromPipelineByPropertyName=$false)]
+        [Parameter(ParameterSetName = 'Proxy',
+            Mandatory=$true,
+            ValueFromPipelineByPropertyName=$false)]
         [string]$CertificateThumbprint,
 
-        [Parameter(Mandatory=$false)]
+        [Parameter(ParameterSetName = 'Proxy',
+            Mandatory=$true,
+            ValueFromPipelineByPropertyName=$true)]
         [string]$Proxy,
  
-        [Parameter(Mandatory=$false)]
+        [Parameter(ParameterSetName = 'Proxy',
+            Mandatory=$true,
+            ValueFromPipelineByPropertyName=$true)]
         [Management.Automation.PSCredential]$ProxyCredential,
 
-        [Parameter(Mandatory=$false)]
+        [Parameter(ParameterSetName = 'Proxy',
+            Mandatory=$true,
+            ValueFromPipelineByPropertyName=$true)]
         [Switch]$ProxyUseDefaultCredentials
     
     )
@@ -1100,32 +1313,58 @@ function Get-VTFileComment
 #  .ExternalHelp Posh-VirusTotal.Help.xml
 function Set-VTFileComment
 {
-    [CmdletBinding()]
+    [CmdletBinding(DefaultParameterSetName = 'Direct')]
     Param
     (
         # File MD5, SHA1 or SHA256 Checksum to comment on.
-        [Parameter(Mandatory=$true,
+        [Parameter(ParameterSetName = 'Direct',
+            Mandatory=$true,
+            ValueFromPipelineByPropertyName=$true,
+            Position=0)]
+        [Parameter(ParameterSetName = 'Proxy',
+            Mandatory=$true,
             ValueFromPipelineByPropertyName=$true,
             Position=0)]
         [string]$Resource,
 
         # VirusToral API Key.
-        [Parameter(Mandatory=$false)]
+        [Parameter(ParameterSetName = 'Direct',
+            Mandatory=$true,
+            ValueFromPipelineByPropertyName=$false)]
+        [Parameter(ParameterSetName = 'Proxy',
+            Mandatory=$true,
+            ValueFromPipelineByPropertyName=$false)]
         [string]$APIKey,
 
-        [Parameter(Mandatory=$true)]
+        [Parameter(ParameterSetName = 'Direct',
+            Mandatory=$true,
+            ValueFromPipelineByPropertyName=$true)]
+        [Parameter(ParameterSetName = 'Proxy',
+            Mandatory=$true,
+            ValueFromPipelineByPropertyName=$true)]
         [string]$Comment,
 
-        [Parameter(Mandatory=$false)]
+        [Parameter(ParameterSetName = 'Direct',
+            Mandatory=$true,
+            ValueFromPipelineByPropertyName=$false)]
+        [Parameter(ParameterSetName = 'Proxy',
+            Mandatory=$true,
+            ValueFromPipelineByPropertyName=$false)]
         [string]$CertificateThumbprint,
 
-        [Parameter(Mandatory=$false)]
+        [Parameter(ParameterSetName = 'Proxy',
+            Mandatory=$true,
+            ValueFromPipelineByPropertyName=$true)]
         [string]$Proxy,
  
-        [Parameter(Mandatory=$false)]
+        [Parameter(ParameterSetName = 'Proxy',
+            Mandatory=$true,
+            ValueFromPipelineByPropertyName=$true)]
         [Management.Automation.PSCredential]$ProxyCredential,
 
-        [Parameter(Mandatory=$false)]
+        [Parameter(ParameterSetName = 'Proxy',
+            Mandatory=$true,
+            ValueFromPipelineByPropertyName=$true)]
         [Switch]$ProxyUseDefaultCredentials
     
     )
@@ -1220,49 +1459,95 @@ function Set-VTFileComment
 #  .ExternalHelp Posh-VirusTotal.Help.xml
 function Set-VTFileRescan
 {
-    [CmdletBinding()]
+    [CmdletBinding(DefaultParameterSetName = 'Direct')]
     Param
     (
         # File MD5 Checksum, File SHA1 Checksum, File SHA256 Checksum or ScanID to query.
-        [Parameter(Mandatory=$true,
+        [Parameter(ParameterSetName = 'Direct',
+            Mandatory=$true,
+            ValueFromPipelineByPropertyName=$true,
+            Position=0)]
+        [Parameter(ParameterSetName = 'Proxy',
+            Mandatory=$true,
             ValueFromPipelineByPropertyName=$true,
             Position=0)]
         [string]$Resource,
 
         # VirusToral API Key.
-        [Parameter(Mandatory=$false)]
+        [Parameter(ParameterSetName = 'Direct',
+            Mandatory=$true,
+            ValueFromPipelineByPropertyName=$false)]
+        [Parameter(ParameterSetName = 'Proxy',
+            Mandatory=$true,
+            ValueFromPipelineByPropertyName=$false)]
         [string]$APIKey,
 
         # Date in which the rescan should be performed. If not specified the rescan will be performed immediately.
-        [Parameter(Mandatory=$false)]
+        [Parameter(ParameterSetName = 'Direct',
+            Mandatory=$true,
+            ValueFromPipelineByPropertyName=$false)]
+        [Parameter(ParameterSetName = 'Proxy',
+            Mandatory=$true,
+            ValueFromPipelineByPropertyName=$false)]
         [datetime]$Date,
 
         # Period in days in which the file should be rescanned.
-        [Parameter(Mandatory=$false)]
+        [Parameter(ParameterSetName = 'Direct',
+            Mandatory=$true,
+            ValueFromPipelineByPropertyName=$false)]
+        [Parameter(ParameterSetName = 'Proxy',
+            Mandatory=$true,
+            ValueFromPipelineByPropertyName=$false)]
         [int32]$Period,
 
         # Used in conjunction with period to specify the number of times the file should be rescanned.
-        [Parameter(Mandatory=$false)]
+        [Parameter(ParameterSetName = 'Direct',
+            Mandatory=$true,
+            ValueFromPipelineByPropertyName=$false)]
+        [Parameter(ParameterSetName = 'Proxy',
+            Mandatory=$true,
+            ValueFromPipelineByPropertyName=$false)]
         [int32]$Repeat,
 
         # An URL where a POST notification should be sent when the rescan finishes.
-        [Parameter(Mandatory=$false)]
+        [Parameter(ParameterSetName = 'Direct',
+            Mandatory=$true,
+            ValueFromPipelineByPropertyName=$false)]
+        [Parameter(ParameterSetName = 'Proxy',
+            Mandatory=$true,
+            ValueFromPipelineByPropertyName=$false)]
         [string]$NotifyURL,
 
         # Indicates if POST notifications should be sent only if the scan results differ from the previous one.
-        [Parameter(Mandatory=$false)]
+        [Parameter(ParameterSetName = 'Direct',
+            Mandatory=$true,
+            ValueFromPipelineByPropertyName=$false)]
+        [Parameter(ParameterSetName = 'Proxy',
+            Mandatory=$true,
+            ValueFromPipelineByPropertyName=$false)]
         [bool]$NotifyChanges,
 
-        [Parameter(Mandatory=$false)]
+        [Parameter(ParameterSetName = 'Direct',
+            Mandatory=$true,
+            ValueFromPipelineByPropertyName=$false)]
+        [Parameter(ParameterSetName = 'Proxy',
+            Mandatory=$true,
+            ValueFromPipelineByPropertyName=$false)]
         [string]$CertificateThumbprint,
 
-        [Parameter(Mandatory=$false)]
+        [Parameter(ParameterSetName = 'Proxy',
+            Mandatory=$true,
+            ValueFromPipelineByPropertyName=$true)]
         [string]$Proxy,
  
-        [Parameter(Mandatory=$false)]
+        [Parameter(ParameterSetName = 'Proxy',
+            Mandatory=$true,
+            ValueFromPipelineByPropertyName=$true)]
         [Management.Automation.PSCredential]$ProxyCredential,
 
-        [Parameter(Mandatory=$false)]
+        [Parameter(ParameterSetName = 'Proxy',
+            Mandatory=$true,
+            ValueFromPipelineByPropertyName=$true)]
         [Switch]$ProxyUseDefaultCredentials
     )
 
@@ -1382,29 +1667,50 @@ function Set-VTFileRescan
 #  .ExternalHelp Posh-VirusTotal.Help.xml
 function Remove-VTFileRescan
 {
-    [CmdletBinding()]
+    [CmdletBinding(DefaultParameterSetName = 'Direct')]
     Param
     (
         # File MD5 Checksum, File SHA1 Checksum, File SHA256 Checksum or ScanID to remove rescan.
-        [Parameter(Mandatory=$true,
+        [Parameter(ParameterSetName = 'Direct',
+            Mandatory=$true,
+            ValueFromPipelineByPropertyName=$true,
+            Position=0)]
+        [Parameter(ParameterSetName = 'Proxy',
+            Mandatory=$true,
             ValueFromPipelineByPropertyName=$true,
             Position=0)]
         [string]$Resource,
 
         # VirusToral API Key.
-        [Parameter(Mandatory=$false)]
+        [Parameter(ParameterSetName = 'Direct',
+            Mandatory=$true,
+            ValueFromPipelineByPropertyName=$false)]
+        [Parameter(ParameterSetName = 'Proxy',
+            Mandatory=$true,
+            ValueFromPipelineByPropertyName=$false)]
         [string]$APIKey,
 
-        [Parameter(Mandatory=$false)]
+        [Parameter(ParameterSetName = 'Direct',
+            Mandatory=$true,
+            ValueFromPipelineByPropertyName=$false)]
+        [Parameter(ParameterSetName = 'Proxy',
+            Mandatory=$true,
+            ValueFromPipelineByPropertyName=$false)]
         [string]$CertificateThumbprint,
 
-        [Parameter(Mandatory=$false)]
+        [Parameter(ParameterSetName = 'Proxy',
+            Mandatory=$true,
+            ValueFromPipelineByPropertyName=$true)]
         [string]$Proxy,
  
-        [Parameter(Mandatory=$false)]
+        [Parameter(ParameterSetName = 'Proxy',
+            Mandatory=$true,
+            ValueFromPipelineByPropertyName=$true)]
         [Management.Automation.PSCredential]$ProxyCredential,
 
-        [Parameter(Mandatory=$false)]
+        [Parameter(ParameterSetName = 'Proxy',
+            Mandatory=$true,
+            ValueFromPipelineByPropertyName=$true)]
         [Switch]$ProxyUseDefaultCredentials
     
     )
@@ -1422,8 +1728,6 @@ function Remove-VTFileRescan
         }
 
         $Body = @{'apikey'= $APIKey}
-
-        
 
         Write-Verbose 'Verifying the API Key.'
         $KeyInfo = Get-VTAPIKeyInfo -APIKey $APIKey
@@ -1504,32 +1808,58 @@ function Remove-VTFileRescan
 #  .ExternalHelp Posh-VirusTotal.Help.xml
 function Get-VTFileScanReport
 {
-    [CmdletBinding()]
+    [CmdletBinding(DefaultParameterSetName = 'Direct')]
     Param
     (
         # File MD5 Checksum, File SHA1 Checksum, File SHA256 Checksum or ScanID of the scan.
-        [Parameter(Mandatory=$true,
+        [Parameter(ParameterSetName = 'Direct',
+            Mandatory=$true,
+            ValueFromPipelineByPropertyName=$true,
+            Position=0)]
+        [Parameter(ParameterSetName = 'Proxy',
+            Mandatory=$true,
             ValueFromPipelineByPropertyName=$true,
             Position=0)]
         [string]$Resource,
 
         # VirusToral API Key.
-        [Parameter(Mandatory=$false)]
+        [Parameter(ParameterSetName = 'Direct',
+            Mandatory=$true,
+            ValueFromPipelineByPropertyName=$false)]
+        [Parameter(ParameterSetName = 'Proxy',
+            Mandatory=$true,
+            ValueFromPipelineByPropertyName=$false)]
         [string]$APIKey,
 
-        [Parameter(Mandatory=$false)]
+        [Parameter(ParameterSetName = 'Direct',
+            Mandatory=$true,
+            ValueFromPipelineByPropertyName=$false)]
+        [Parameter(ParameterSetName = 'Proxy',
+            Mandatory=$true,
+            ValueFromPipelineByPropertyName=$false)]
         [switch]$AllInfo,
 
-        [Parameter(Mandatory=$false)]
+        [Parameter(ParameterSetName = 'Direct',
+            Mandatory=$true,
+            ValueFromPipelineByPropertyName=$false)]
+        [Parameter(ParameterSetName = 'Proxy',
+            Mandatory=$true,
+            ValueFromPipelineByPropertyName=$false)]
         [string]$CertificateThumbprint,
 
-        [Parameter(Mandatory=$false)]
+        [Parameter(ParameterSetName = 'Proxy',
+            Mandatory=$true,
+            ValueFromPipelineByPropertyName=$true)]
         [string]$Proxy,
  
-        [Parameter(Mandatory=$false)]
+        [Parameter(ParameterSetName = 'Proxy',
+            Mandatory=$true,
+            ValueFromPipelineByPropertyName=$true)]
         [Management.Automation.PSCredential]$ProxyCredential,
 
-        [Parameter(Mandatory=$false)]
+        [Parameter(ParameterSetName = 'Proxy',
+            Mandatory=$true,
+            ValueFromPipelineByPropertyName=$true)]
         [Switch]$ProxyUseDefaultCredentials
     
     )
@@ -1630,34 +1960,59 @@ function Get-VTFileScanReport
 #  .ExternalHelp Posh-VirusTotal.Help.xml
 function Get-VTFileBehaviourReport
 {
-    [CmdletBinding()]
+    [CmdletBinding(DefaultParameterSetName = 'Direct')]
     Param
     (
         # File MD5 Checksum, File SHA1 Checksum or File SHA256 Checksum of file.
-        [Parameter(Mandatory=$true,
+        [Parameter(ParameterSetName = 'Direct',
+            Mandatory=$true,
+            ValueFromPipelineByPropertyName=$true,
+            Position=0)]
+        [Parameter(ParameterSetName = 'Proxy',
+            Mandatory=$true,
             ValueFromPipelineByPropertyName=$true,
             Position=0)]
         [string]$Resource,
 
         # VirusToral API Key.
-        [Parameter(Mandatory=$false)]
+        [Parameter(ParameterSetName = 'Direct',
+            Mandatory=$true,
+            ValueFromPipelineByPropertyName=$false)]
+        [Parameter(ParameterSetName = 'Proxy',
+            Mandatory=$true,
+            ValueFromPipelineByPropertyName=$false)]
         [string]$APIKey,
 
         # File name and path to save Behaviour report as a Cuckoo JSON Dump.
-        [Parameter(Mandatory=$true,
-                   Position=1)]
+        [Parameter(ParameterSetName = 'Direct',
+            Mandatory=$true,
+            ValueFromPipelineByPropertyName=$true)]
+        [Parameter(ParameterSetName = 'Proxy',
+            Mandatory=$true,
+            ValueFromPipelineByPropertyName=$true)]
         [string]$Report,
 
-        [Parameter(Mandatory=$false)]
+        [Parameter(ParameterSetName = 'Direct',
+            Mandatory=$true,
+            ValueFromPipelineByPropertyName=$false)]
+        [Parameter(ParameterSetName = 'Proxy',
+            Mandatory=$true,
+            ValueFromPipelineByPropertyName=$false)]
         [string]$CertificateThumbprint,
 
-        [Parameter(Mandatory=$false)]
+        [Parameter(ParameterSetName = 'Proxy',
+            Mandatory=$true,
+            ValueFromPipelineByPropertyName=$true)]
         [string]$Proxy,
  
-        [Parameter(Mandatory=$false)]
+        [Parameter(ParameterSetName = 'Proxy',
+            Mandatory=$true,
+            ValueFromPipelineByPropertyName=$true)]
         [Management.Automation.PSCredential]$ProxyCredential,
 
-        [Parameter(Mandatory=$false)]
+        [Parameter(ParameterSetName = 'Proxy',
+            Mandatory=$true,
+            ValueFromPipelineByPropertyName=$true)]
         [Switch]$ProxyUseDefaultCredentials
 
     
@@ -1755,34 +2110,61 @@ function Get-VTFileBehaviourReport
 #  .ExternalHelp Posh-VirusTotal.Help.xml
 function Get-VTFileSample
 {
-    [CmdletBinding()]
+    [CmdletBinding(DefaultParameterSetName = 'Direct')]
     Param
     (
         # File MD5 Checksum, File SHA1 Checksum or File SHA256 Checksum of file.
-        [Parameter(Mandatory=$true,
+        [Parameter(ParameterSetName = 'Direct',
+            Mandatory=$true,
+            ValueFromPipelineByPropertyName=$true,
+            Position=0)]
+        [Parameter(ParameterSetName = 'Proxy',
+            Mandatory=$true,
             ValueFromPipelineByPropertyName=$true,
             Position=0)]
         [string]$Resource,
 
         # VirusToral API Key.
-        [Parameter(Mandatory=$false)]
+        [Parameter(ParameterSetName = 'Direct',
+            Mandatory=$true,
+            ValueFromPipelineByPropertyName=$false)]
+        [Parameter(ParameterSetName = 'Proxy',
+            Mandatory=$true,
+            ValueFromPipelineByPropertyName=$false)]
         [string]$APIKey,
 
         # File name and path to save sample.
-        [Parameter(Mandatory=$true,
-                   Position=1)]
+        [Parameter(ParameterSetName = 'Direct',
+            Mandatory=$true,
+            ValueFromPipelineByPropertyName=$true,
+            Position = 1)]
+        [Parameter(ParameterSetName = 'Proxy',
+            Mandatory=$true,
+            ValueFromPipelineByPropertyName=$true,
+            Position = 1)]
         [string]$File,
 
-        [Parameter(Mandatory=$false)]
+        [Parameter(ParameterSetName = 'Direct',
+            Mandatory=$true,
+            ValueFromPipelineByPropertyName=$false)]
+        [Parameter(ParameterSetName = 'Proxy',
+            Mandatory=$true,
+            ValueFromPipelineByPropertyName=$false)]
         [string]$CertificateThumbprint,
 
-        [Parameter(Mandatory=$false)]
+        [Parameter(ParameterSetName = 'Proxy',
+            Mandatory=$true,
+            ValueFromPipelineByPropertyName=$true)]
         [string]$Proxy,
  
-        [Parameter(Mandatory=$false)]
+        [Parameter(ParameterSetName = 'Proxy',
+            Mandatory=$true,
+            ValueFromPipelineByPropertyName=$true)]
         [Management.Automation.PSCredential]$ProxyCredential,
 
-        [Parameter(Mandatory=$false)]
+        [Parameter(ParameterSetName = 'Proxy',
+            Mandatory=$true,
+            ValueFromPipelineByPropertyName=$true)]
         [Switch]$ProxyUseDefaultCredentials
     
     )
@@ -1880,34 +2262,61 @@ function Get-VTFileSample
 #  .ExternalHelp Posh-VirusTotal.Help.xml
 function Get-VTFileNetworkTraffic
 {
-    [CmdletBinding()]
+    [CmdletBinding(DefaultParameterSetName = 'Direct')]
     Param
     (
         # File MD5 Checksum, File SHA1 Checksum or File SHA256 Checksum.
-        [Parameter(Mandatory=$true,
+        [Parameter(ParameterSetName = 'Direct',
+            Mandatory=$true,
+            ValueFromPipelineByPropertyName=$true,
+            Position=0)]
+        [Parameter(ParameterSetName = 'Proxy',
+            Mandatory=$true,
             ValueFromPipelineByPropertyName=$true,
             Position=0)]
         [string]$Hash,
 
         # VirusToral API Key.
-        [Parameter(Mandatory=$false)]
+        [Parameter(ParameterSetName = 'Direct',
+            Mandatory=$true,
+            ValueFromPipelineByPropertyName=$false)]
+        [Parameter(ParameterSetName = 'Proxy',
+            Mandatory=$true,
+            ValueFromPipelineByPropertyName=$false)]
         [string]$APIKey,
 
         # File name and path to save Network Traffic in PCAP format.
-        [Parameter(Mandatory=$true,
-                   Position=1)]
+        [Parameter(ParameterSetName = 'Direct',
+            Mandatory=$true,
+            ValueFromPipelineByPropertyName=$true,
+            Position = 1)]
+        [Parameter(ParameterSetName = 'Proxy',
+            Mandatory=$true,
+            ValueFromPipelineByPropertyName=$true,
+            Position = 1)]
         [string]$File,
 
-        [Parameter(Mandatory=$false)]
+        [Parameter(ParameterSetName = 'Direct',
+            Mandatory=$true,
+            ValueFromPipelineByPropertyName=$false)]
+        [Parameter(ParameterSetName = 'Proxy',
+            Mandatory=$true,
+            ValueFromPipelineByPropertyName=$false)]
         [string]$CertificateThumbprint,
 
-        [Parameter(Mandatory=$false)]
+        [Parameter(ParameterSetName = 'Proxy',
+            Mandatory=$true,
+            ValueFromPipelineByPropertyName=$true)]
         [string]$Proxy,
  
-        [Parameter(Mandatory=$false)]
+        [Parameter(ParameterSetName = 'Proxy',
+            Mandatory=$true,
+            ValueFromPipelineByPropertyName=$true)]
         [Management.Automation.PSCredential]$ProxyCredential,
 
-        [Parameter(Mandatory=$false)]
+        [Parameter(ParameterSetName = 'Proxy',
+            Mandatory=$true,
+            ValueFromPipelineByPropertyName=$true)]
         [Switch]$ProxyUseDefaultCredentials
 
     
@@ -2008,33 +2417,59 @@ function Get-VTFileNetworkTraffic
 #  .ExternalHelp Posh-VirusTotal.Help.xml
 function Search-VTAdvancedReversed
 {
-    [CmdletBinding()]
+    [CmdletBinding(DefaultParameterSetName = 'Direct')]
     Param
     (
         # A search modifier compliant file search query..
-        [Parameter(Mandatory=$true,
+        [Parameter(ParameterSetName = 'Direct',
+            Mandatory=$true,
+            ValueFromPipelineByPropertyName=$true,
+            Position=0)]
+        [Parameter(ParameterSetName = 'Proxy',
+            Mandatory=$true,
             ValueFromPipelineByPropertyName=$true,
             Position=0)]
         [string]$Query,
 
         # VirusToral API Key.
-        [Parameter(Mandatory=$false)]
+        [Parameter(ParameterSetName = 'Direct',
+            Mandatory=$true,
+            ValueFromPipelineByPropertyName=$false)]
+        [Parameter(ParameterSetName = 'Proxy',
+            Mandatory=$true,
+            ValueFromPipelineByPropertyName=$false)]
         [string]$APIKey,
 
         # The offset value returned by a previously issued identical query.
-        [Parameter(Mandatory=$false)]
+        [Parameter(ParameterSetName = 'Direct',
+            Mandatory=$true,
+            ValueFromPipelineByPropertyName=$false)]
+        [Parameter(ParameterSetName = 'Proxy',
+            Mandatory=$true,
+            ValueFromPipelineByPropertyName=$false)]
         [int]$OffSet,
 
-        [Parameter(Mandatory=$false)]
+        [Parameter(ParameterSetName = 'Direct',
+            Mandatory=$true,
+            ValueFromPipelineByPropertyName=$false)]
+        [Parameter(ParameterSetName = 'Proxy',
+            Mandatory=$true,
+            ValueFromPipelineByPropertyName=$false)]
         [string]$CertificateThumbprint,
 
-        [Parameter(Mandatory=$false)]
+        [Parameter(ParameterSetName = 'Proxy',
+            Mandatory=$true,
+            ValueFromPipelineByPropertyName=$true)]
         [string]$Proxy,
  
-        [Parameter(Mandatory=$false)]
+        [Parameter(ParameterSetName = 'Proxy',
+            Mandatory=$true,
+            ValueFromPipelineByPropertyName=$true)]
         [Management.Automation.PSCredential]$ProxyCredential,
 
-        [Parameter(Mandatory=$false)]
+        [Parameter(ParameterSetName = 'Proxy',
+            Mandatory=$true,
+            ValueFromPipelineByPropertyName=$true)]
         [Switch]$ProxyUseDefaultCredentials
     
     )

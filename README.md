@@ -68,7 +68,9 @@ Function        Submit-VTURL                                       Posh-VirusTot
 </pre>
 
 # Change Log
-
+## Version 1.1
+* Added support for connecting thru a HTTP Proxy and provide credentials for the proxy if necessary.
+* Certificate pinning using the Certificate Thumbprint.
 ## Version 1.0
 
 * First public version of the module supporting PowerShell v3.0 and v4.0
