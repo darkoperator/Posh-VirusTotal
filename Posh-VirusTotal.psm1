@@ -7,7 +7,12 @@ function Set-VTAPIKey
     (
         # VirusToral API Key.
         [Parameter(Mandatory=$true)]
-        [string]$APIKey
+        [string]$APIKey,
+
+        [Parameter(Mandatory=$true,
+                   ValueFromPipelineByPropertyName=$true,
+                   Position=1)]
+        [securestring]$MasterPassword
     )
 
     Begin
@@ -16,12 +21,69 @@ function Set-VTAPIKey
     Process
     {
         $Global:VTAPIKey = $APIKey
+        $SecureKeyString = ConvertTo-SecureString -String $APIKey -AsPlainText -Force
+        $EncryptedString = $SecureKeyString | ConvertFrom-SecureString -SecureKey $MasterPassword
+
+        $FolderName = "Posh-VirusTotal"
+        $ConfigName = "api.key"
+        
+        if (!(Test-Path "$($env:AppData)\$FolderName"))
+        {
+            Write-Verbose -Message "Seems this is the first time the config has been set."
+            Write-Verbose -Message "Creating folder $("$($env:AppData)\$FolderName")"
+            New-Item -ItemType directory -Path "$($env:AppData)\$FolderName" | Out-Null
+        }
+        
+        Write-Verbose -Message "Saving the information to configuration file $("$($env:AppData)\$FolderName\$ConfigName")"
+        "$($EncryptedString)"  | Set-Content  "$($env:AppData)\$FolderName\$ConfigName" -Force
     }
     End
     {
     }
 }
 
+#  .ExternalHelp Posh-VirusTotal.Help.xml
+function Read-VTAPIKey
+{
+    [CmdletBinding()]
+
+    Param
+    (
+
+        [Parameter(Mandatory=$true,
+                   ValueFromPipelineByPropertyName=$true,
+                   Position=0)]
+        [securestring]$MasterPassword
+    )
+
+    Begin
+    {
+        # Test if configuration file exists.
+        if (!(Test-Path "$($env:AppData)\Posh-VirusTotal\api.key"))
+        {
+            throw "Configuration has not been set, Set-VTAPIKey to configure the API Keys."
+        }
+    }
+    Process
+    {
+        Write-Verbose -Message "Reading key from $($env:AppData)\Posh-VirusTotal\api.key."
+        $ConfigFileContent = Get-Content -Path "$($env:AppData)\Posh-VirusTotal\api.key"
+        Write-Debug -Message "Secure string is $($ConfigFileContent)"
+        $SecString = ConvertTo-SecureString -SecureKey $MasterPassword $ConfigFileContent
+
+        # Decrypt the secure string.
+        $SecureStringToBSTR = [Runtime.InteropServices.Marshal]::SecureStringToBSTR($SecString)
+        $APIKey = [Runtime.InteropServices.Marshal]::PtrToStringAuto($SecureStringToBSTR)
+
+        # Set session variable with the key.
+        Write-Verbose -Message "Setting key $($APIKey) to variable for use by other commands."
+        $Global:VTAPIKey = $APIKey
+        Write-Verbose -Message "Key has been set."
+    }
+    End
+    {
+    }
+}
 
 #  .ExternalHelp Posh-VirusTotal.Help.xml
 function Get-VTIPReport
