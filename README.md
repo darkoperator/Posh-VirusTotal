@@ -68,6 +68,9 @@ Function        Submit-VTURL                                       Posh-VirusTot
 </pre>
 
 # Change Log
+## Version 1.2
+* API key is now encrypted on disk when set.
+* Module in Synopsis mention if they are using Private or Public API.
 ## Version 1.1
 * Added support for connecting thru a HTTP Proxy and provide credentials for the proxy if necessary.
 * Certificate pinning using the Certificate Thumbprint.
