@@ -24,12 +24,12 @@ function Set-VTAPIKey
         $SecureKeyString = ConvertTo-SecureString -String $APIKey -AsPlainText -Force
         $EncryptedString = $SecureKeyString | ConvertFrom-SecureString -SecureKey $MasterPassword
 
-        $FolderName = "Posh-VirusTotal"
-        $ConfigName = "api.key"
+        $FolderName = 'Posh-VirusTotal'
+        $ConfigName = 'api.key'
         
         if (!(Test-Path "$($env:AppData)\$FolderName"))
         {
-            Write-Verbose -Message "Seems this is the first time the config has been set."
+            Write-Verbose -Message 'Seems this is the first time the config has been set.'
             Write-Verbose -Message "Creating folder $("$($env:AppData)\$FolderName")"
             New-Item -ItemType directory -Path "$($env:AppData)\$FolderName" | Out-Null
         }
@@ -61,7 +61,7 @@ function Read-VTAPIKey
         # Test if configuration file exists.
         if (!(Test-Path "$($env:AppData)\Posh-VirusTotal\api.key"))
         {
-            throw "Configuration has not been set, Set-VTAPIKey to configure the API Keys."
+            throw 'Configuration has not been set, Set-VTAPIKey to configure the API Keys.'
         }
     }
     Process
@@ -78,7 +78,7 @@ function Read-VTAPIKey
         # Set session variable with the key.
         Write-Verbose -Message "Setting key $($APIKey) to variable for use by other commands."
         $Global:VTAPIKey = $APIKey
-        Write-Verbose -Message "Key has been set."
+        Write-Verbose -Message 'Key has been set.'
     }
     End
     {
@@ -104,18 +104,18 @@ function Get-VTIPReport
 
         # VirusToral API Key.
         [Parameter(ParameterSetName = 'Direct',
-            Mandatory=$true,
+            Mandatory=$false,
             ValueFromPipelineByPropertyName=$false)]
         [Parameter(ParameterSetName = 'Proxy',
-            Mandatory=$true,
+            Mandatory=$false,
             ValueFromPipelineByPropertyName=$false)]
         [string]$APIKey,
 
         [Parameter(ParameterSetName = 'Direct',
-            Mandatory=$true,
+            Mandatory=$false,
             ValueFromPipelineByPropertyName=$false)]
         [Parameter(ParameterSetName = 'Proxy',
-            Mandatory=$true,
+            Mandatory=$false,
             ValueFromPipelineByPropertyName=$false)]
         [string]$CertificateThumbprint,
 
@@ -140,7 +140,7 @@ function Get-VTIPReport
         $URI = 'https://www.virustotal.com/vtapi/v2/ip-address/report'
         if (!(Test-Path variable:Global:VTAPIKey ) -and !($APIKey))
         {
-            throw "No VirusTotal API Key has been specified or set."
+            throw 'No VirusTotal API Key has been specified or set.'
         }
         elseif ((Test-Path variable:Global:VTAPIKey ) -and !($APIKey))
         {
@@ -163,7 +163,7 @@ function Get-VTIPReport
         $Params.Add('ErrorVariable', 'RESTError')
 
         # Check if connection will be made thru a proxy.
-        if ($PsCmdlet.ParameterSetName -eq "Proxy")
+        if ($PsCmdlet.ParameterSetName -eq 'Proxy')
         {
             $Params.Add('Proxy', $Proxy)
 
@@ -190,13 +190,13 @@ function Get-VTIPReport
         
         if ($RESTError)
         {
-            if ($RESTError.Message.Contains("403"))
+            if ($RESTError.Message.Contains('403'))
             {
-                throw "API key is not valid."
+                throw 'API key is not valid.'
             }
-            elseif ($RESTError.Message -like "*204*")
+            elseif ($RESTError.Message -like '*204*')
             {
-                throw "API key rate has been reached."
+                throw 'API key rate has been reached.'
             }
             else
             {
@@ -233,18 +233,18 @@ function Get-VTDomainReport
 
         # VirusToral API Key.
         [Parameter(ParameterSetName = 'Direct',
-            Mandatory=$true,
+            Mandatory=$false,
             ValueFromPipelineByPropertyName=$false)]
         [Parameter(ParameterSetName = 'Proxy',
-            Mandatory=$true,
+            Mandatory=$false,
             ValueFromPipelineByPropertyName=$false)]
         [string]$APIKey,
 
         [Parameter(ParameterSetName = 'Direct',
-            Mandatory=$true,
+            Mandatory=$false,
             ValueFromPipelineByPropertyName=$false)]
         [Parameter(ParameterSetName = 'Proxy',
-            Mandatory=$true,
+            Mandatory=$false,
             ValueFromPipelineByPropertyName=$false)]
         [string]$CertificateThumbprint,
 
@@ -269,7 +269,7 @@ function Get-VTDomainReport
         $URI = 'https://www.virustotal.com/vtapi/v2/domain/report'
         if (!(Test-Path variable:Global:VTAPIKey ) -and !($APIKey))
         {
-            throw "No VirusTotal API Key has been specified or set."
+            throw 'No VirusTotal API Key has been specified or set.'
         }
         elseif ((Test-Path variable:Global:VTAPIKey ) -and !($APIKey))
         {
@@ -291,7 +291,7 @@ function Get-VTDomainReport
         $Params.Add('ErrorVariable', 'RESTError')
 
         # Check if connection will be made thru a proxy.
-        if ($PsCmdlet.ParameterSetName -eq "Proxy")
+        if ($PsCmdlet.ParameterSetName -eq 'Proxy')
         {
             $Params.Add('Proxy', $Proxy)
 
@@ -319,13 +319,13 @@ function Get-VTDomainReport
         
         if ($RESTError)
         {
-            if ($RESTError.Message.Contains("403"))
+            if ($RESTError.Message.Contains('403'))
             {
-                throw "API key is not valid."
+                throw 'API key is not valid.'
             }
-            elseif ($RESTError.Message -like "*204*")
+            elseif ($RESTError.Message -like '*204*')
             {
-                throw "API key rate has been reached."
+                throw 'API key rate has been reached.'
             }
             else
             {
@@ -362,18 +362,18 @@ function Get-VTFileReport
 
         # VirusToral API Key.
         [Parameter(ParameterSetName = 'Direct',
-            Mandatory=$true,
+            Mandatory=$false,
             ValueFromPipelineByPropertyName=$false)]
         [Parameter(ParameterSetName = 'Proxy',
-            Mandatory=$true,
+            Mandatory=$false,
             ValueFromPipelineByPropertyName=$false)]
         [string]$APIKey,
 
         [Parameter(ParameterSetName = 'Direct',
-            Mandatory=$true,
+            Mandatory=$false,
             ValueFromPipelineByPropertyName=$false)]
         [Parameter(ParameterSetName = 'Proxy',
-            Mandatory=$true,
+            Mandatory=$false,
             ValueFromPipelineByPropertyName=$false)]
         [string]$CertificateThumbprint,
 
@@ -398,7 +398,7 @@ function Get-VTFileReport
         $URI = 'https://www.virustotal.com/vtapi/v2/file/report'
         if (!(Test-Path variable:Global:VTAPIKey ) -and !($APIKey))
         {
-            throw "No VirusTotal API Key has been specified or set."
+            throw 'No VirusTotal API Key has been specified or set.'
         }
         elseif ((Test-Path variable:Global:VTAPIKey ) -and !($APIKey))
         {
@@ -407,7 +407,7 @@ function Get-VTFileReport
     }
     Process
     {
-        $QueryResources =  $Resource -join ","
+        $QueryResources =  $Resource -join ','
 
         $OldEAP = $ErrorActionPreference
         $ErrorActionPreference = 'SilentlyContinue'
@@ -422,7 +422,7 @@ function Get-VTFileReport
         $Params.Add('ErrorVariable', 'RESTError')
 
         # Check if connection will be made thru a proxy.
-        if ($PsCmdlet.ParameterSetName -eq "Proxy")
+        if ($PsCmdlet.ParameterSetName -eq 'Proxy')
         {
             $Params.Add('Proxy', $Proxy)
 
@@ -450,13 +450,13 @@ function Get-VTFileReport
         
         if ($RESTError)
         {
-            if ($RESTError.Message.Contains("403"))
+            if ($RESTError.Message.Contains('403'))
             {
-                throw "API key is not valid."
+                throw 'API key is not valid.'
             }
-            elseif ($RESTError.Message -like "*204*")
+            elseif ($RESTError.Message -like '*204*')
             {
-                throw "API key rate has been reached."
+                throw 'API key rate has been reached.'
             }
             else
             {
@@ -497,10 +497,10 @@ function Get-VTURLReport
 
         # VirusToral API Key.
         [Parameter(ParameterSetName = 'Direct',
-            Mandatory=$true,
+            Mandatory=$false,
             ValueFromPipelineByPropertyName=$false)]
         [Parameter(ParameterSetName = 'Proxy',
-            Mandatory=$true,
+            Mandatory=$false,
             ValueFromPipelineByPropertyName=$false)]
         [string]$APIKey,
 
@@ -514,10 +514,10 @@ function Get-VTURLReport
         [switch]$Scan,
 
         [Parameter(ParameterSetName = 'Direct',
-            Mandatory=$true,
+            Mandatory=$false,
             ValueFromPipelineByPropertyName=$false)]
         [Parameter(ParameterSetName = 'Proxy',
-            Mandatory=$true,
+            Mandatory=$false,
             ValueFromPipelineByPropertyName=$false)]
         [string]$CertificateThumbprint,
 
@@ -552,7 +552,7 @@ function Get-VTURLReport
 
         if (!(Test-Path variable:Global:VTAPIKey ) -and !($APIKey))
         {
-            throw "No VirusTotal API Key has been specified or set."
+            throw 'No VirusTotal API Key has been specified or set.'
         }
         elseif ((Test-Path variable:Global:VTAPIKey ) -and !($APIKey))
         {
@@ -561,7 +561,7 @@ function Get-VTURLReport
     }
     Process
     {
-        $QueryResources =  $Resource -join ","
+        $QueryResources =  $Resource -join ','
 
         $OldEAP = $ErrorActionPreference
         $ErrorActionPreference = 'SilentlyContinue'
@@ -577,7 +577,7 @@ function Get-VTURLReport
         $Params.Add('ErrorVariable', 'RESTError')
 
         # Check if connection will be made thru a proxy.
-        if ($PsCmdlet.ParameterSetName -eq "Proxy")
+        if ($PsCmdlet.ParameterSetName -eq 'Proxy')
         {
             $Params.Add('Proxy', $Proxy)
 
@@ -604,13 +604,13 @@ function Get-VTURLReport
         
         if ($RESTError)
         {
-            if ($RESTError.Message.Contains("403"))
+            if ($RESTError.Message.Contains('403'))
             {
-                throw "API key is not valid."
+                throw 'API key is not valid.'
             }
-            elseif ($RESTError.Message -like "*204*")
+            elseif ($RESTError.Message -like '*204*')
             {
-                throw "API key rate has been reached."
+                throw 'API key rate has been reached.'
             }
             else
             {
@@ -651,10 +651,10 @@ function Submit-VTURL
 
         # VirusToral API Key.
         [Parameter(ParameterSetName = 'Direct',
-            Mandatory=$true,
+            Mandatory=$false,
             ValueFromPipelineByPropertyName=$false)]
         [Parameter(ParameterSetName = 'Proxy',
-            Mandatory=$true,
+            Mandatory=$false,
             ValueFromPipelineByPropertyName=$false)]
         [string]$APIKey,
 
@@ -668,10 +668,10 @@ function Submit-VTURL
         [switch]$Scan,
 
         [Parameter(ParameterSetName = 'Direct',
-            Mandatory=$true,
+            Mandatory=$false,
             ValueFromPipelineByPropertyName=$false)]
         [Parameter(ParameterSetName = 'Proxy',
-            Mandatory=$true,
+            Mandatory=$false,
             ValueFromPipelineByPropertyName=$false)]
         [string]$CertificateThumbprint,
 
@@ -705,7 +705,7 @@ function Submit-VTURL
 
         if (!(Test-Path variable:Global:VTAPIKey ) -and !($APIKey))
         {
-            throw "No VirusTotal API Key has been specified or set."
+            throw 'No VirusTotal API Key has been specified or set.'
         }
         elseif ((Test-Path variable:Global:VTAPIKey ) -and !($APIKey))
         {
@@ -728,7 +728,7 @@ function Submit-VTURL
         $Params.Add('ErrorVariable', 'RESTError')
 
         # Check if connection will be made thru a proxy.
-        if ($PsCmdlet.ParameterSetName -eq "Proxy")
+        if ($PsCmdlet.ParameterSetName -eq 'Proxy')
         {
             $Params.Add('Proxy', $Proxy)
 
@@ -755,13 +755,13 @@ function Submit-VTURL
         
         if ($RESTError)
         {
-            if ($RESTError.Message.Contains("403"))
+            if ($RESTError.Message.Contains('403'))
             {
-                throw "API key is not valid."
+                throw 'API key is not valid.'
             }
-            elseif ($RESTError.Message -like "*204*")
+            elseif ($RESTError.Message -like '*204*')
             {
-                throw "API key rate has been reached."
+                throw 'API key rate has been reached.'
             }
             else
             {
@@ -802,10 +802,10 @@ function Submit-VTFile
 
         # VirusToral API Key.
         [Parameter(ParameterSetName = 'Direct',
-            Mandatory=$true,
+            Mandatory=$false,
             ValueFromPipelineByPropertyName=$false)]
         [Parameter(ParameterSetName = 'Proxy',
-            Mandatory=$true,
+            Mandatory=$false,
             ValueFromPipelineByPropertyName=$false)]
         [string]$APIKey,
 
@@ -827,11 +827,11 @@ function Submit-VTFile
 
     Begin
     {
-        $URI = "http://www.virustotal.com/vtapi/v2/file/scan"
+        $URI = 'http://www.virustotal.com/vtapi/v2/file/scan'
 
         if (!(Test-Path variable:Global:VTAPIKey ) -and !($APIKey))
         {
-            Write-Error "No VirusTotal API Key has been specified or set."
+            Write-Error 'No VirusTotal API Key has been specified or set.'
         }
         elseif ((Test-Path variable:Global:VTAPIKey ) -and !($APIKey))
         {
@@ -845,12 +845,12 @@ function Submit-VTFile
         # Check the file size
         if ($fileinfo.length -gt 64mb)
         {
-            Write-Error "VirusTotal has a limit of 64MB per file submited" -ErrorAction Stop
+            Write-Error 'VirusTotal has a limit of 64MB per file submited' -ErrorAction Stop
         }
    
-        $req = [System.Net.WebRequest]::Create("http://www.virustotal.com/vtapi/v2/file/scan")
+        $req = [System.Net.WebRequest]::Create('http://www.virustotal.com/vtapi/v2/file/scan')
         #$req.Headers = $headers
-        $req.Method = "POST"
+        $req.Method = 'POST'
         $req.AllowWriteStreamBuffering = $true
         $req.SendChunked = $false
         $req.KeepAlive = $true
@@ -878,17 +878,17 @@ function Submit-VTFile
         $headers = New-Object -TypeName System.Net.WebHeaderCollection
 
         # Prep the POST Headers for the message
-        $headers.add("apikey",$apikey)
-        $boundary = "----------------------------" + [DateTime]::Now.Ticks.ToString("x")
-        $req.ContentType = "multipart/form-data; boundary=" + $boundary
+        $headers.add('apikey',$apikey)
+        $boundary = '----------------------------' + [DateTime]::Now.Ticks.ToString('x')
+        $req.ContentType = 'multipart/form-data; boundary=' + $boundary
         [byte[]]$boundarybytes = [System.Text.Encoding]::ASCII.GetBytes("`r`n--" + $boundary + "`r`n")
         [string]$formdataTemplate = "`r`n--" + $boundary + "`r`nContent-Disposition: form-data; name=`"{0}`";`r`n`r`n{1}"
-        [string]$formitem = [string]::Format($formdataTemplate, "apikey", $apikey)
+        [string]$formitem = [string]::Format($formdataTemplate, 'apikey', $apikey)
         [byte[]]$formitembytes = [System.Text.Encoding]::UTF8.GetBytes($formitem)
         [string]$headerTemplate = "Content-Disposition: form-data; name=`"{0}`"; filename=`"{1}`"`r`nContent-Type: application/octet-stream`r`n`r`n"
-        [string]$header = [string]::Format($headerTemplate, "file", (get-item $file).name)
+        [string]$header = [string]::Format($headerTemplate, 'file', (get-item $file).name)
         [byte[]]$headerbytes = [System.Text.Encoding]::UTF8.GetBytes($header)
-        [string]$footerTemplate = "Content-Disposition: form-data; name=`"Upload`"`r`n`r`nSubmit Query`r`n" + $boundary + "--"
+        [string]$footerTemplate = "Content-Disposition: form-data; name=`"Upload`"`r`n`r`nSubmit Query`r`n" + $boundary + '--'
         [byte[]]$footerBytes = [System.Text.Encoding]::UTF8.GetBytes($footerTemplate)
 
 
@@ -922,13 +922,13 @@ function Submit-VTFile
         }
         Catch [Net.WebException]
         {
-            if ($Error[0].ToString() -like "*403*")
+            if ($Error[0].ToString() -like '*403*')
             {
-                Write-Error "API key is not valid."
+                Write-Error 'API key is not valid.'
             }
-            elseif ($Error[0].ToString() -like "*204*")
+            elseif ($Error[0].ToString() -like '*204*')
             {
-                Write-Error "API key rate has been reached."
+                Write-Error 'API key rate has been reached.'
             }
         }
     }
@@ -947,8 +947,8 @@ function Get-PoshVTVersion
  
      Begin
      {
-        $currentversion = ""
-        $installed = Get-Module -Name "Posh-VirusTotal" 
+        $currentversion = ''
+        $installed = Get-Module -Name 'Posh-VirusTotal' 
      }
      Process
      {
@@ -960,17 +960,17 @@ function Get-PoshVTVersion
         }
         Catch
         {
-            Write-Warning "Could not retrieve the current version."
+            Write-Warning 'Could not retrieve the current version.'
         }
-        $majorver,$minorver = $currentversion.split(".")
+        $majorver,$minorver = $currentversion.split('.')
 
         if ($majorver -gt $installed.Version.Major)
         {
-            Write-Warning "You are running an outdated version of the module."
+            Write-Warning 'You are running an outdated version of the module.'
         }
         elseif ($minorver -gt $installed.Version.Minor)
         {
-            Write-Warning "You are running an outdated version of the module."
+            Write-Warning 'You are running an outdated version of the module.'
         } 
         
         $props = @{
@@ -994,18 +994,18 @@ function Get-PoshVTVersion
 
         # VirusToral API Key.
         [Parameter(ParameterSetName = 'Direct',
-            Mandatory=$true,
+            Mandatory=$false,
             ValueFromPipelineByPropertyName=$false)]
         [Parameter(ParameterSetName = 'Proxy',
-            Mandatory=$true,
+            Mandatory=$false,
             ValueFromPipelineByPropertyName=$false)]
         [string]$APIKey,
 
         [Parameter(ParameterSetName = 'Direct',
-            Mandatory=$true,
+            Mandatory=$false,
             ValueFromPipelineByPropertyName=$false)]
         [Parameter(ParameterSetName = 'Proxy',
-            Mandatory=$true,
+            Mandatory=$false,
             ValueFromPipelineByPropertyName=$false)]
         [string]$CertificateThumbprint,
 
@@ -1030,7 +1030,7 @@ function Get-PoshVTVersion
         $URI = 'http://www.virustotal.com/vtapi/v2/key/details'
         if (!(Test-Path variable:Global:VTAPIKey ) -and !($APIKey))
         {
-            throw "No VirusTotal API Key has been specified or set."
+            throw 'No VirusTotal API Key has been specified or set.'
         }
         elseif ((Test-Path variable:Global:VTAPIKey ) -and !($APIKey))
         {
@@ -1053,7 +1053,7 @@ function Get-PoshVTVersion
         $Params.Add('ErrorVariable', 'RESTError')
 
         # Check if connection will be made thru a proxy.
-        if ($PsCmdlet.ParameterSetName -eq "Proxy")
+        if ($PsCmdlet.ParameterSetName -eq 'Proxy')
         {
             $Params.Add('Proxy', $Proxy)
 
@@ -1080,13 +1080,13 @@ function Get-PoshVTVersion
         
         if ($RESTError)
         {
-            if ($RESTError.Message.Contains("403"))
+            if ($RESTError.Message.Contains('403'))
             {
-                throw "API key is not valid."
+                throw 'API key is not valid.'
             }
-            elseif ($RESTError.Message -like "*204*")
+            elseif ($RESTError.Message -like '*204*')
             {
-                throw "API key rate has been reached."
+                throw 'API key rate has been reached.'
             }
             else
             {
@@ -1116,18 +1116,18 @@ function Get-VTSpecialURL
     (
         # VirusToral Private API Key.
         [Parameter(ParameterSetName = 'Direct',
-            Mandatory=$true,
+            Mandatory=$false,
             ValueFromPipelineByPropertyName=$false)]
         [Parameter(ParameterSetName = 'Proxy',
-            Mandatory=$true,
+            Mandatory=$false,
             ValueFromPipelineByPropertyName=$false)]
         [string]$APIKey,
 
         [Parameter(ParameterSetName = 'Direct',
-            Mandatory=$true,
+            Mandatory=$false,
             ValueFromPipelineByPropertyName=$false)]
         [Parameter(ParameterSetName = 'Proxy',
-            Mandatory=$true,
+            Mandatory=$false,
             ValueFromPipelineByPropertyName=$false)]
         [string]$CertificateThumbprint,
 
@@ -1153,7 +1153,7 @@ function Get-VTSpecialURL
         $URI = 'https://www.virustotal.com/vtapi/v2/file/scan/upload_url'
         if (!(Test-Path variable:Global:VTAPIKey ) -and !($APIKey))
         {
-            throw "No VirusTotal API Key has been specified or set."
+            throw 'No VirusTotal API Key has been specified or set.'
         }
         elseif ((Test-Path variable:Global:VTAPIKey ) -and !($APIKey))
         {
@@ -1164,7 +1164,7 @@ function Get-VTSpecialURL
         $KeyInfo = Get-VTAPIKeyInfo -APIKey $APIKey
         if ($KeyInfo.type -ne 'private')
         {
-            throw "The key provided is not a Private API Key"
+            throw 'The key provided is not a Private API Key'
         }
         Write-Verbose 'Key verifies as a Private API Key.'
     }
@@ -1184,7 +1184,7 @@ function Get-VTSpecialURL
         $Params.Add('ErrorVariable', 'RESTError')
 
         # Check if connection will be made thru a proxy.
-        if ($PsCmdlet.ParameterSetName -eq "Proxy")
+        if ($PsCmdlet.ParameterSetName -eq 'Proxy')
         {
             $Params.Add('Proxy', $Proxy)
 
@@ -1211,13 +1211,13 @@ function Get-VTSpecialURL
         
         if ($RESTError)
         {
-            if ($RESTError.Message.Contains("403"))
+            if ($RESTError.Message.Contains('403'))
             {
-                throw "API key is not valid."
+                throw 'API key is not valid.'
             }
-            elseif ($RESTError.Message -like "*204*")
+            elseif ($RESTError.Message -like '*204*')
             {
-                throw "API key rate has been reached."
+                throw 'API key rate has been reached.'
             }
             else
             {
@@ -1253,18 +1253,18 @@ function Get-VTFileComment
 
         # VirusToral API Key.
         [Parameter(ParameterSetName = 'Direct',
-            Mandatory=$true,
+            Mandatory=$false,
             ValueFromPipelineByPropertyName=$false)]
         [Parameter(ParameterSetName = 'Proxy',
-            Mandatory=$true,
+            Mandatory=$false,
             ValueFromPipelineByPropertyName=$false)]
         [string]$APIKey,
 
         [Parameter(ParameterSetName = 'Direct',
-            Mandatory=$true,
+            Mandatory=$false,
             ValueFromPipelineByPropertyName=$false)]
         [Parameter(ParameterSetName = 'Proxy',
-            Mandatory=$true,
+            Mandatory=$false,
             ValueFromPipelineByPropertyName=$false)]
         [string]$CertificateThumbprint,
 
@@ -1290,7 +1290,7 @@ function Get-VTFileComment
         $URI = 'https://www.virustotal.com/vtapi/v2/comments/get'
         if (!(Test-Path variable:Global:VTAPIKey ) -and !($APIKey))
         {
-            Write-Error "No VirusTotal API Key has been specified or set."
+            Write-Error 'No VirusTotal API Key has been specified or set.'
         }
         elseif ((Test-Path variable:Global:VTAPIKey ) -and !($APIKey))
         {
@@ -1301,7 +1301,7 @@ function Get-VTFileComment
         $KeyInfo = Get-VTAPIKeyInfo -APIKey $APIKey
         if ($KeyInfo.type -ne 'private')
         {
-            throw "The key provided is not a Private API Key"
+            throw 'The key provided is not a Private API Key'
         }
         Write-Verbose 'Key verifies as a Private API Key.'
 
@@ -1320,7 +1320,7 @@ function Get-VTFileComment
         $Params.Add('ErrorVariable', 'RESTError')
 
         # Check if connection will be made thru a proxy.
-        if ($PsCmdlet.ParameterSetName -eq "Proxy")
+        if ($PsCmdlet.ParameterSetName -eq 'Proxy')
         {
             $Params.Add('Proxy', $Proxy)
 
@@ -1349,13 +1349,13 @@ function Get-VTFileComment
         $ErrorActionPreference = $OldEAP
         if ($RESTError)
         {
-            if ($RESTError.Message.Contains("403"))
+            if ($RESTError.Message.Contains('403'))
             {
-                Write-Error "API key is not valid." -ErrorAction Stop
+                Write-Error 'API key is not valid.' -ErrorAction Stop
             }
-            elseif ($RESTError.Message -like "*204*")
+            elseif ($RESTError.Message -like '*204*')
             {
-                Write-Error "API key rate has been reached." -ErrorAction Stop
+                Write-Error 'API key rate has been reached.' -ErrorAction Stop
             }
             else
             {
@@ -1391,10 +1391,10 @@ function Set-VTFileComment
 
         # VirusToral API Key.
         [Parameter(ParameterSetName = 'Direct',
-            Mandatory=$true,
+            Mandatory=$false,
             ValueFromPipelineByPropertyName=$false)]
         [Parameter(ParameterSetName = 'Proxy',
-            Mandatory=$true,
+            Mandatory=$false,
             ValueFromPipelineByPropertyName=$false)]
         [string]$APIKey,
 
@@ -1407,10 +1407,10 @@ function Set-VTFileComment
         [string]$Comment,
 
         [Parameter(ParameterSetName = 'Direct',
-            Mandatory=$true,
+            Mandatory=$false,
             ValueFromPipelineByPropertyName=$false)]
         [Parameter(ParameterSetName = 'Proxy',
-            Mandatory=$true,
+            Mandatory=$false,
             ValueFromPipelineByPropertyName=$false)]
         [string]$CertificateThumbprint,
 
@@ -1436,7 +1436,7 @@ function Set-VTFileComment
         $URI = 'https://www.virustotal.com/vtapi/v2/comments/put'
         if (!(Test-Path variable:Global:VTAPIKey ) -and !($APIKey))
         {
-            throw "No VirusTotal API Key has been specified or set."
+            throw 'No VirusTotal API Key has been specified or set.'
         }
         elseif ((Test-Path variable:Global:VTAPIKey ) -and !($APIKey))
         {
@@ -1447,7 +1447,7 @@ function Set-VTFileComment
         $KeyInfo = Get-VTAPIKeyInfo -APIKey $APIKey
         if ($KeyInfo.type -ne 'private')
         {
-            throw "The key provided is not a Private API Key"
+            throw 'The key provided is not a Private API Key'
         }
         Write-Verbose 'Key verifies as a Private API Key.'
 
@@ -1466,7 +1466,7 @@ function Set-VTFileComment
         $Params.Add('ErrorVariable', 'RESTError')
 
         # Check if connection will be made thru a proxy.
-        if ($PsCmdlet.ParameterSetName -eq "Proxy")
+        if ($PsCmdlet.ParameterSetName -eq 'Proxy')
         {
             $Params.Add('Proxy', $Proxy)
 
@@ -1495,13 +1495,13 @@ function Set-VTFileComment
         $ErrorActionPreference = $OldEAP
         if ($RESTError)
         {
-            if ($RESTError.Message.Contains("403"))
+            if ($RESTError.Message.Contains('403'))
             {
-                throw "API key is not valid."
+                throw 'API key is not valid.'
             }
-            elseif ($RESTError.Message -like "*204*")
+            elseif ($RESTError.Message -like '*204*')
             {
-                throw "API key rate has been reached."
+                throw 'API key rate has been reached.'
             }
             else
             {
@@ -1537,10 +1537,10 @@ function Set-VTFileRescan
 
         # VirusToral API Key.
         [Parameter(ParameterSetName = 'Direct',
-            Mandatory=$true,
+            Mandatory=$false,
             ValueFromPipelineByPropertyName=$false)]
         [Parameter(ParameterSetName = 'Proxy',
-            Mandatory=$true,
+            Mandatory=$false,
             ValueFromPipelineByPropertyName=$false)]
         [string]$APIKey,
 
@@ -1590,10 +1590,10 @@ function Set-VTFileRescan
         [bool]$NotifyChanges,
 
         [Parameter(ParameterSetName = 'Direct',
-            Mandatory=$true,
+            Mandatory=$false,
             ValueFromPipelineByPropertyName=$false)]
         [Parameter(ParameterSetName = 'Proxy',
-            Mandatory=$true,
+            Mandatory=$false,
             ValueFromPipelineByPropertyName=$false)]
         [string]$CertificateThumbprint,
 
@@ -1618,7 +1618,7 @@ function Set-VTFileRescan
         $URI = 'https://www.virustotal.com/vtapi/v2/file/rescan'
         if (!(Test-Path variable:Global:VTAPIKey ) -and !($APIKey))
         {
-            Write-Error "No VirusTotal API Key has been specified or set."
+            Write-Error 'No VirusTotal API Key has been specified or set.'
         }
         elseif ((Test-Path variable:Global:VTAPIKey ) -and !($APIKey))
         {
@@ -1631,7 +1631,7 @@ function Set-VTFileRescan
         $KeyInfo = Get-VTAPIKeyInfo -APIKey $APIKey
         if ($KeyInfo.type -ne 'private')
         {
-            throw "The key provided is not a Private API Key"
+            throw 'The key provided is not a Private API Key'
         }
         Write-Verbose 'Key verifies as a Private API Key.'
     }
@@ -1640,7 +1640,7 @@ function Set-VTFileRescan
         $Body.add('resource',$Resource)
         if ($Date)
         {
-            $Body.add('date', ($Date.ToString("yyyyMMddhhmmss")))
+            $Body.add('date', ($Date.ToString('yyyyMMddhhmmss')))
         }
 
         if ($Period)
@@ -1673,7 +1673,7 @@ function Set-VTFileRescan
         $Params.Add('ErrorVariable', 'RESTError')
 
         # Check if connection will be made thru a proxy.
-        if ($PsCmdlet.ParameterSetName -eq "Proxy")
+        if ($PsCmdlet.ParameterSetName -eq 'Proxy')
         {
             $Params.Add('Proxy', $Proxy)
 
@@ -1702,13 +1702,13 @@ function Set-VTFileRescan
         $ErrorActionPreference = $OldEAP
         if ($RESTError)
         {
-            if ($RESTError.Message.Contains("403"))
+            if ($RESTError.Message.Contains('403'))
             {
-                throw "API key is not valid."
+                throw 'API key is not valid.'
             }
-            elseif ($RESTError.Message -like "*204*")
+            elseif ($RESTError.Message -like '*204*')
             {
-                throw "API key rate has been reached."
+                throw 'API key rate has been reached.'
             }
             else
             {
@@ -1745,18 +1745,18 @@ function Remove-VTFileRescan
 
         # VirusToral API Key.
         [Parameter(ParameterSetName = 'Direct',
-            Mandatory=$true,
+            Mandatory=$false,
             ValueFromPipelineByPropertyName=$false)]
         [Parameter(ParameterSetName = 'Proxy',
-            Mandatory=$true,
+            Mandatory=$false,
             ValueFromPipelineByPropertyName=$false)]
         [string]$APIKey,
 
         [Parameter(ParameterSetName = 'Direct',
-            Mandatory=$true,
+            Mandatory=$false,
             ValueFromPipelineByPropertyName=$false)]
         [Parameter(ParameterSetName = 'Proxy',
-            Mandatory=$true,
+            Mandatory=$false,
             ValueFromPipelineByPropertyName=$false)]
         [string]$CertificateThumbprint,
 
@@ -1782,7 +1782,7 @@ function Remove-VTFileRescan
         $URI = 'https://www.virustotal.com/vtapi/v2/file/rescan/delete'
         if (!(Test-Path variable:Global:VTAPIKey ) -and !($APIKey))
         {
-            Write-Error "No VirusTotal API Key has been specified or set."
+            Write-Error 'No VirusTotal API Key has been specified or set.'
         }
         elseif ((Test-Path variable:Global:VTAPIKey ) -and !($APIKey))
         {
@@ -1795,7 +1795,7 @@ function Remove-VTFileRescan
         $KeyInfo = Get-VTAPIKeyInfo -APIKey $APIKey
         if ($KeyInfo.type -ne 'private')
         {
-            throw "The key provided is not a Private API Key"
+            throw 'The key provided is not a Private API Key'
         }
         Write-Verbose 'Key verifies as a Private API Key.'
 
@@ -1813,7 +1813,7 @@ function Remove-VTFileRescan
         $Params.Add('ErrorVariable', 'RESTError')
 
         # Check if connection will be made thru a proxy.
-        if ($PsCmdlet.ParameterSetName -eq "Proxy")
+        if ($PsCmdlet.ParameterSetName -eq 'Proxy')
         {
             $Params.Add('Proxy', $Proxy)
 
@@ -1843,13 +1843,13 @@ function Remove-VTFileRescan
 
         if ($RESTError)
         {
-            if ($RESTError.Message.Contains("403"))
+            if ($RESTError.Message.Contains('403'))
             {
-                Write-Error "API key is not valid." -ErrorAction Stop
+                Write-Error 'API key is not valid.' -ErrorAction Stop
             }
-            elseif ($RESTError.Message -like "*204*")
+            elseif ($RESTError.Message -like '*204*')
             {
-                Write-Error "API key rate has been reached." -ErrorAction Stop
+                Write-Error 'API key rate has been reached.' -ErrorAction Stop
             }
             else
             {
@@ -1886,10 +1886,10 @@ function Get-VTFileScanReport
 
         # VirusToral API Key.
         [Parameter(ParameterSetName = 'Direct',
-            Mandatory=$true,
+            Mandatory=$false,
             ValueFromPipelineByPropertyName=$false)]
         [Parameter(ParameterSetName = 'Proxy',
-            Mandatory=$true,
+            Mandatory=$false,
             ValueFromPipelineByPropertyName=$false)]
         [string]$APIKey,
 
@@ -1902,10 +1902,10 @@ function Get-VTFileScanReport
         [switch]$AllInfo,
 
         [Parameter(ParameterSetName = 'Direct',
-            Mandatory=$true,
+            Mandatory=$false,
             ValueFromPipelineByPropertyName=$false)]
         [Parameter(ParameterSetName = 'Proxy',
-            Mandatory=$true,
+            Mandatory=$false,
             ValueFromPipelineByPropertyName=$false)]
         [string]$CertificateThumbprint,
 
@@ -1931,7 +1931,7 @@ function Get-VTFileScanReport
         $URI = 'https://www.virustotal.com/vtapi/v2/file/report'
         if (!(Test-Path variable:Global:VTAPIKey ) -and !($APIKey))
         {
-            throw "No VirusTotal API Key has been specified or set."
+            throw 'No VirusTotal API Key has been specified or set.'
         }
         elseif ((Test-Path variable:Global:VTAPIKey ) -and !($APIKey))
         {
@@ -1949,7 +1949,7 @@ function Get-VTFileScanReport
         $KeyInfo = Get-VTAPIKeyInfo -APIKey $APIKey
         if ($KeyInfo.type -ne 'private')
         {
-            throw "The key provided is not a Private API Key"
+            throw 'The key provided is not a Private API Key'
         }
         Write-Verbose 'Key verified as a Private API Key.'
     }
@@ -1966,7 +1966,7 @@ function Get-VTFileScanReport
         $Params.Add('ErrorVariable', 'RESTError')
 
         # Check if connection will be made thru a proxy.
-        if ($PsCmdlet.ParameterSetName -eq "Proxy")
+        if ($PsCmdlet.ParameterSetName -eq 'Proxy')
         {
             $Params.Add('Proxy', $Proxy)
 
@@ -1996,13 +1996,13 @@ function Get-VTFileScanReport
         
         if ($RESTError)
         {
-            if ($RESTError.Message.Contains("403"))
+            if ($RESTError.Message.Contains('403'))
             {
-                Write-Error "API key is not valid." -ErrorAction Stop
+                Write-Error 'API key is not valid.' -ErrorAction Stop
             }
-            elseif ($RESTError.Message -like "*204*")
+            elseif ($RESTError.Message -like '*204*')
             {
-                Write-Error "API key rate has been reached." -ErrorAction Stop
+                Write-Error 'API key rate has been reached.' -ErrorAction Stop
             }
             else
             {
@@ -2038,10 +2038,10 @@ function Get-VTFileBehaviourReport
 
         # VirusToral API Key.
         [Parameter(ParameterSetName = 'Direct',
-            Mandatory=$true,
+            Mandatory=$false,
             ValueFromPipelineByPropertyName=$false)]
         [Parameter(ParameterSetName = 'Proxy',
-            Mandatory=$true,
+            Mandatory=$false,
             ValueFromPipelineByPropertyName=$false)]
         [string]$APIKey,
 
@@ -2055,10 +2055,10 @@ function Get-VTFileBehaviourReport
         [string]$Report,
 
         [Parameter(ParameterSetName = 'Direct',
-            Mandatory=$true,
+            Mandatory=$false,
             ValueFromPipelineByPropertyName=$false)]
         [Parameter(ParameterSetName = 'Proxy',
-            Mandatory=$true,
+            Mandatory=$false,
             ValueFromPipelineByPropertyName=$false)]
         [string]$CertificateThumbprint,
 
@@ -2085,7 +2085,7 @@ function Get-VTFileBehaviourReport
         $URI = 'https://www.virustotal.com/vtapi/v2/file/behaviour'
         if (!(Test-Path variable:Global:VTAPIKey ) -and !($APIKey))
         {
-            throw "No VirusTotal API Key has been specified or set."
+            throw 'No VirusTotal API Key has been specified or set.'
         }
         elseif ((Test-Path variable:Global:VTAPIKey ) -and !($APIKey))
         {
@@ -2096,7 +2096,7 @@ function Get-VTFileBehaviourReport
         $KeyInfo = Get-VTAPIKeyInfo -APIKey $APIKey
         if ($KeyInfo.type -ne 'private')
         {
-            throw "The key provided is not a Private API Key"
+            throw 'The key provided is not a Private API Key'
         }
         Write-Verbose 'Key verified as a Private API Key.'
 
@@ -2118,7 +2118,7 @@ function Get-VTFileBehaviourReport
         $Params.Add('Outfile', $ReportFullPath)
 
         # Check if connection will be made thru a proxy.
-        if ($PsCmdlet.ParameterSetName -eq "Proxy")
+        if ($PsCmdlet.ParameterSetName -eq 'Proxy')
         {
             $Params.Add('Proxy', $Proxy)
 
@@ -2149,13 +2149,13 @@ function Get-VTFileBehaviourReport
         $ErrorActionPreference = $OldEAP
         if ($RESTError)
         {
-            if ($RESTError.Message.Contains("403"))
+            if ($RESTError.Message.Contains('403'))
             {
-                throw "API key is not valid."
+                throw 'API key is not valid.'
             }
-            elseif ($RESTError.Message -like "*204*")
+            elseif ($RESTError.Message -like '*204*')
             {
-                throw "API key rate has been reached."
+                throw 'API key rate has been reached.'
             }
             else
             {
@@ -2188,10 +2188,10 @@ function Get-VTFileSample
 
         # VirusToral API Key.
         [Parameter(ParameterSetName = 'Direct',
-            Mandatory=$true,
+            Mandatory=$false,
             ValueFromPipelineByPropertyName=$false)]
         [Parameter(ParameterSetName = 'Proxy',
-            Mandatory=$true,
+            Mandatory=$false,
             ValueFromPipelineByPropertyName=$false)]
         [string]$APIKey,
 
@@ -2207,10 +2207,10 @@ function Get-VTFileSample
         [string]$File,
 
         [Parameter(ParameterSetName = 'Direct',
-            Mandatory=$true,
+            Mandatory=$false,
             ValueFromPipelineByPropertyName=$false)]
         [Parameter(ParameterSetName = 'Proxy',
-            Mandatory=$true,
+            Mandatory=$false,
             ValueFromPipelineByPropertyName=$false)]
         [string]$CertificateThumbprint,
 
@@ -2236,7 +2236,7 @@ function Get-VTFileSample
         $URI = 'https://www.virustotal.com/vtapi/v2/file/download'
         if (!(Test-Path variable:Global:VTAPIKey ) -and !($APIKey))
         {
-            Write-Error "No VirusTotal API Key has been specified or set."
+            Write-Error 'No VirusTotal API Key has been specified or set.'
         }
         elseif ((Test-Path variable:Global:VTAPIKey ) -and !($APIKey))
         {
@@ -2247,7 +2247,7 @@ function Get-VTFileSample
         $KeyInfo = Get-VTAPIKeyInfo -APIKey $APIKey
         if ($KeyInfo.type -ne 'private')
         {
-            throw "The key provided is not a Private API Key"
+            throw 'The key provided is not a Private API Key'
         }
         Write-Verbose 'Key verified as a Private API Key.'
 
@@ -2269,7 +2269,7 @@ function Get-VTFileSample
         $Params.Add('OutFile', $SampleFullPath)
 
         # Check if connection will be made thru a proxy.
-        if ($PsCmdlet.ParameterSetName -eq "Proxy")
+        if ($PsCmdlet.ParameterSetName -eq 'Proxy')
         {
             $Params.Add('Proxy', $Proxy)
 
@@ -2301,13 +2301,13 @@ function Get-VTFileSample
 
         if ($RESTError)
         {
-            if ($RESTError.Message.Contains("403"))
+            if ($RESTError.Message.Contains('403'))
             {
-                throw "API key is not valid."
+                throw 'API key is not valid.'
             }
-            elseif ($RESTError.Message -like "*204*")
+            elseif ($RESTError.Message -like '*204*')
             {
-                throw "API key rate has been reached."
+                throw 'API key rate has been reached.'
             }
             else
             {
@@ -2340,10 +2340,10 @@ function Get-VTFileNetworkTraffic
 
         # VirusToral API Key.
         [Parameter(ParameterSetName = 'Direct',
-            Mandatory=$true,
+            Mandatory=$false,
             ValueFromPipelineByPropertyName=$false)]
         [Parameter(ParameterSetName = 'Proxy',
-            Mandatory=$true,
+            Mandatory=$false,
             ValueFromPipelineByPropertyName=$false)]
         [string]$APIKey,
 
@@ -2359,10 +2359,10 @@ function Get-VTFileNetworkTraffic
         [string]$File,
 
         [Parameter(ParameterSetName = 'Direct',
-            Mandatory=$true,
+            Mandatory=$false,
             ValueFromPipelineByPropertyName=$false)]
         [Parameter(ParameterSetName = 'Proxy',
-            Mandatory=$true,
+            Mandatory=$false,
             ValueFromPipelineByPropertyName=$false)]
         [string]$CertificateThumbprint,
 
@@ -2389,7 +2389,7 @@ function Get-VTFileNetworkTraffic
         $URI = 'https://www.virustotal.com/vtapi/v2/file/network-traffic'
         if (!(Test-Path variable:Global:VTAPIKey ) -and !($APIKey))
         {
-            throw "No VirusTotal API Key has been specified or set."
+            throw 'No VirusTotal API Key has been specified or set.'
         }
         elseif ((Test-Path variable:Global:VTAPIKey ) -and !($APIKey))
         {
@@ -2400,7 +2400,7 @@ function Get-VTFileNetworkTraffic
         $KeyInfo = Get-VTAPIKeyInfo -APIKey $APIKey
         if ($KeyInfo.type -ne 'private')
         {
-            throw "The key provided is not a Private API Key"
+            throw 'The key provided is not a Private API Key'
         }
         Write-Verbose 'Key verified as a Private API Key.'
 
@@ -2422,7 +2422,7 @@ function Get-VTFileNetworkTraffic
         $Params.Add('OutFile', $NTFullPath)
 
         # Check if connection will be made thru a proxy.
-        if ($PsCmdlet.ParameterSetName -eq "Proxy")
+        if ($PsCmdlet.ParameterSetName -eq 'Proxy')
         {
             $Params.Add('Proxy', $Proxy)
 
@@ -2456,13 +2456,13 @@ function Get-VTFileNetworkTraffic
 
         if ($RESTError)
         {
-            if ($RESTError.Message.Contains("403"))
+            if ($RESTError.Message.Contains('403'))
             {
-                throw "API key is not valid."
+                throw 'API key is not valid.'
             }
-            elseif ($RESTError.Message -like "*204*")
+            elseif ($RESTError.Message -like '*204*')
             {
-                throw "API key rate has been reached."
+                throw 'API key rate has been reached.'
             }
             else
             {
@@ -2495,27 +2495,27 @@ function Search-VTAdvancedReversed
 
         # VirusToral API Key.
         [Parameter(ParameterSetName = 'Direct',
-            Mandatory=$true,
+            Mandatory=$false,
             ValueFromPipelineByPropertyName=$false)]
         [Parameter(ParameterSetName = 'Proxy',
-            Mandatory=$true,
+            Mandatory=$false,
             ValueFromPipelineByPropertyName=$false)]
         [string]$APIKey,
 
         # The offset value returned by a previously issued identical query.
         [Parameter(ParameterSetName = 'Direct',
-            Mandatory=$true,
+            Mandatory=$false,
             ValueFromPipelineByPropertyName=$false)]
         [Parameter(ParameterSetName = 'Proxy',
-            Mandatory=$true,
+            Mandatory=$false,
             ValueFromPipelineByPropertyName=$false)]
         [int]$OffSet,
 
         [Parameter(ParameterSetName = 'Direct',
-            Mandatory=$true,
+            Mandatory=$false,
             ValueFromPipelineByPropertyName=$false)]
         [Parameter(ParameterSetName = 'Proxy',
-            Mandatory=$true,
+            Mandatory=$false,
             ValueFromPipelineByPropertyName=$false)]
         [string]$CertificateThumbprint,
 
@@ -2538,10 +2538,10 @@ function Search-VTAdvancedReversed
 
     Begin
     {
-        $URI = 'https://www.virustotal.com/vtapi/vtapi/v2/file/search'
+        $URI = 'https://www.virustotal.com/vtapi/v2/file/search'
         if (!(Test-Path variable:Global:VTAPIKey ) -and !($APIKey))
         {
-            Write-Error "No VirusTotal API Key has been specified or set."
+            Write-Error 'No VirusTotal API Key has been specified or set.'
         }
         elseif ((Test-Path variable:Global:VTAPIKey ) -and !($APIKey))
         {
@@ -2560,15 +2560,13 @@ function Search-VTAdvancedReversed
         $KeyInfo = Get-VTAPIKeyInfo -APIKey $APIKey
         if ($KeyInfo.type -ne 'private')
         {
-            throw "The key provided is not a Private API Key"
+            throw 'The key provided is not a Private API Key'
         }
         Write-Verbose 'Key verifies as a Private API Key.'
 
     }
     Process
     {
-
-        $Body.add('resource',$Resource)
         
         # Start building parameters for REST Method invokation.
         $Params =  @{}
@@ -2578,7 +2576,7 @@ function Search-VTAdvancedReversed
         $Params.Add('ErrorVariable', 'RESTError')
 
         # Check if connection will be made thru a proxy.
-        if ($PsCmdlet.ParameterSetName -eq "Proxy")
+        if ($PsCmdlet.ParameterSetName -eq 'Proxy')
         {
             $Params.Add('Proxy', $Proxy)
 
@@ -2608,17 +2606,17 @@ function Search-VTAdvancedReversed
 
         if ($RESTError)
         {
-            if ($RESTError.Message.Contains("403"))
+            if ($RESTError.Message.Contains('403'))
             {
-                Write-Error "API key is not valid." -ErrorAction Stop
+                Write-Error 'API key is not valid.' -ErrorAction Stop
             }
-            elseif ($RESTError.Message -like "*204*")
+            elseif ($RESTError.Message -like '*204*')
             {
-                Write-Error "API key rate has been reached." -ErrorAction Stop
+                Write-Error 'API key rate has been reached.' -ErrorAction Stop
             }
             else
             {
-                Write-Error $RESTError
+                Write-Error $RESTError[0]
             }
         }
 
