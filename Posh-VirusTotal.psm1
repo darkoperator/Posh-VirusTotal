@@ -1014,11 +1014,11 @@ function Submit-VTFile
         }
         Catch [Net.WebException]
         {
-            if ($Error[0].ToString() -like '*403*')
+            if ($_[0].ToString() -like '*403*')
             {
                 Write-Error 'API key is not valid.'
             }
-            elseif ($Error[0].ToString() -like '*204*')
+            elseif ($_[0].ToString() -like '*204*')
             {
                 Write-Error 'API key rate has been reached.'
             }
@@ -1104,7 +1104,16 @@ function Get-PoshVTVersion
         [Parameter(ParameterSetName = 'Proxy',
                    Mandatory=$true,
                    ValueFromPipelineByPropertyName=$true)]
-        [Switch]$ProxyUseDefaultCredentials
+        [Switch]$ProxyUseDefaultCredentials,
+
+        # VirusToral Private API Key.
+        [Parameter(ParameterSetName = 'Direct',
+                   Mandatory=$false,
+                   ValueFromPipelineByPropertyName=$false)]
+        [Parameter(ParameterSetName = 'Proxy',
+                   Mandatory=$false,
+                   ValueFromPipelineByPropertyName=$false)]
+        [string]$APIKey
     )
 
     DynamicParam 
@@ -1125,6 +1134,7 @@ function Get-PoshVTVersion
               $APIKeyParam = new-object -Type System.Management.Automation.RuntimeDefinedParameter('APIKey', [String], $attributeCollection)
               #expose the name of our parameter
               $paramDictionary = new-object -Type System.Management.Automation.RuntimeDefinedParameterDictionary
+              $paramDictionary.Remove('APIKey') | Out-Null
               $paramDictionary.Add('APIKey', $APIKeyParam)
  
               return $paramDictionary
@@ -1270,7 +1280,13 @@ function Get-VTSpecialURL
         $KeyInfo = Get-VTAPIKeyInfo -APIKey $APIKey
         if ($KeyInfo.type -ne 'private')
         {
-            throw 'The key provided is not a Private API Key'
+            $message = 'The key provided is not a Private API Key'
+            $exception = New-Object InvalidOperationException $message
+            $errorID = 'PermissionDenied'
+            $errorCategory = [Management.Automation.ErrorCategory]::PermissionDenied
+            $target = $Path
+            $errorRecord = New-Object Management.Automation.ErrorRecord $exception, $errorID, $errorCategory, $KeyInfo
+            $PSCmdlet.ThrowTerminatingError($errorRecord)
         }
         Write-Verbose 'Key verifies as a Private API Key.'
     }
