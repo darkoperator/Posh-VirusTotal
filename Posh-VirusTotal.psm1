@@ -701,57 +701,72 @@ function Submit-VTURL
     (
         # URL or ScanID to query.
         [Parameter(ParameterSetName = 'Direct',
-            Mandatory=$true,
-            ValueFromPipelineByPropertyName=$true,
-            Position=0)]
+                   Mandatory=$true,
+                   ValueFromPipelineByPropertyName=$true,
+                   Position=0)]
         [Parameter(ParameterSetName = 'Proxy',
-            Mandatory=$true,
-            ValueFromPipelineByPropertyName=$true,
-            Position=0)]
+                   Mandatory=$true,
+                   ValueFromPipelineByPropertyName=$true,
+                   Position=0)]
         [ValidateCount(1,4)]
         [string[]]$URL,
 
-        # VirusToral API Key.
-        [Parameter(ParameterSetName = 'Direct',
-            Mandatory=$false,
-            ValueFromPipelineByPropertyName=$false)]
-        [Parameter(ParameterSetName = 'Proxy',
-            Mandatory=$false,
-            ValueFromPipelineByPropertyName=$false)]
-        [string]$APIKey,
-
         # Automatically submit the URL for analysis if no report is found for it in VirusTotal.
         [Parameter(ParameterSetName = 'Direct',
-            Mandatory=$true,
-            ValueFromPipelineByPropertyName=$false)]
+                   Mandatory=$true,
+                   ValueFromPipelineByPropertyName=$false)]
         [Parameter(ParameterSetName = 'Proxy',
-            Mandatory=$true,
-            ValueFromPipelineByPropertyName=$false)]
+                   Mandatory=$true,
+                   ValueFromPipelineByPropertyName=$false)]
         [switch]$Scan,
 
         [Parameter(ParameterSetName = 'Direct',
-            Mandatory=$false,
-            ValueFromPipelineByPropertyName=$false)]
+                   Mandatory=$false,
+                   ValueFromPipelineByPropertyName=$false)]
         [Parameter(ParameterSetName = 'Proxy',
-            Mandatory=$false,
-            ValueFromPipelineByPropertyName=$false)]
+                   Mandatory=$false,
+                   ValueFromPipelineByPropertyName=$false)]
         [string]$CertificateThumbprint,
 
         [Parameter(ParameterSetName = 'Proxy',
-            Mandatory=$true,
-            ValueFromPipelineByPropertyName=$true)]
+                   Mandatory=$true,
+                   ValueFromPipelineByPropertyName=$true)]
         [string]$Proxy,
  
         [Parameter(ParameterSetName = 'Proxy',
-            Mandatory=$true,
-            ValueFromPipelineByPropertyName=$true)]
+                   Mandatory=$true,
+                   ValueFromPipelineByPropertyName=$true)]
         [Management.Automation.PSCredential]$ProxyCredential,
 
         [Parameter(ParameterSetName = 'Proxy',
-            Mandatory=$true,
-            ValueFromPipelineByPropertyName=$true)]
+                   Mandatory=$true,
+                   ValueFromPipelineByPropertyName=$true)]
         [Switch]$ProxyUseDefaultCredentials
     )
+
+    DynamicParam 
+    {
+        if (!(Test-Path variable:Global:VTAPIKey) -or ($Global:VTAPIKey -eq '' -or $Global:VTAPIKey -eq $null))
+        {
+              #create a new ParameterAttribute Object      
+              $attributes = new-object System.Management.Automation.ParameterAttribute
+              #the default Parameter Set Name is __AllParameterSets
+              $attributes.ParameterSetName = '__AllParameterSets'
+              $attributes.Mandatory = $true
+              #create an attributecollection object for the attribute we just created.
+              $attributeCollection = new-object -Type System.Collections.ObjectModel.Collection[System.Attribute]
+              #add our custom attribute
+              $attributeCollection.Add($attributes)
+ 
+              #add our paramater specifying the attribute collection
+              $APIKeyParam = new-object -Type System.Management.Automation.RuntimeDefinedParameter('APIKey', [String], $attributeCollection)
+              #expose the name of our parameter
+              $paramDictionary = new-object -Type System.Management.Automation.RuntimeDefinedParameterDictionary
+              $paramDictionary.Add('APIKey', $APIKeyParam)
+ 
+              return $paramDictionary
+        }
+    }
 
     Begin
     {
@@ -765,13 +780,13 @@ function Submit-VTURL
             $scanurl = 0
         }
 
-        if (!(Test-Path variable:Global:VTAPIKey ) -and !($APIKey))
-        {
-            throw 'No VirusTotal API Key has been specified or set.'
-        }
-        elseif ((Test-Path variable:Global:VTAPIKey ) -and !($APIKey))
+        if ((Test-Path variable:Global:VTAPIKey ) -and !($PSBoundParameters.ApiKey))
         {
             $APIKey = $Global:VTAPIKey
+        }
+        else
+        {
+            $APIKey = $PSBoundParameters.ApiKey
         }
     }
     Process
@@ -852,52 +867,67 @@ function Submit-VTFile
     (
         # URL or ScanID to query.
         [Parameter(ParameterSetName = 'Direct',
-            Mandatory=$true,
-            ValueFromPipelineByPropertyName=$true,
-            Position=0)]
+                   Mandatory=$true,
+                   ValueFromPipelineByPropertyName=$true,
+                   Position=0)]
         [Parameter(ParameterSetName = 'Proxy',
-            Mandatory=$true,
-            ValueFromPipelineByPropertyName=$true,
-            Position=0)]
+                   Mandatory=$true,
+                   ValueFromPipelineByPropertyName=$true,
+                   Position=0)]
         [ValidateScript({Test-Path $_ -PathType Leaf})]
         [string]$File,
 
-        # VirusToral API Key.
-        [Parameter(ParameterSetName = 'Direct',
-            Mandatory=$false,
-            ValueFromPipelineByPropertyName=$false)]
         [Parameter(ParameterSetName = 'Proxy',
-            Mandatory=$false,
-            ValueFromPipelineByPropertyName=$false)]
-        [string]$APIKey,
-
-        [Parameter(ParameterSetName = 'Proxy',
-            Mandatory=$true,
-            ValueFromPipelineByPropertyName=$true)]
+                   Mandatory=$true,
+                   ValueFromPipelineByPropertyName=$true)]
         [string]$Proxy,
  
         [Parameter(ParameterSetName = 'Proxy',
-            Mandatory=$true,
-            ValueFromPipelineByPropertyName=$true)]
+                   Mandatory=$true,
+                   ValueFromPipelineByPropertyName=$true)]
         [Management.Automation.PSCredential]$ProxyCredential,
 
         [Parameter(ParameterSetName = 'Proxy',
-            Mandatory=$true,
-            ValueFromPipelineByPropertyName=$true)]
+                   Mandatory=$true,
+                   ValueFromPipelineByPropertyName=$true)]
         [Switch]$ProxyUseDefaultCredentials
     )
+
+    DynamicParam 
+    {
+        if (!(Test-Path variable:Global:VTAPIKey) -or ($Global:VTAPIKey -eq '' -or $Global:VTAPIKey -eq $null))
+        {
+              #create a new ParameterAttribute Object      
+              $attributes = new-object System.Management.Automation.ParameterAttribute
+              #the default Parameter Set Name is __AllParameterSets
+              $attributes.ParameterSetName = '__AllParameterSets'
+              $attributes.Mandatory = $true
+              #create an attributecollection object for the attribute we just created.
+              $attributeCollection = new-object -Type System.Collections.ObjectModel.Collection[System.Attribute]
+              #add our custom attribute
+              $attributeCollection.Add($attributes)
+ 
+              #add our paramater specifying the attribute collection
+              $APIKeyParam = new-object -Type System.Management.Automation.RuntimeDefinedParameter('APIKey', [String], $attributeCollection)
+              #expose the name of our parameter
+              $paramDictionary = new-object -Type System.Management.Automation.RuntimeDefinedParameterDictionary
+              $paramDictionary.Add('APIKey', $APIKeyParam)
+ 
+              return $paramDictionary
+        }
+    }
 
     Begin
     {
         $URI = 'http://www.virustotal.com/vtapi/v2/file/scan'
 
-        if (!(Test-Path variable:Global:VTAPIKey ) -and !($APIKey))
-        {
-            Write-Error 'No VirusTotal API Key has been specified or set.'
-        }
-        elseif ((Test-Path variable:Global:VTAPIKey ) -and !($APIKey))
+        if ((Test-Path variable:Global:VTAPIKey ) -and !($PSBoundParameters.ApiKey))
         {
             $APIKey = $Global:VTAPIKey
+        }
+        else
+        {
+            $APIKey = $PSBoundParameters.ApiKey
         }
     }
     Process
@@ -1053,50 +1083,64 @@ function Get-PoshVTVersion
     [CmdletBinding(DefaultParameterSetName = 'Direct')]
     Param
     (
-
-        # VirusToral API Key.
         [Parameter(ParameterSetName = 'Direct',
-            Mandatory=$false,
-            ValueFromPipelineByPropertyName=$false)]
+                   Mandatory=$false,
+                   ValueFromPipelineByPropertyName=$false)]
         [Parameter(ParameterSetName = 'Proxy',
-            Mandatory=$false,
-            ValueFromPipelineByPropertyName=$false)]
-        [string]$APIKey,
-
-        [Parameter(ParameterSetName = 'Direct',
-            Mandatory=$false,
-            ValueFromPipelineByPropertyName=$false)]
-        [Parameter(ParameterSetName = 'Proxy',
-            Mandatory=$false,
-            ValueFromPipelineByPropertyName=$false)]
+                   Mandatory=$false,
+                   ValueFromPipelineByPropertyName=$false)]
         [string]$CertificateThumbprint,
 
         [Parameter(ParameterSetName = 'Proxy',
-            Mandatory=$true,
-            ValueFromPipelineByPropertyName=$true)]
+                   Mandatory=$true,
+                   ValueFromPipelineByPropertyName=$true)]
         [string]$Proxy,
  
         [Parameter(ParameterSetName = 'Proxy',
-            Mandatory=$true,
-            ValueFromPipelineByPropertyName=$true)]
+                   Mandatory=$true,
+                   ValueFromPipelineByPropertyName=$true)]
         [Management.Automation.PSCredential]$ProxyCredential,
 
         [Parameter(ParameterSetName = 'Proxy',
-            Mandatory=$true,
-            ValueFromPipelineByPropertyName=$true)]
+                   Mandatory=$true,
+                   ValueFromPipelineByPropertyName=$true)]
         [Switch]$ProxyUseDefaultCredentials
     )
+
+    DynamicParam 
+    {
+        if (!(Test-Path variable:Global:VTAPIKey) -or ($Global:VTAPIKey -eq '' -or $Global:VTAPIKey -eq $null))
+        {
+              #create a new ParameterAttribute Object      
+              $attributes = new-object System.Management.Automation.ParameterAttribute
+              #the default Parameter Set Name is __AllParameterSets
+              $attributes.ParameterSetName = '__AllParameterSets'
+              $attributes.Mandatory = $true
+              #create an attributecollection object for the attribute we just created.
+              $attributeCollection = new-object -Type System.Collections.ObjectModel.Collection[System.Attribute]
+              #add our custom attribute
+              $attributeCollection.Add($attributes)
+ 
+              #add our paramater specifying the attribute collection
+              $APIKeyParam = new-object -Type System.Management.Automation.RuntimeDefinedParameter('APIKey', [String], $attributeCollection)
+              #expose the name of our parameter
+              $paramDictionary = new-object -Type System.Management.Automation.RuntimeDefinedParameterDictionary
+              $paramDictionary.Add('APIKey', $APIKeyParam)
+ 
+              return $paramDictionary
+        }
+    }
 
     Begin
     {
         $URI = 'http://www.virustotal.com/vtapi/v2/key/details'
-        if (!(Test-Path variable:Global:VTAPIKey ) -and !($APIKey))
-        {
-            throw 'No VirusTotal API Key has been specified or set.'
-        }
-        elseif ((Test-Path variable:Global:VTAPIKey ) -and !($APIKey))
+        if ((Test-Path variable:Global:VTAPIKey ) -and !($PSBoundParameters.ApiKey))
         {
             $APIKey = $Global:VTAPIKey
+        }
+        else
+        {
+            $APIKey = $PSBoundParameters.ApiKey
         }
     }
     Process
