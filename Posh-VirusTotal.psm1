@@ -93,45 +93,45 @@ function Get-VTIPReport
     (
         # IP Address to scan for.
         [Parameter(ParameterSetName = 'Direct',
-            Mandatory=$true,
-            ValueFromPipelineByPropertyName=$true,
-            Position=0)]
+                   Mandatory=$true,
+                   ValueFromPipelineByPropertyName=$true,
+                   Position=0)]
         [Parameter(ParameterSetName = 'Proxy',
-            Mandatory=$true,
-            ValueFromPipelineByPropertyName=$true,
-            Position=0)]
+                   Mandatory=$true,
+                   ValueFromPipelineByPropertyName=$true,
+                   Position=0)]
         [string]$IPAddress,
 
         # VirusToral API Key.
         [Parameter(ParameterSetName = 'Direct',
-            Mandatory=$false,
-            ValueFromPipelineByPropertyName=$false)]
+                   Mandatory=$false,
+                   ValueFromPipelineByPropertyName=$false)]
         [Parameter(ParameterSetName = 'Proxy',
-            Mandatory=$false,
-            ValueFromPipelineByPropertyName=$false)]
+                   Mandatory=$false,
+                   ValueFromPipelineByPropertyName=$false)]
         [string]$APIKey,
 
         [Parameter(ParameterSetName = 'Direct',
-            Mandatory=$false,
-            ValueFromPipelineByPropertyName=$false)]
+                   Mandatory=$false,
+                   ValueFromPipelineByPropertyName=$false)]
         [Parameter(ParameterSetName = 'Proxy',
-            Mandatory=$false,
-            ValueFromPipelineByPropertyName=$false)]
+                   Mandatory=$false,
+                   ValueFromPipelineByPropertyName=$false)]
         [string]$CertificateThumbprint,
 
         [Parameter(ParameterSetName = 'Proxy',
-            Mandatory=$true,
-            ValueFromPipelineByPropertyName=$true)]
+                   Mandatory=$true,
+                   ValueFromPipelineByPropertyName=$true)]
         [string]$Proxy,
  
         [Parameter(ParameterSetName = 'Proxy',
-            Mandatory=$true,
-            ValueFromPipelineByPropertyName=$true)]
+                   Mandatory=$true,
+                   ValueFromPipelineByPropertyName=$true)]
         [Management.Automation.PSCredential]$ProxyCredential,
 
         [Parameter(ParameterSetName = 'Proxy',
-            Mandatory=$true,
-            ValueFromPipelineByPropertyName=$true)]
+                   Mandatory=$true,
+                   ValueFromPipelineByPropertyName=$true)]
         [Switch]$ProxyUseDefaultCredentials
     )
 
@@ -140,7 +140,7 @@ function Get-VTIPReport
         $URI = 'https://www.virustotal.com/vtapi/v2/ip-address/report'
         if (!(Test-Path variable:Global:VTAPIKey ) -and !($APIKey))
         {
-            throw 'No VirusTotal API Key has been specified or set.'
+            NoAPIKeyError
         }
         elseif ((Test-Path variable:Global:VTAPIKey ) -and !($APIKey))
         {
@@ -222,45 +222,45 @@ function Get-VTDomainReport
     (
         # Domain to scan.
         [Parameter(ParameterSetName = 'Direct',
-            Mandatory=$true,
-            ValueFromPipelineByPropertyName=$true,
-            Position=0)]
+                   Mandatory=$true,
+                   ValueFromPipelineByPropertyName=$true,
+                   Position=0)]
         [Parameter(ParameterSetName = 'Proxy',
-            Mandatory=$true,
-            ValueFromPipelineByPropertyName=$true,
-            Position=0)]
+                   Mandatory=$true,
+                   ValueFromPipelineByPropertyName=$true,
+                   Position=0)]
         [string]$Domain,
 
         # VirusToral API Key.
         [Parameter(ParameterSetName = 'Direct',
-            Mandatory=$false,
-            ValueFromPipelineByPropertyName=$false)]
+                   Mandatory=$false,
+                   ValueFromPipelineByPropertyName=$false)]
         [Parameter(ParameterSetName = 'Proxy',
-            Mandatory=$false,
-            ValueFromPipelineByPropertyName=$false)]
+                   Mandatory=$false,
+                   ValueFromPipelineByPropertyName=$false)]
         [string]$APIKey,
 
         [Parameter(ParameterSetName = 'Direct',
-            Mandatory=$false,
-            ValueFromPipelineByPropertyName=$false)]
+                   Mandatory=$false,
+                   ValueFromPipelineByPropertyName=$false)]
         [Parameter(ParameterSetName = 'Proxy',
-            Mandatory=$false,
-            ValueFromPipelineByPropertyName=$false)]
+                   Mandatory=$false,
+                   ValueFromPipelineByPropertyName=$false)]
         [string]$CertificateThumbprint,
 
         [Parameter(ParameterSetName = 'Proxy',
-            Mandatory=$true,
-            ValueFromPipelineByPropertyName=$true)]
+                   Mandatory=$true,
+                   ValueFromPipelineByPropertyName=$true)]
         [string]$Proxy,
  
         [Parameter(ParameterSetName = 'Proxy',
-            Mandatory=$true,
-            ValueFromPipelineByPropertyName=$true)]
+                   Mandatory=$true,
+                   ValueFromPipelineByPropertyName=$true)]
         [Management.Automation.PSCredential]$ProxyCredential,
 
         [Parameter(ParameterSetName = 'Proxy',
-            Mandatory=$true,
-            ValueFromPipelineByPropertyName=$true)]
+                   Mandatory=$true,
+                   ValueFromPipelineByPropertyName=$true)]
         [Switch]$ProxyUseDefaultCredentials
     )
 
@@ -269,7 +269,7 @@ function Get-VTDomainReport
         $URI = 'https://www.virustotal.com/vtapi/v2/domain/report'
         if (!(Test-Path variable:Global:VTAPIKey ) -and !($APIKey))
         {
-            throw 'No VirusTotal API Key has been specified or set.'
+            NoAPIKeyError
         }
         elseif ((Test-Path variable:Global:VTAPIKey ) -and !($APIKey))
         {
@@ -350,41 +350,41 @@ function Get-VTFileReport
     (
         # File MD5 Checksum, File SHA1 Checksum, File SHA256 Checksum or ScanID to query.
         [Parameter(ParameterSetName = 'Direct',
-            Mandatory=$true,
-            ValueFromPipelineByPropertyName=$true,
-            Position=0)]
+                   Mandatory=$true,
+                   ValueFromPipelineByPropertyName=$true,
+                   Position=0)]
         [Parameter(ParameterSetName = 'Proxy',
-            Mandatory=$true,
-            ValueFromPipelineByPropertyName=$true,
-            Position=0)]
+                   Mandatory=$true,
+                   ValueFromPipelineByPropertyName=$true,
+                   Position=0)]
         [ValidateCount(1,4)]
         [string[]]$Resource,
 
         # VirusToral API Key.
         [Parameter(ParameterSetName = 'Direct',
-            Mandatory=$false,
-            ValueFromPipelineByPropertyName=$false)]
+                   Mandatory=$false,
+                   ValueFromPipelineByPropertyName=$false)]
         [Parameter(ParameterSetName = 'Proxy',
-            Mandatory=$false,
-            ValueFromPipelineByPropertyName=$false)]
+                   Mandatory=$false,
+                   ValueFromPipelineByPropertyName=$false)]
         [string]$APIKey,
 
         [Parameter(ParameterSetName = 'Direct',
-            Mandatory=$false,
-            ValueFromPipelineByPropertyName=$false)]
+                   Mandatory=$false,
+                   ValueFromPipelineByPropertyName=$false)]
         [Parameter(ParameterSetName = 'Proxy',
-            Mandatory=$false,
-            ValueFromPipelineByPropertyName=$false)]
+                   Mandatory=$false,
+                   ValueFromPipelineByPropertyName=$false)]
         [string]$CertificateThumbprint,
 
         [Parameter(ParameterSetName = 'Proxy',
-            Mandatory=$true,
-            ValueFromPipelineByPropertyName=$true)]
+                   Mandatory=$true,
+                   ValueFromPipelineByPropertyName=$true)]
         [string]$Proxy,
  
         [Parameter(ParameterSetName = 'Proxy',
-            Mandatory=$true,
-            ValueFromPipelineByPropertyName=$true)]
+                   Mandatory=$true,
+                   ValueFromPipelineByPropertyName=$true)]
         [Management.Automation.PSCredential]$ProxyCredential,
 
         [Parameter(ParameterSetName = 'Proxy',
@@ -398,7 +398,7 @@ function Get-VTFileReport
         $URI = 'https://www.virustotal.com/vtapi/v2/file/report'
         if (!(Test-Path variable:Global:VTAPIKey ) -and !($APIKey))
         {
-            throw 'No VirusTotal API Key has been specified or set.'
+            NoAPIKeyError
         }
         elseif ((Test-Path variable:Global:VTAPIKey ) -and !($APIKey))
         {
@@ -485,55 +485,55 @@ function Get-VTURLReport
     (
         # URL or ScanID to query.
         [Parameter(ParameterSetName = 'Direct',
-            Mandatory=$true,
-            ValueFromPipelineByPropertyName=$true,
-            Position=0)]
+                   Mandatory=$true,
+                   ValueFromPipelineByPropertyName=$true,
+                   Position=0)]
         [Parameter(ParameterSetName = 'Proxy',
-            Mandatory=$true,
-            ValueFromPipelineByPropertyName=$true,
-            Position=0)]
+                   Mandatory=$true,
+                   ValueFromPipelineByPropertyName=$true,
+                   Position=0)]
         [ValidateCount(1,4)]
         [string[]]$Resource,
 
         # VirusToral API Key.
         [Parameter(ParameterSetName = 'Direct',
-            Mandatory=$false,
-            ValueFromPipelineByPropertyName=$false)]
+                   Mandatory=$false,
+                   ValueFromPipelineByPropertyName=$false)]
         [Parameter(ParameterSetName = 'Proxy',
-            Mandatory=$false,
-            ValueFromPipelineByPropertyName=$false)]
+                   Mandatory=$false,
+                   ValueFromPipelineByPropertyName=$false)]
         [string]$APIKey,
 
         # Automatically submit the URL for analysis if no report is found for it in VirusTotal.
         [Parameter(ParameterSetName = 'Direct',
-            Mandatory=$true,
-            ValueFromPipelineByPropertyName=$false)]
+                   Mandatory=$true,
+                   ValueFromPipelineByPropertyName=$false)]
         [Parameter(ParameterSetName = 'Proxy',
-            Mandatory=$true,
-            ValueFromPipelineByPropertyName=$false)]
+                   Mandatory=$true,
+                   ValueFromPipelineByPropertyName=$false)]
         [switch]$Scan,
 
         [Parameter(ParameterSetName = 'Direct',
-            Mandatory=$false,
-            ValueFromPipelineByPropertyName=$false)]
+                   Mandatory=$false,
+                   ValueFromPipelineByPropertyName=$false)]
         [Parameter(ParameterSetName = 'Proxy',
-            Mandatory=$false,
-            ValueFromPipelineByPropertyName=$false)]
+                   Mandatory=$false,
+                   ValueFromPipelineByPropertyName=$false)]
         [string]$CertificateThumbprint,
 
         [Parameter(ParameterSetName = 'Proxy',
-            Mandatory=$true,
-            ValueFromPipelineByPropertyName=$true)]
+                   Mandatory=$true,
+                   ValueFromPipelineByPropertyName=$true)]
         [string]$Proxy,
  
         [Parameter(ParameterSetName = 'Proxy',
-            Mandatory=$true,
-            ValueFromPipelineByPropertyName=$true)]
+                   Mandatory=$true,
+                   ValueFromPipelineByPropertyName=$true)]
         [Management.Automation.PSCredential]$ProxyCredential,
 
         [Parameter(ParameterSetName = 'Proxy',
-            Mandatory=$true,
-            ValueFromPipelineByPropertyName=$true)]
+                   Mandatory=$true,
+                   ValueFromPipelineByPropertyName=$true)]
         [Switch]$ProxyUseDefaultCredentials
     )
 
@@ -552,7 +552,7 @@ function Get-VTURLReport
 
         if (!(Test-Path variable:Global:VTAPIKey ) -and !($APIKey))
         {
-            throw 'No VirusTotal API Key has been specified or set.'
+            NoAPIKeyError
         }
         elseif ((Test-Path variable:Global:VTAPIKey ) -and !($APIKey))
         {
@@ -639,55 +639,55 @@ function Submit-VTURL
     (
         # URL or ScanID to query.
         [Parameter(ParameterSetName = 'Direct',
-            Mandatory=$true,
-            ValueFromPipelineByPropertyName=$true,
-            Position=0)]
+                   Mandatory=$true,
+                   ValueFromPipelineByPropertyName=$true,
+                   Position=0)]
         [Parameter(ParameterSetName = 'Proxy',
-            Mandatory=$true,
-            ValueFromPipelineByPropertyName=$true,
-            Position=0)]
+                   Mandatory=$true,
+                   ValueFromPipelineByPropertyName=$true,
+                   Position=0)]
         [ValidateCount(1,4)]
         [string[]]$URL,
 
         # VirusToral API Key.
         [Parameter(ParameterSetName = 'Direct',
-            Mandatory=$false,
-            ValueFromPipelineByPropertyName=$false)]
+                   Mandatory=$false,
+                   ValueFromPipelineByPropertyName=$false)]
         [Parameter(ParameterSetName = 'Proxy',
-            Mandatory=$false,
-            ValueFromPipelineByPropertyName=$false)]
+                   Mandatory=$false,
+                   ValueFromPipelineByPropertyName=$false)]
         [string]$APIKey,
 
         # Automatically submit the URL for analysis if no report is found for it in VirusTotal.
         [Parameter(ParameterSetName = 'Direct',
-            Mandatory=$true,
-            ValueFromPipelineByPropertyName=$false)]
+                   Mandatory=$true,
+                   ValueFromPipelineByPropertyName=$false)]
         [Parameter(ParameterSetName = 'Proxy',
-            Mandatory=$true,
-            ValueFromPipelineByPropertyName=$false)]
+                   Mandatory=$true,
+                   ValueFromPipelineByPropertyName=$false)]
         [switch]$Scan,
 
         [Parameter(ParameterSetName = 'Direct',
-            Mandatory=$false,
-            ValueFromPipelineByPropertyName=$false)]
+                   Mandatory=$false,
+                   ValueFromPipelineByPropertyName=$false)]
         [Parameter(ParameterSetName = 'Proxy',
-            Mandatory=$false,
-            ValueFromPipelineByPropertyName=$false)]
+                   Mandatory=$false,
+                   ValueFromPipelineByPropertyName=$false)]
         [string]$CertificateThumbprint,
 
         [Parameter(ParameterSetName = 'Proxy',
-            Mandatory=$true,
-            ValueFromPipelineByPropertyName=$true)]
+                   Mandatory=$true,
+                   ValueFromPipelineByPropertyName=$true)]
         [string]$Proxy,
  
         [Parameter(ParameterSetName = 'Proxy',
-            Mandatory=$true,
-            ValueFromPipelineByPropertyName=$true)]
+                   Mandatory=$true,
+                   ValueFromPipelineByPropertyName=$true)]
         [Management.Automation.PSCredential]$ProxyCredential,
 
         [Parameter(ParameterSetName = 'Proxy',
-            Mandatory=$true,
-            ValueFromPipelineByPropertyName=$true)]
+                   Mandatory=$true,
+                   ValueFromPipelineByPropertyName=$true)]
         [Switch]$ProxyUseDefaultCredentials
     )
 
@@ -705,7 +705,7 @@ function Submit-VTURL
 
         if (!(Test-Path variable:Global:VTAPIKey ) -and !($APIKey))
         {
-            throw 'No VirusTotal API Key has been specified or set.'
+            NoAPIKeyError
         }
         elseif ((Test-Path variable:Global:VTAPIKey ) -and !($APIKey))
         {
@@ -790,38 +790,38 @@ function Submit-VTFile
     (
         # URL or ScanID to query.
         [Parameter(ParameterSetName = 'Direct',
-            Mandatory=$true,
-            ValueFromPipelineByPropertyName=$true,
-            Position=0)]
+                   Mandatory=$true,
+                   ValueFromPipelineByPropertyName=$true,
+                   Position=0)]
         [Parameter(ParameterSetName = 'Proxy',
-            Mandatory=$true,
-            ValueFromPipelineByPropertyName=$true,
-            Position=0)]
+                   Mandatory=$true,
+                   ValueFromPipelineByPropertyName=$true,
+                   Position=0)]
         [ValidateScript({Test-Path $_ -PathType Leaf})]
         [string]$File,
 
         # VirusToral API Key.
         [Parameter(ParameterSetName = 'Direct',
-            Mandatory=$false,
-            ValueFromPipelineByPropertyName=$false)]
+                   Mandatory=$false,
+                   ValueFromPipelineByPropertyName=$false)]
         [Parameter(ParameterSetName = 'Proxy',
-            Mandatory=$false,
-            ValueFromPipelineByPropertyName=$false)]
+                   Mandatory=$false,
+                   ValueFromPipelineByPropertyName=$false)]
         [string]$APIKey,
 
         [Parameter(ParameterSetName = 'Proxy',
-            Mandatory=$true,
-            ValueFromPipelineByPropertyName=$true)]
+                   Mandatory=$true,
+                   ValueFromPipelineByPropertyName=$true)]
         [string]$Proxy,
  
         [Parameter(ParameterSetName = 'Proxy',
-            Mandatory=$true,
-            ValueFromPipelineByPropertyName=$true)]
+                   Mandatory=$true,
+                   ValueFromPipelineByPropertyName=$true)]
         [Management.Automation.PSCredential]$ProxyCredential,
 
         [Parameter(ParameterSetName = 'Proxy',
-            Mandatory=$true,
-            ValueFromPipelineByPropertyName=$true)]
+                   Mandatory=$true,
+                   ValueFromPipelineByPropertyName=$true)]
         [Switch]$ProxyUseDefaultCredentials
     )
 
@@ -831,7 +831,7 @@ function Submit-VTFile
 
         if (!(Test-Path variable:Global:VTAPIKey ) -and !($APIKey))
         {
-            Write-Error 'No VirusTotal API Key has been specified or set.'
+            NoAPIKeyError
         }
         elseif ((Test-Path variable:Global:VTAPIKey ) -and !($APIKey))
         {
@@ -845,7 +845,8 @@ function Submit-VTFile
         # Check the file size
         if ($fileinfo.length -gt 64mb)
         {
-            Write-Error 'VirusTotal has a limit of 64MB per file submited' -ErrorAction Stop
+            Write-Error -message "VirusTotal has a limit of 64MB per file submited $($File) could not be proccessed."
+            return
         }
    
         $req = [System.Net.WebRequest]::Create('http://www.virustotal.com/vtapi/v2/file/scan')
@@ -994,34 +995,34 @@ function Get-PoshVTVersion
 
         # VirusToral API Key.
         [Parameter(ParameterSetName = 'Direct',
-            Mandatory=$false,
-            ValueFromPipelineByPropertyName=$false)]
+                   Mandatory=$false,
+                   ValueFromPipelineByPropertyName=$false)]
         [Parameter(ParameterSetName = 'Proxy',
-            Mandatory=$false,
-            ValueFromPipelineByPropertyName=$false)]
+                   Mandatory=$false,
+                   ValueFromPipelineByPropertyName=$false)]
         [string]$APIKey,
 
         [Parameter(ParameterSetName = 'Direct',
-            Mandatory=$false,
-            ValueFromPipelineByPropertyName=$false)]
+                   Mandatory=$false,
+                   ValueFromPipelineByPropertyName=$false)]
         [Parameter(ParameterSetName = 'Proxy',
-            Mandatory=$false,
-            ValueFromPipelineByPropertyName=$false)]
+                   Mandatory=$false,
+                   ValueFromPipelineByPropertyName=$false)]
         [string]$CertificateThumbprint,
 
         [Parameter(ParameterSetName = 'Proxy',
-            Mandatory=$true,
-            ValueFromPipelineByPropertyName=$true)]
+                   Mandatory=$true,
+                   ValueFromPipelineByPropertyName=$true)]
         [string]$Proxy,
  
         [Parameter(ParameterSetName = 'Proxy',
-            Mandatory=$true,
-            ValueFromPipelineByPropertyName=$true)]
+                   Mandatory=$true,
+                   ValueFromPipelineByPropertyName=$true)]
         [Management.Automation.PSCredential]$ProxyCredential,
 
         [Parameter(ParameterSetName = 'Proxy',
-            Mandatory=$true,
-            ValueFromPipelineByPropertyName=$true)]
+                   Mandatory=$true,
+                   ValueFromPipelineByPropertyName=$true)]
         [Switch]$ProxyUseDefaultCredentials
     )
 
@@ -1030,7 +1031,7 @@ function Get-PoshVTVersion
         $URI = 'http://www.virustotal.com/vtapi/v2/key/details'
         if (!(Test-Path variable:Global:VTAPIKey ) -and !($APIKey))
         {
-            throw 'No VirusTotal API Key has been specified or set.'
+            NoAPIKeyError
         }
         elseif ((Test-Path variable:Global:VTAPIKey ) -and !($APIKey))
         {
@@ -1116,34 +1117,34 @@ function Get-VTSpecialURL
     (
         # VirusToral Private API Key.
         [Parameter(ParameterSetName = 'Direct',
-            Mandatory=$false,
-            ValueFromPipelineByPropertyName=$false)]
+                   Mandatory=$false,
+                   ValueFromPipelineByPropertyName=$false)]
         [Parameter(ParameterSetName = 'Proxy',
-            Mandatory=$false,
-            ValueFromPipelineByPropertyName=$false)]
+                   Mandatory=$false,
+                   ValueFromPipelineByPropertyName=$false)]
         [string]$APIKey,
 
         [Parameter(ParameterSetName = 'Direct',
-            Mandatory=$false,
-            ValueFromPipelineByPropertyName=$false)]
+                   Mandatory=$false,
+                   ValueFromPipelineByPropertyName=$false)]
         [Parameter(ParameterSetName = 'Proxy',
-            Mandatory=$false,
-            ValueFromPipelineByPropertyName=$false)]
+                   Mandatory=$false,
+                   ValueFromPipelineByPropertyName=$false)]
         [string]$CertificateThumbprint,
 
         [Parameter(ParameterSetName = 'Proxy',
-            Mandatory=$true,
-            ValueFromPipelineByPropertyName=$true)]
+                   Mandatory=$true,
+                   ValueFromPipelineByPropertyName=$true)]
         [string]$Proxy,
  
         [Parameter(ParameterSetName = 'Proxy',
-            Mandatory=$true,
-            ValueFromPipelineByPropertyName=$true)]
+                   Mandatory=$true,
+                   ValueFromPipelineByPropertyName=$true)]
         [Management.Automation.PSCredential]$ProxyCredential,
 
         [Parameter(ParameterSetName = 'Proxy',
-            Mandatory=$true,
-            ValueFromPipelineByPropertyName=$true)]
+                   Mandatory=$true,
+                   ValueFromPipelineByPropertyName=$true)]
         [Switch]$ProxyUseDefaultCredentials
     )
 
@@ -1153,7 +1154,7 @@ function Get-VTSpecialURL
         $URI = 'https://www.virustotal.com/vtapi/v2/file/scan/upload_url'
         if (!(Test-Path variable:Global:VTAPIKey ) -and !($APIKey))
         {
-            throw 'No VirusTotal API Key has been specified or set.'
+            NoAPIKeyError
         }
         elseif ((Test-Path variable:Global:VTAPIKey ) -and !($APIKey))
         {
@@ -1164,7 +1165,7 @@ function Get-VTSpecialURL
         $KeyInfo = Get-VTAPIKeyInfo -APIKey $APIKey
         if ($KeyInfo.type -ne 'private')
         {
-            throw 'The key provided is not a Private API Key'
+            WrongAPIKeyError
         }
         Write-Verbose 'Key verifies as a Private API Key.'
     }
@@ -1242,45 +1243,45 @@ function Get-VTFileComment
     (
         # File MD5, SHA1 or SHA256 Checksum to get comments from.
         [Parameter(ParameterSetName = 'Direct',
-            Mandatory=$true,
-            ValueFromPipelineByPropertyName=$true,
-            Position=0)]
+                   Mandatory=$true,
+                   ValueFromPipelineByPropertyName=$true,
+                   Position=0)]
         [Parameter(ParameterSetName = 'Proxy',
-            Mandatory=$true,
-            ValueFromPipelineByPropertyName=$true,
-            Position=0)]
+                   Mandatory=$true,
+                   ValueFromPipelineByPropertyName=$true,
+                   Position=0)]
         [string]$Resource,
 
         # VirusToral API Key.
         [Parameter(ParameterSetName = 'Direct',
-            Mandatory=$false,
-            ValueFromPipelineByPropertyName=$false)]
+                   Mandatory=$false,
+                   ValueFromPipelineByPropertyName=$false)]
         [Parameter(ParameterSetName = 'Proxy',
-            Mandatory=$false,
-            ValueFromPipelineByPropertyName=$false)]
+                   Mandatory=$false,
+                   ValueFromPipelineByPropertyName=$false)]
         [string]$APIKey,
 
         [Parameter(ParameterSetName = 'Direct',
-            Mandatory=$false,
-            ValueFromPipelineByPropertyName=$false)]
+                   Mandatory=$false,
+                   ValueFromPipelineByPropertyName=$false)]
         [Parameter(ParameterSetName = 'Proxy',
-            Mandatory=$false,
-            ValueFromPipelineByPropertyName=$false)]
+                   Mandatory=$false,
+                   ValueFromPipelineByPropertyName=$false)]
         [string]$CertificateThumbprint,
 
         [Parameter(ParameterSetName = 'Proxy',
-            Mandatory=$true,
-            ValueFromPipelineByPropertyName=$true)]
+                   Mandatory=$true,
+                   ValueFromPipelineByPropertyName=$true)]
         [string]$Proxy,
  
         [Parameter(ParameterSetName = 'Proxy',
-            Mandatory=$true,
-            ValueFromPipelineByPropertyName=$true)]
+                   Mandatory=$true,
+                   ValueFromPipelineByPropertyName=$true)]
         [Management.Automation.PSCredential]$ProxyCredential,
 
         [Parameter(ParameterSetName = 'Proxy',
-            Mandatory=$true,
-            ValueFromPipelineByPropertyName=$true)]
+                   Mandatory=$true,
+                   ValueFromPipelineByPropertyName=$true)]
         [Switch]$ProxyUseDefaultCredentials
     
     )
@@ -1290,7 +1291,7 @@ function Get-VTFileComment
         $URI = 'https://www.virustotal.com/vtapi/v2/comments/get'
         if (!(Test-Path variable:Global:VTAPIKey ) -and !($APIKey))
         {
-            Write-Error 'No VirusTotal API Key has been specified or set.'
+            NoAPIKeyError
         }
         elseif ((Test-Path variable:Global:VTAPIKey ) -and !($APIKey))
         {
@@ -1301,7 +1302,7 @@ function Get-VTFileComment
         $KeyInfo = Get-VTAPIKeyInfo -APIKey $APIKey
         if ($KeyInfo.type -ne 'private')
         {
-            throw 'The key provided is not a Private API Key'
+            WrongAPIKeyError
         }
         Write-Verbose 'Key verifies as a Private API Key.'
 
@@ -1380,53 +1381,53 @@ function Set-VTFileComment
     (
         # File MD5, SHA1 or SHA256 Checksum to comment on.
         [Parameter(ParameterSetName = 'Direct',
-            Mandatory=$true,
-            ValueFromPipelineByPropertyName=$true,
-            Position=0)]
+                   Mandatory=$true,
+                   ValueFromPipelineByPropertyName=$true,
+                   Position=0)]
         [Parameter(ParameterSetName = 'Proxy',
-            Mandatory=$true,
-            ValueFromPipelineByPropertyName=$true,
-            Position=0)]
+                   Mandatory=$true,
+                   ValueFromPipelineByPropertyName=$true,
+                   Position=0)]
         [string]$Resource,
 
         # VirusToral API Key.
         [Parameter(ParameterSetName = 'Direct',
-            Mandatory=$false,
-            ValueFromPipelineByPropertyName=$false)]
+                   Mandatory=$false,
+                   ValueFromPipelineByPropertyName=$false)]
         [Parameter(ParameterSetName = 'Proxy',
-            Mandatory=$false,
-            ValueFromPipelineByPropertyName=$false)]
+                   Mandatory=$false,
+                   ValueFromPipelineByPropertyName=$false)]
         [string]$APIKey,
 
         [Parameter(ParameterSetName = 'Direct',
-            Mandatory=$true,
-            ValueFromPipelineByPropertyName=$true)]
+                   Mandatory=$true,
+                   ValueFromPipelineByPropertyName=$true)]
         [Parameter(ParameterSetName = 'Proxy',
-            Mandatory=$true,
-            ValueFromPipelineByPropertyName=$true)]
+                   Mandatory=$true,
+                   ValueFromPipelineByPropertyName=$true)]
         [string]$Comment,
 
         [Parameter(ParameterSetName = 'Direct',
-            Mandatory=$false,
-            ValueFromPipelineByPropertyName=$false)]
+                   Mandatory=$false,
+                   ValueFromPipelineByPropertyName=$false)]
         [Parameter(ParameterSetName = 'Proxy',
-            Mandatory=$false,
-            ValueFromPipelineByPropertyName=$false)]
+                   Mandatory=$false,
+                   ValueFromPipelineByPropertyName=$false)]
         [string]$CertificateThumbprint,
 
         [Parameter(ParameterSetName = 'Proxy',
-            Mandatory=$true,
-            ValueFromPipelineByPropertyName=$true)]
+                   Mandatory=$true,
+                   ValueFromPipelineByPropertyName=$true)]
         [string]$Proxy,
  
         [Parameter(ParameterSetName = 'Proxy',
-            Mandatory=$true,
-            ValueFromPipelineByPropertyName=$true)]
+                   Mandatory=$true,
+                   ValueFromPipelineByPropertyName=$true)]
         [Management.Automation.PSCredential]$ProxyCredential,
 
         [Parameter(ParameterSetName = 'Proxy',
-            Mandatory=$true,
-            ValueFromPipelineByPropertyName=$true)]
+                   Mandatory=$true,
+                   ValueFromPipelineByPropertyName=$true)]
         [Switch]$ProxyUseDefaultCredentials
     
     )
@@ -1436,7 +1437,7 @@ function Set-VTFileComment
         $URI = 'https://www.virustotal.com/vtapi/v2/comments/put'
         if (!(Test-Path variable:Global:VTAPIKey ) -and !($APIKey))
         {
-            throw 'No VirusTotal API Key has been specified or set.'
+            NoAPIKeyError
         }
         elseif ((Test-Path variable:Global:VTAPIKey ) -and !($APIKey))
         {
@@ -1447,7 +1448,7 @@ function Set-VTFileComment
         $KeyInfo = Get-VTAPIKeyInfo -APIKey $APIKey
         if ($KeyInfo.type -ne 'private')
         {
-            throw 'The key provided is not a Private API Key'
+            WrongAPIKeyError
         }
         Write-Verbose 'Key verifies as a Private API Key.'
 
@@ -1526,90 +1527,90 @@ function Set-VTFileRescan
     (
         # File MD5 Checksum, File SHA1 Checksum, File SHA256 Checksum or ScanID to query.
         [Parameter(ParameterSetName = 'Direct',
-            Mandatory=$true,
-            ValueFromPipelineByPropertyName=$true,
-            Position=0)]
+                   Mandatory=$true,
+                   ValueFromPipelineByPropertyName=$true,
+                   Position=0)]
         [Parameter(ParameterSetName = 'Proxy',
-            Mandatory=$true,
-            ValueFromPipelineByPropertyName=$true,
-            Position=0)]
+                   Mandatory=$true,
+                   ValueFromPipelineByPropertyName=$true,
+                   Position=0)]
         [string]$Resource,
 
         # VirusToral API Key.
         [Parameter(ParameterSetName = 'Direct',
-            Mandatory=$false,
-            ValueFromPipelineByPropertyName=$false)]
+                   Mandatory=$false,
+                   ValueFromPipelineByPropertyName=$false)]
         [Parameter(ParameterSetName = 'Proxy',
-            Mandatory=$false,
-            ValueFromPipelineByPropertyName=$false)]
+                   Mandatory=$false,
+                   ValueFromPipelineByPropertyName=$false)]
         [string]$APIKey,
 
         # Date in which the rescan should be performed. If not specified the rescan will be performed immediately.
         [Parameter(ParameterSetName = 'Direct',
-            Mandatory=$true,
-            ValueFromPipelineByPropertyName=$false)]
+                   Mandatory=$true,
+                   ValueFromPipelineByPropertyName=$false)]
         [Parameter(ParameterSetName = 'Proxy',
-            Mandatory=$true,
-            ValueFromPipelineByPropertyName=$false)]
+                   Mandatory=$true,
+                   ValueFromPipelineByPropertyName=$false)]
         [datetime]$Date,
 
         # Period in days in which the file should be rescanned.
         [Parameter(ParameterSetName = 'Direct',
-            Mandatory=$true,
-            ValueFromPipelineByPropertyName=$false)]
+                   Mandatory=$true,
+                   ValueFromPipelineByPropertyName=$false)]
         [Parameter(ParameterSetName = 'Proxy',
-            Mandatory=$true,
-            ValueFromPipelineByPropertyName=$false)]
+                   Mandatory=$true,
+                   ValueFromPipelineByPropertyName=$false)]
         [int32]$Period,
 
         # Used in conjunction with period to specify the number of times the file should be rescanned.
         [Parameter(ParameterSetName = 'Direct',
-            Mandatory=$true,
-            ValueFromPipelineByPropertyName=$false)]
+                   Mandatory=$true,
+                   ValueFromPipelineByPropertyName=$false)]
         [Parameter(ParameterSetName = 'Proxy',
-            Mandatory=$true,
-            ValueFromPipelineByPropertyName=$false)]
+                   Mandatory=$true,
+                   ValueFromPipelineByPropertyName=$false)]
         [int32]$Repeat,
 
         # An URL where a POST notification should be sent when the rescan finishes.
         [Parameter(ParameterSetName = 'Direct',
-            Mandatory=$true,
-            ValueFromPipelineByPropertyName=$false)]
+                   Mandatory=$true,
+                   ValueFromPipelineByPropertyName=$false)]
         [Parameter(ParameterSetName = 'Proxy',
-            Mandatory=$true,
-            ValueFromPipelineByPropertyName=$false)]
+                   Mandatory=$true,
+                   ValueFromPipelineByPropertyName=$false)]
         [string]$NotifyURL,
 
         # Indicates if POST notifications should be sent only if the scan results differ from the previous one.
         [Parameter(ParameterSetName = 'Direct',
-            Mandatory=$true,
-            ValueFromPipelineByPropertyName=$false)]
+                   Mandatory=$true,
+                   ValueFromPipelineByPropertyName=$false)]
         [Parameter(ParameterSetName = 'Proxy',
-            Mandatory=$true,
-            ValueFromPipelineByPropertyName=$false)]
+                   Mandatory=$true,
+                   ValueFromPipelineByPropertyName=$false)]
         [bool]$NotifyChanges,
 
         [Parameter(ParameterSetName = 'Direct',
-            Mandatory=$false,
-            ValueFromPipelineByPropertyName=$false)]
+                   Mandatory=$false,
+                   ValueFromPipelineByPropertyName=$false)]
         [Parameter(ParameterSetName = 'Proxy',
-            Mandatory=$false,
-            ValueFromPipelineByPropertyName=$false)]
+                   Mandatory=$false,
+                   ValueFromPipelineByPropertyName=$false)]
         [string]$CertificateThumbprint,
 
         [Parameter(ParameterSetName = 'Proxy',
-            Mandatory=$true,
-            ValueFromPipelineByPropertyName=$true)]
+                   Mandatory=$true,
+                   ValueFromPipelineByPropertyName=$true)]
         [string]$Proxy,
  
         [Parameter(ParameterSetName = 'Proxy',
-            Mandatory=$true,
-            ValueFromPipelineByPropertyName=$true)]
+                   Mandatory=$true,
+                   ValueFromPipelineByPropertyName=$true)]
         [Management.Automation.PSCredential]$ProxyCredential,
 
         [Parameter(ParameterSetName = 'Proxy',
-            Mandatory=$true,
-            ValueFromPipelineByPropertyName=$true)]
+                   Mandatory=$true,
+                   ValueFromPipelineByPropertyName=$true)]
         [Switch]$ProxyUseDefaultCredentials
     )
 
@@ -1618,7 +1619,7 @@ function Set-VTFileRescan
         $URI = 'https://www.virustotal.com/vtapi/v2/file/rescan'
         if (!(Test-Path variable:Global:VTAPIKey ) -and !($APIKey))
         {
-            Write-Error 'No VirusTotal API Key has been specified or set.'
+            NoAPIKeyError
         }
         elseif ((Test-Path variable:Global:VTAPIKey ) -and !($APIKey))
         {
@@ -1631,7 +1632,7 @@ function Set-VTFileRescan
         $KeyInfo = Get-VTAPIKeyInfo -APIKey $APIKey
         if ($KeyInfo.type -ne 'private')
         {
-            throw 'The key provided is not a Private API Key'
+            WrongAPIKeyError
         }
         Write-Verbose 'Key verifies as a Private API Key.'
     }
@@ -1734,45 +1735,45 @@ function Remove-VTFileRescan
     (
         # File MD5 Checksum, File SHA1 Checksum, File SHA256 Checksum or ScanID to remove rescan.
         [Parameter(ParameterSetName = 'Direct',
-            Mandatory=$true,
-            ValueFromPipelineByPropertyName=$true,
-            Position=0)]
+                   Mandatory=$true,
+                   ValueFromPipelineByPropertyName=$true,
+                   Position=0)]
         [Parameter(ParameterSetName = 'Proxy',
-            Mandatory=$true,
-            ValueFromPipelineByPropertyName=$true,
-            Position=0)]
+                   Mandatory=$true,
+                   ValueFromPipelineByPropertyName=$true,
+                   Position=0)]
         [string]$Resource,
 
         # VirusToral API Key.
         [Parameter(ParameterSetName = 'Direct',
-            Mandatory=$false,
-            ValueFromPipelineByPropertyName=$false)]
+                   Mandatory=$false,
+                   ValueFromPipelineByPropertyName=$false)]
         [Parameter(ParameterSetName = 'Proxy',
-            Mandatory=$false,
-            ValueFromPipelineByPropertyName=$false)]
+                   Mandatory=$false,
+                   ValueFromPipelineByPropertyName=$false)]
         [string]$APIKey,
 
         [Parameter(ParameterSetName = 'Direct',
-            Mandatory=$false,
-            ValueFromPipelineByPropertyName=$false)]
+                   Mandatory=$false,
+                   ValueFromPipelineByPropertyName=$false)]
         [Parameter(ParameterSetName = 'Proxy',
-            Mandatory=$false,
-            ValueFromPipelineByPropertyName=$false)]
+                   Mandatory=$false,
+                   ValueFromPipelineByPropertyName=$false)]
         [string]$CertificateThumbprint,
 
         [Parameter(ParameterSetName = 'Proxy',
-            Mandatory=$true,
-            ValueFromPipelineByPropertyName=$true)]
+                   Mandatory=$true,
+                   ValueFromPipelineByPropertyName=$true)]
         [string]$Proxy,
  
         [Parameter(ParameterSetName = 'Proxy',
-            Mandatory=$true,
-            ValueFromPipelineByPropertyName=$true)]
+                   Mandatory=$true,
+                   ValueFromPipelineByPropertyName=$true)]
         [Management.Automation.PSCredential]$ProxyCredential,
 
         [Parameter(ParameterSetName = 'Proxy',
-            Mandatory=$true,
-            ValueFromPipelineByPropertyName=$true)]
+                   Mandatory=$true,
+                   ValueFromPipelineByPropertyName=$true)]
         [Switch]$ProxyUseDefaultCredentials
     
     )
@@ -1782,7 +1783,7 @@ function Remove-VTFileRescan
         $URI = 'https://www.virustotal.com/vtapi/v2/file/rescan/delete'
         if (!(Test-Path variable:Global:VTAPIKey ) -and !($APIKey))
         {
-            Write-Error 'No VirusTotal API Key has been specified or set.'
+            NoAPIKeyError
         }
         elseif ((Test-Path variable:Global:VTAPIKey ) -and !($APIKey))
         {
@@ -1795,7 +1796,7 @@ function Remove-VTFileRescan
         $KeyInfo = Get-VTAPIKeyInfo -APIKey $APIKey
         if ($KeyInfo.type -ne 'private')
         {
-            throw 'The key provided is not a Private API Key'
+            WrongAPIKeyError
         }
         Write-Verbose 'Key verifies as a Private API Key.'
 
@@ -1875,53 +1876,53 @@ function Get-VTFileScanReport
     (
         # File MD5 Checksum, File SHA1 Checksum, File SHA256 Checksum or ScanID of the scan.
         [Parameter(ParameterSetName = 'Direct',
-            Mandatory=$true,
-            ValueFromPipelineByPropertyName=$true,
-            Position=0)]
+                   Mandatory=$true,
+                   ValueFromPipelineByPropertyName=$true,
+                   Position=0)]
         [Parameter(ParameterSetName = 'Proxy',
-            Mandatory=$true,
-            ValueFromPipelineByPropertyName=$true,
-            Position=0)]
+                   Mandatory=$true,
+                   ValueFromPipelineByPropertyName=$true,
+                   Position=0)]
         [string]$Resource,
 
         # VirusToral API Key.
         [Parameter(ParameterSetName = 'Direct',
-            Mandatory=$false,
-            ValueFromPipelineByPropertyName=$false)]
+                   Mandatory=$false,
+                   ValueFromPipelineByPropertyName=$false)]
         [Parameter(ParameterSetName = 'Proxy',
-            Mandatory=$false,
-            ValueFromPipelineByPropertyName=$false)]
+                   Mandatory=$false,
+                   ValueFromPipelineByPropertyName=$false)]
         [string]$APIKey,
 
         [Parameter(ParameterSetName = 'Direct',
-            Mandatory=$true,
-            ValueFromPipelineByPropertyName=$false)]
+                   Mandatory=$true,
+                   ValueFromPipelineByPropertyName=$false)]
         [Parameter(ParameterSetName = 'Proxy',
-            Mandatory=$true,
-            ValueFromPipelineByPropertyName=$false)]
+                   Mandatory=$true,
+                   ValueFromPipelineByPropertyName=$false)]
         [switch]$AllInfo,
 
         [Parameter(ParameterSetName = 'Direct',
-            Mandatory=$false,
-            ValueFromPipelineByPropertyName=$false)]
+                   Mandatory=$false,
+                   ValueFromPipelineByPropertyName=$false)]
         [Parameter(ParameterSetName = 'Proxy',
-            Mandatory=$false,
-            ValueFromPipelineByPropertyName=$false)]
+                   Mandatory=$false,
+                   ValueFromPipelineByPropertyName=$false)]
         [string]$CertificateThumbprint,
 
         [Parameter(ParameterSetName = 'Proxy',
-            Mandatory=$true,
-            ValueFromPipelineByPropertyName=$true)]
+                   Mandatory=$true,
+                   ValueFromPipelineByPropertyName=$true)]
         [string]$Proxy,
  
         [Parameter(ParameterSetName = 'Proxy',
-            Mandatory=$true,
-            ValueFromPipelineByPropertyName=$true)]
+                   Mandatory=$true,
+                   ValueFromPipelineByPropertyName=$true)]
         [Management.Automation.PSCredential]$ProxyCredential,
 
         [Parameter(ParameterSetName = 'Proxy',
-            Mandatory=$true,
-            ValueFromPipelineByPropertyName=$true)]
+                   Mandatory=$true,
+                   ValueFromPipelineByPropertyName=$true)]
         [Switch]$ProxyUseDefaultCredentials
     
     )
@@ -1931,7 +1932,7 @@ function Get-VTFileScanReport
         $URI = 'https://www.virustotal.com/vtapi/v2/file/report'
         if (!(Test-Path variable:Global:VTAPIKey ) -and !($APIKey))
         {
-            throw 'No VirusTotal API Key has been specified or set.'
+            NoAPIKeyError
         }
         elseif ((Test-Path variable:Global:VTAPIKey ) -and !($APIKey))
         {
@@ -1949,7 +1950,7 @@ function Get-VTFileScanReport
         $KeyInfo = Get-VTAPIKeyInfo -APIKey $APIKey
         if ($KeyInfo.type -ne 'private')
         {
-            throw 'The key provided is not a Private API Key'
+            WrongAPIKeyError
         }
         Write-Verbose 'Key verified as a Private API Key.'
     }
@@ -2628,3 +2629,27 @@ function Search-VTAdvancedReversed
     {
     }
 }
+
+
+
+function WrongAPIKeyError($KeyInfo)
+{
+    $message = 'The key provided is not a Private API Key'
+    $exception = New-Object InvalidOperationException $message
+    $errorID = 'PermissionDenied'
+    $errorCategory = [Management.Automation.ErrorCategory]::PermissionDenied
+    $errorRecord = New-Object Management.Automation.ErrorRecord $exception, $errorID, $errorCategory, $KeyInfo
+    $PSCmdlet.ThrowTerminatingError($errorRecord)
+}
+
+function NoAPIKeyError($KeyInfo)
+{
+    $message = 'No VirtusTotal API key is set or specified'
+    $exception = New-Object InvalidOperationException $message
+    $errorID = 'InvalidArgument'
+    $errorCategory = [Management.Automation.ErrorCategory]::InvalidArgument
+    $errorRecord = New-Object Management.Automation.ErrorRecord $exception, $errorID, $errorCategory, $KeyInfo
+    $PSCmdlet.ThrowTerminatingError($errorRecord)
+}
+
+export-modulemember *-*
