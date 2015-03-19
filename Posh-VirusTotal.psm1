@@ -22,12 +22,27 @@ function Set-VTAPIKey
     {
         $Global:VTAPIKey = $APIKey
         $SecureKeyString = ConvertTo-SecureString -String $APIKey -AsPlainText -Force
-        $EncryptedString = $SecureKeyString | ConvertFrom-SecureString -SecureKey $MasterPassword
+
+        # Generate a random secure Salt
+        $SaltBytes = New-Object byte[] 32
+        $RNG = New-Object System.Security.Cryptography.RNGCryptoServiceProvider
+        $RNG.GetBytes($SaltBytes)
+
+        $Credentials = New-Object System.Management.Automation.PSCredential -ArgumentList 'user', $MasterPassword
+
+        # Derive Key, IV and Salt from Key
+        $Rfc2898Deriver = New-Object System.Security.Cryptography.Rfc2898DeriveBytes -ArgumentList $Credentials.GetNetworkCredential().Password, $SaltBytes
+        $KeyBytes  = $Rfc2898Deriver.GetBytes(32)
+
+        $EncryptedString = $SecureKeyString | ConvertFrom-SecureString -key $KeyBytes
+
 
         $FolderName = 'Posh-VirusTotal'
         $ConfigName = 'api.key'
-        
-        if (!(Test-Path "$($env:AppData)\$FolderName"))
+        $saltname   = 'salt.rnd'
+
+        (Test-Path -Path "$($env:AppData)\$FolderName")
+        if (!(Test-Path -Path "$($env:AppData)\$FolderName"))
         {
             Write-Verbose -Message 'Seems this is the first time the config has been set.'
             Write-Verbose -Message "Creating folder $("$($env:AppData)\$FolderName")"
@@ -36,6 +51,9 @@ function Set-VTAPIKey
         
         Write-Verbose -Message "Saving the information to configuration file $("$($env:AppData)\$FolderName\$ConfigName")"
         "$($EncryptedString)"  | Set-Content  "$($env:AppData)\$FolderName\$ConfigName" -Force
+
+        # Saving salt in to the file.
+        Set-Content -Value $SaltBytes -Encoding Byte -Path "$($env:AppData)\$FolderName\$saltname" -Force
     }
     End
     {
@@ -69,7 +87,14 @@ function Read-VTAPIKey
         Write-Verbose -Message "Reading key from $($env:AppData)\Posh-VirusTotal\api.key."
         $ConfigFileContent = Get-Content -Path "$($env:AppData)\Posh-VirusTotal\api.key"
         Write-Debug -Message "Secure string is $($ConfigFileContent)"
-        $SecString = ConvertTo-SecureString -SecureKey $MasterPassword $ConfigFileContent
+        $SaltBytes = Get-Content -Encoding Byte -Path "$($env:AppData)\Posh-VirusTotal\salt.rnd" 
+        $Credentials = New-Object System.Management.Automation.PSCredential -ArgumentList 'user', $MasterPassword
+
+        # Derive Key, IV and Salt from Key
+        $Rfc2898Deriver = New-Object System.Security.Cryptography.Rfc2898DeriveBytes -ArgumentList $Credentials.GetNetworkCredential().Password, $SaltBytes
+        $KeyBytes  = $Rfc2898Deriver.GetBytes(32)
+
+        $SecString = ConvertTo-SecureString -Key $KeyBytes $ConfigFileContent
 
         # Decrypt the secure string.
         $SecureStringToBSTR = [Runtime.InteropServices.Marshal]::SecureStringToBSTR($SecString)
