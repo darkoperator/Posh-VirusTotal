@@ -531,10 +531,10 @@ function Get-VTURLReport
 
         # Automatically submit the URL for analysis if no report is found for it in VirusTotal.
         [Parameter(ParameterSetName = 'Direct',
-            Mandatory=$true,
+            Mandatory=$false,
             ValueFromPipelineByPropertyName=$false)]
         [Parameter(ParameterSetName = 'Proxy',
-            Mandatory=$true,
+            Mandatory=$false,
             ValueFromPipelineByPropertyName=$false)]
         [switch]$Scan,
 
