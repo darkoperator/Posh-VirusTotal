@@ -1,4 +1,4 @@
-﻿
+
 #  .ExternalHelp Posh-VirusTotal.Help.xml
 function Set-VTAPIKey
 {
@@ -22,6 +22,9 @@ function Set-VTAPIKey
     {
         $Global:VTAPIKey = $APIKey
         $SecureKeyString = ConvertTo-SecureString -String $APIKey -AsPlainText -Force
+
+       
+        
 
         # Generate a random secure Salt
         $SaltBytes = New-Object byte[] 32
@@ -53,7 +56,11 @@ function Set-VTAPIKey
         "$($EncryptedString)"  | Set-Content  "$($env:AppData)\$FolderName\$ConfigName" -Force
 
         # Saving salt in to the file.
-        Set-Content -Value $SaltBytes -Encoding Byte -Path "$($env:AppData)\$FolderName\$saltname" -Force
+        if ($PSVersionTable.PSEdition -eq "Desktop") {
+            Set-Content -Value $SaltBytes -Encoding Byte -Path "$($env:AppData)\$FolderName\$saltname" -Force
+            } else {
+                Set-Content -Value $SaltBytes -AsByteStream -Path "$($env:AppData)\$FolderName\$saltname" -Force    
+        }
     }
     End
     {
